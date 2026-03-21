@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Porra Mundial</title>
+</head>
+<body>
+
+<header class="topbar">
+
+  <button class="nav-btn">Información</button>
+  <button class="nav-btn">Clasificación</button>
+  <button class="nav-btn">Próximos partidos</button>
+  <!-- <button class="nav-btn warning">Mis predicciones ⚠</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'">Mis porras</button> -->
+
+  <div id="login-section" style="margin-left: auto;">
+    <button id="loginBtn" class="nav-btn">Identifícate 👤</button>
+    <div id ="userdiv" class="dropdown">
+      <button id="userBtn" class="nav-btn dropdown-btn"></button>
+      <div id="menu" class="dropdown-menu">
+        <button onclick="alert('Perfil')">Mis porras</button>
+        <button onclick="alert('Configuración')">
+          Mis predicciones
+        </button>
+        <button id="logoutBtn" onclick="alert('Cerrar sesión')">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </div>
+  
+
+</header>
+
+<main class="container">
+
+  <img class="logo" src="../static/media/logo2.png">
+
+  <!-- Cuenta atrás -->
+  <div class="countdown-card">
+    <h2>Quedan</h2>
+    <span id="countdowon" class="countdown"></span>
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions">
+
+    <button class="big-btn">Crear porra</button>
+
+    <button class="big-btn">Unirse a una porra</button>
+
+    <!-- <input
+      class="pool-input"
+      type="text"
+      placeholder="Id de porra"
+    /> -->
+
+  </div>
+
+</main>
+
+
+
+<script type="module">
+
+import { initializeApp } from 
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from 
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+  };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const loginSection = document.getElementById("login-section");
+const userdiv = document.getElementById("userdiv");
+const userBtn = document.getElementById("userBtn");
+
+
+
+// 🔐 Login con Google
+loginBtn.onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  await signInWithPopup(auth, provider);
+};
+
+
+// 🔓 Logout
+logoutBtn.onclick = () => signOut(auth);
+
+
+// 👤 Detectar usuario
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginBtn.style.display = "none";
+    userdiv.style.display = "block";
+    userBtn.textContent = `Hola, ${(user.displayName.split(' '))[0]}`;
+  } else {
+    // loginSection.style.display = "block";
+    loginBtn.style.display = "block";
+    userdiv.style.display = "none";
+  }
+});
+
+// COUNTDOWN
+// Set the date we're counting down to
+var countDownDate = new Date("Jun 11, 2026 21:00:00").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="countdowon"
+  document.getElementById("countdowon").innerHTML = days + "d " + hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+  // If the count down is finished, write some text
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("countdowon").innerHTML = "EXPIRED";
+  }
+}, 1000);
+
+const btn = document.getElementById("userBtn");
+const menu = document.getElementById("menu");
+
+btn.onclick = () => {
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+};
+
+/* Cerrar si haces click fuera */
+window.onclick = (e) => {
+  if (!e.target.matches('.dropdown-btn')) {
+    menu.style.display = "none";
+  }
+};
+</script>
+
+</body>
+</html>
