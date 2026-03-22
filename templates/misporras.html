@@ -2,16 +2,224 @@
 <html>
 <head>
   <title>Mis porras</title>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../static/misporras_style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
 </head>
 <body>
 
-<h1>🏆 Mis porras</h1>
+  
+<header class="topbar">
 
-<p>Aquí aparecerán las porras del usuario.</p>
+  <button class="nav-btn">Información</button>
+  <button class="nav-btn">Clasificación</button>
+  <button class="nav-btn">Próximos partidos</button>
+ 
+  
+
+</header>
+
+  <main>
+<div class="container">
+<h1 style="font-size: 3em;">Mis porras</h1>
+
+<ul id="listaPorras">Aun no participas en ninguna porra</ul>
+
+<button id="btnMostrarCrear">➕ Crear porra</button>
+
+<div id="crearPorraBox" style="display:none; margin-top:10px;">
+  <input
+    type="text"
+    id="nombrePorra"
+    placeholder="Nombre de la porra"
+  >
+  <button id="btnCrear">Crear</button>
+</div>
 
 <button onclick="location.href='home.html'">
   Volver
 </button>
 
+</div>
+</main>
+
 </body>
+
+<script type="module">
+
+  
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+// 🔐 Config Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+};
+
+
+// 🔥 Inicializar
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+// 📦 Elementos
+const btnMostrar = document.getElementById("btnMostrarCrear");
+const box = document.getElementById("crearPorraBox");
+const btnCrear = document.getElementById("btnCrear");
+const inputNombre = document.getElementById("nombrePorra");
+
+
+// 👁️ Mostrar / ocultar formulario
+btnMostrar.onclick = () => {
+  box.style.display =
+    box.style.display === "none" ? "block" : "none";
+};
+
+
+// 🔑 Generador ID aleatorio
+function generarID() {
+
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  let id = "";
+
+  for (let i = 0; i < 8; i++) {
+    id += chars.charAt(
+      Math.floor(Math.random() * chars.length)
+    );
+  }
+
+  return id;
+}
+
+
+// 👤 Usuario actual
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+});
+
+
+// 🏆 Crear porra
+btnCrear.onclick = async () => {
+
+  if (!currentUser) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+
+  const nombre = inputNombre.value.trim();
+
+  if (!nombre) {
+    alert("Introduce un nombre");
+    return;
+  }
+
+  const id = generarID();
+
+  try {
+
+    await setDoc(doc(db, "porras", id), {
+
+      ID: id,
+      nombre: nombre,
+      owner: currentUser.uid,
+      miembros: [currentUser.uid],
+      fecha_creacion: serverTimestamp()
+
+    });
+    cargarMisPorras(currentUser);
+    alert(`Porra "${nombre}" creada con ID ${id}`);
+
+    inputNombre.value = "";
+    box.style.display = "none";
+
+  } catch (e) {
+
+    console.error(e);
+    alert("Error al crear la porra");
+
+  }
+
+};
+
+import {
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+async function cargarMisPorras(user) {
+
+  const q = query(
+    collection(db, "porras"),
+    where("miembros", "array-contains", user.uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const lista = document.getElementById("listaPorras");
+  lista.innerHTML = "";
+
+  if (snapshot.empty) {
+    lista.innerHTML = "<li>No participas en ninguna porra</li>";
+    return;
+  }
+
+  snapshot.forEach(docSnap => {
+
+    const data = docSnap.data();
+
+    const li = document.createElement("li");
+
+    li.textContent =
+      `${data.nombre} — ID: ${data.ID}`;
+
+    lista.appendChild(li);
+  });
+}
+
+
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+    cargarMisPorras(user);
+    console.log("porras cargadas");
+  } else {
+    window.location.href = "home.html";
+  }
+
+});
+
+
+
+</script>
+
+
 </html>
