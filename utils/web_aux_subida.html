@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Subir partidos</title>
+</head>
+<body>
+
+<h2>Subiendo partidos...</h2>
+
+<script type="module">
+
+// 🔥 Importa Firebase
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// 🔥 Importa tus datos
+import { partidos } from "./partidos.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+async function subirPartidos() {
+
+  for (const p of partidos) {
+
+    await setDoc(doc(db, "partidos", p.Numero), p);
+
+  }
+
+  alert("Partidos subidos ✔️");
+
+}
+
+subirPartidos();
+
+</script>
+
+</body>
+</html>

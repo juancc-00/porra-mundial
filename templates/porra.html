@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Porra</title>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../static/porra_style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<header class="topbar">
+
+    <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
+  <button class="nav-btn">Información</button>
+  <button class="nav-btn">Clasificación</button>
+  <button class="nav-btn">Próximos partidos</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
+ 
+</header>
+
+<main>
+
+<div class="container">
+
+<div class="cabecera-container">
+    <h1 id="nombrePorra" style="font-size: 3em;">Cargando...</h1>
+</div>  
+
+
+
+<p>ID: <span id="idPorra"></span></p>
+
+<h2>Participantes</h2>
+<ul id="listaMiembros"></ul>
+
+</div>
+
+</main>
+
+</body>
+
+<script type="module">
+
+
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+};
+
+const params = new URLSearchParams(window.location.search);
+const idPorra = params.get("id");
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "home.html";
+    return;
+  }
+  await cargarPorra(idPorra, user);
+});
+
+
+async function cargarPorra(id, user) {
+
+  const ref = doc(db, "porras", id);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) {
+
+    alert("La porra no existe");
+    window.location.href = "mis-porras.html";
+    return;
+
+  }
+
+  const data = snap.data();
+
+  // ===== MOSTRAR DATOS =====
+
+  document.getElementById("nombrePorra").textContent =
+    data.nombre;
+
+  document.getElementById("idPorra").textContent =
+    data.ID;
+
+  // ===== LISTA DE MIEMBROS =====
+
+  const lista =
+    document.getElementById("listaMiembros");
+
+  lista.innerHTML = "";
+
+  // ⭐ IMPORTANTE: usar for...of
+
+  for (const uid of data.miembros) {
+
+    const alias = await obtenerAlias(uid);
+
+    const li = document.createElement("li");
+    li.textContent = alias;
+
+    lista.appendChild(li);
+
+  }
+
+}
+
+async function obtenerAlias(uid) {
+
+  const ref = doc(db, "usuarios", uid);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    return snap.data().nombre;
+  }
+
+  return "Jugador";
+
+}
+
+
+</script>
+
+
+</html>

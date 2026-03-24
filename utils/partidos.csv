@@ -1,105 +1,105 @@
-﻿#;Equipo 1;Resultado;Equipo 2;Fecha;Hora;Estadio;Fase
-1;México ;;Sudáfrica;2026-06-11;21:00;Estadio Azteca;Grupo A
-2;Corea del Sur ;;;2026-06-12;4:00;Estadio Chivas;Grupo A
-3;Canadá ;;;2026-06-12;21:00;Estadio Nacional de Canadá;Grupo B
-4;Estados Unidos ;;Paraguay;2026-06-13;3:00;SoFi Stadium;Grupo D
-5;Haití ;;Escocia;2026-06-14;3:00;MetLife Stadium;Grupo C
-6;Australia ;;;2026-06-14;6:00;Estadio BC Place;Grupo D
-7;Brasil ;;Marruecos;2026-06-14;0:00;Gillette Stadium;Grupo C
-8;Catar ;;Suiza;2026-06-13;21:00;Levi's Stadium;Grupo B
-9;Costa de Marfil ;;Ecuador;2026-06-15;1:00;Lincoln Financial Field;Grupo E
-10;Alemania ;;Curazao;2026-06-14;19:00;NRG Stadium;Grupo E
-11;Países Bajos ;;Japón;2026-06-14;22:00;AT&T Stadium;Grupo F
-12;;;Túnez;2026-06-15;4:00;Estadio Monterrey;Grupo F
-13;Arabia Saudita ;;Uruguay;2026-06-16;0:00;Hard Rock Stadium;Grupo H
-14;España ;;Cabo Verde;2026-06-15;20:00;Mercedes-Benz Stadium;Grupo H
-15;Irán ;;Nueva Zelanda;2026-06-16;3:00;Lumen Field;Grupo G
-16;Bélgica ;;Egipto;2026-06-15;21:00;SoFi Stadium;Grupo G
-17;Francia ;;Senegal;2026-06-16;21:00;MetLife Stadium;Grupo I
-18;;;Noruega;2026-06-17;0:00;Gillette Stadium;Grupo I
-19;Argentina ;;Argelia;2026-06-17;3:00;Arrowhead Stadium;Grupo J
-20;Austria ;;Jordania;2026-06-17;6:00;Levi's Stadium;Grupo J
-21;Ghana ;;Panamá;2026-06-18;2:00;AT&T Stadium;Grupo L
-22;Inglaterra ;;Croacia;2026-06-17;21:00;Estadio Nacional de Canadá;Grupo L
-23;Portugal ;;;2026-06-17;19:00;NRG Stadium;Grupo K
-24;Uzbekistán ;;Colombia;2026-06-18;4:00;Estadio Azteca;Grupo K
-25;;;Sudáfrica;2026-06-18;18:00;Mercedes-Benz Stadium;Grupo A
-26;Suiza ;;;2026-06-18;21:00;SoFi Stadium;Grupo B
-27;Canadá ;;Catar;2026-06-19;0:00;Estadio BC Place;Grupo B
-28;México ;;Corea del Sur;2026-06-19;3:00;Estadio Chivas;Grupo A
-29;Brasil ;;Haití;2026-06-20;3:00;Lincoln Financial Field;Grupo C
-30;Escocia ;;Marruecos;2026-06-20;0:00;Gillette Stadium;Grupo C
-31;;;Paraguay;2026-06-20;6:00;Levi's Stadium;Grupo D
-32;Estados Unidos ;;Australia;2026-06-19;21:00;Lumen Field;Grupo D
-33;Alemania ;;Costa de Marfil;2026-06-20;22:00;Estadio Nacional de Canadá;Grupo E
-34;Ecuador ;;Curazao;2026-06-21;2:00;Arrowhead Stadium;Grupo E
-35;Países Bajos ;;;2026-06-20;19:00;NRG Stadium;Grupo F
-36;Túnez ;;Japón;2026-06-21;6:00;Estadio Monterrey;Grupo F
-37;Uruguay ;;Cabo Verde;2026-06-22;0:00;Mercedes-Benz Stadium;Grupo H
-38;España ;;Arabia Saudita;2026-06-21;18:00;Hard Rock Stadium;Grupo H
-39;Bélgica ;;Irán;2026-06-21;21:00;SoFi Stadium;Grupo G
-40;Nueva Zelanda ;;Egipto;2026-06-22;3:00;Estadio BC Place;Grupo G
-41;Noruega ;;Senegal;2026-06-23;2:00;Lincoln Financial Field;Grupo I
-42;Francia ;;;2026-06-22;23:00;MetLife Stadium;Grupo I
-43;Argentina ;;Austria;2026-06-22;19:00;AT&T Stadium;Grupo J
-44;Jordania ;;Argelia;2026-06-23;5:00;Levi's Stadium;Grupo J
-45;Inglaterra ;;Ghana;2026-06-23;22:00;Gillette Stadium;Grupo L
-46;Panamá ;;Croacia;2026-06-24;1:00;Estadio Nacional de Canadá;Grupo L
-47;Portugal ;;Uzbekistán;2026-06-23;19:00;NRG Stadium;Grupo K
-48;Colombia ;;;2026-06-24;4:00;Estadio Chivas;Grupo K
-49;Escocia ;;Brasil;2026-06-25;0:00;Hard Rock Stadium;Grupo C
-50;Marruecos ;;Haití;2026-06-25;0:00;Mercedes-Benz Stadium;Grupo C
-51;Suiza ;;Canadá;2026-06-24;21:00;Estadio BC Place;Grupo B
-52;;;Catar;2026-06-24;21:00;Lumen Field;Grupo B
-53;;;México;2026-06-25;5:00;Estadio Azteca;Grupo A
-54;Sudáfrica ;;Corea del Sur;2026-06-25;5:00;Estadio Monterrey;Grupo A
-55;Curazao ;;Costa de Marfil;2026-06-25;22:00;Lincoln Financial Field;Grupo E
-56;Ecuador ;;Alemania;2026-06-25;22:00;MetLife Stadium;Grupo E
-57;Japón ;;;2026-06-26;1:00;AT&T Stadium;Grupo F
-58;Túnez ;;Países Bajos;2026-06-26;1:00;Arrowhead Stadium;Grupo F
-59;;;Estados Unidos;2026-06-26;4:00;SoFi Stadium;Grupo D
-60;Paraguay ;;Australia;2026-06-26;4:00;Levi's Stadium;Grupo D
-61;Noruega ;;Francia;2026-06-26;21:00;Gillette Stadium;Grupo I
-62;Senegal ;;;2026-06-26;21:00;Estadio Nacional de Canadá;Grupo I
-63;Egipto ;;Irán;2026-06-27;5:00;Lumen Field;Grupo G
-64;Nueva Zelanda ;;Bélgica;2026-06-27;5:00;Estadio BC Place;Grupo G
-65;Cabo Verde ;;Arabia Saudita;2026-06-27;2:00;NRG Stadium;Grupo H
-66;Uruguay ;;España;2026-06-27;2:00;Estadio Akron;Grupo H
-67;Panamá ;;Inglaterra;2026-06-27;23:00;MetLife Stadium;Grupo L
-68;Croacia ;;Ghana;2026-06-27;23:00;Lincoln Financial Field;Grupo L
-69;Argelia ;;Austria;2026-06-28;4:00;Arrowhead Stadium;Grupo J
-70;Jordania ;;Argentina;2026-06-28;4:00;AT&T Stadium;Grupo J
-71;Colombia ;;Portugal;2026-06-28;1:30;Hard Rock Stadium;Grupo K
-72;;;;2026-06-28;1:30;Mercedes-Benz Stadium;Grupo K
-73;;;;2026-06-28;21:00;SoFi Stadium;Diesciesisavos de final
-74;;;;2026-06-29;22:30;Gillette Stadium;Diesciesisavos de final
-75;;;;2026-06-30;3:00;Estadio Monterrey;Diesciesisavos de final
-76;;;;2026-06-29;19:00;NRG Stadium;Diesciesisavos de final
-77;;;;2026-06-30;23:00;MetLife Stadium;Diesciesisavos de final
-78;;;;2026-06-30;19:00;AT&T Stadium;Diesciesisavos de final
-79;;;;2026-07-01;3:00;Estadio Azteca;Diesciesisavos de final
-80;;;;2026-07-01;18:00;Mercedes-Benz Stadium;Diesciesisavos de final
-81;;;;2026-07-02;2:00;Levi's Stadium;Diesciesisavos de final
-82;;;;2026-07-01;22:00;Lumen Field;Diesciesisavos de final
-83;;;;2026-07-03;1:00;Estadio Nacional de Canadá;Diesciesisavos de final
-84;;;;2026-07-02;21:00;SoFi Stadium;Diesciesisavos de final
-85;;;;2026-07-03;5:00;Estadio BC Place;Diesciesisavos de final
-86;;;;2026-07-04;0:00;Hard Rock Stadium;Diesciesisavos de final
-87;;;;2026-07-04;3:30;Arrowhead Stadium;Diesciesisavos de final
-88;;;;2026-07-03;20:00;AT&T Stadium;Diesciesisavos de final
-89;;;;2026-07-04;23:00;Lincoln Financial Field;Octavos de final
-90;;;;2026-07-04;19:00;NRG Stadium;Octavos de final
-91;;;;2026-07-05;22:00;MetLife Stadium;Octavos de final
-92;;;;2026-07-06;2:00;Estadio Azteca;Octavos de final
-93;;;;2026-07-06;21:00;AT&T Stadium;Octavos de final
-94;;;;2026-07-07;2:00;Lumen Field;Octavos de final
-95;;;;2026-07-07;18:00;Mercedes-Benz Stadium;Octavos de final
-96;;;;2026-07-07;22:00;Estadio BC Place;Octavos de final
-97;;;;2026-07-09;22:00;Gillette Stadium;Cuartos de final
-98;;;;2026-07-10;21:00;SoFi Stadium;Cuartos de final
-99;;;;2026-07-11;23:00;Hard Rock Stadium;Cuartos de final
-100;;;;2026-07-12;3:00;Arrowhead Stadium;Cuartos de final
-101;;;;2026-07-14;21:00;AT&T Stadium;Semifinales
-102;;;;2026-07-15;21:00;Mercedes-Benz Stadium;Semifinales
-103;;;;2026-07-18;23:00;Hard Rock Stadium;Tercer puesto
-104;;;;2026-07-19;21:00;MetLife Stadium;Final
+﻿Numero;Equipo 1;Resultado;Equipo 2;Fecha;Hora;Estadio;Fase
+1;México ;;Sudáfrica;11/06/2026;21:00;Estadio Azteca;Grupo A
+2;Corea del Sur ;;;12/06/2026;4:00;Estadio Chivas;Grupo A
+3;Canadá ;;;12/06/2026;21:00;Estadio Nacional de Canadá;Grupo B
+4;Estados Unidos ;;Paraguay;13/06/2026;3:00;SoFi Stadium;Grupo D
+5;Haití ;;Escocia;14/06/2026;3:00;MetLife Stadium;Grupo C
+6;Australia ;;;14/06/2026;6:00;Estadio BC Place;Grupo D
+7;Brasil ;;Marruecos;14/06/2026;0:00;Gillette Stadium;Grupo C
+8;Catar ;;Suiza;13/06/2026;21:00;Levi's Stadium;Grupo B
+9;Costa de Marfil ;;Ecuador;15/06/2026;1:00;Lincoln Financial Field;Grupo E
+10;Alemania ;;Curazao;14/06/2026;19:00;NRG Stadium;Grupo E
+11;Países Bajos ;;Japón;14/06/2026;22:00;AT&T Stadium;Grupo F
+12;;;Túnez;15/06/2026;4:00;Estadio Monterrey;Grupo F
+13;Arabia Saudita ;;Uruguay;16/06/2026;0:00;Hard Rock Stadium;Grupo H
+14;España ;;Cabo Verde;15/06/2026;20:00;Mercedes-Benz Stadium;Grupo H
+15;Irán ;;Nueva Zelanda;16/06/2026;3:00;Lumen Field;Grupo G
+16;Bélgica ;;Egipto;15/06/2026;21:00;SoFi Stadium;Grupo G
+17;Francia ;;Senegal;16/06/2026;21:00;MetLife Stadium;Grupo I
+18;;;Noruega;17/06/2026;0:00;Gillette Stadium;Grupo I
+19;Argentina ;;Argelia;17/06/2026;3:00;Arrowhead Stadium;Grupo J
+20;Austria ;;Jordania;17/06/2026;6:00;Levi's Stadium;Grupo J
+21;Ghana ;;Panamá;18/06/2026;2:00;AT&T Stadium;Grupo L
+22;Inglaterra ;;Croacia;17/06/2026;21:00;Estadio Nacional de Canadá;Grupo L
+23;Portugal ;;;17/06/2026;19:00;NRG Stadium;Grupo K
+24;Uzbekistán ;;Colombia;18/06/2026;4:00;Estadio Azteca;Grupo K
+25;;;Sudáfrica;18/06/2026;18:00;Mercedes-Benz Stadium;Grupo A
+26;Suiza ;;;18/06/2026;21:00;SoFi Stadium;Grupo B
+27;Canadá ;;Catar;19/06/2026;0:00;Estadio BC Place;Grupo B
+28;México ;;Corea del Sur;19/06/2026;3:00;Estadio Chivas;Grupo A
+29;Brasil ;;Haití;20/06/2026;3:00;Lincoln Financial Field;Grupo C
+30;Escocia ;;Marruecos;20/06/2026;0:00;Gillette Stadium;Grupo C
+31;;;Paraguay;20/06/2026;6:00;Levi's Stadium;Grupo D
+32;Estados Unidos ;;Australia;19/06/2026;21:00;Lumen Field;Grupo D
+33;Alemania ;;Costa de Marfil;20/06/2026;22:00;Estadio Nacional de Canadá;Grupo E
+34;Ecuador ;;Curazao;21/06/2026;2:00;Arrowhead Stadium;Grupo E
+35;Países Bajos ;;;20/06/2026;19:00;NRG Stadium;Grupo F
+36;Túnez ;;Japón;21/06/2026;6:00;Estadio Monterrey;Grupo F
+37;Uruguay ;;Cabo Verde;22/06/2026;0:00;Mercedes-Benz Stadium;Grupo H
+38;España ;;Arabia Saudita;21/06/2026;18:00;Hard Rock Stadium;Grupo H
+39;Bélgica ;;Irán;21/06/2026;21:00;SoFi Stadium;Grupo G
+40;Nueva Zelanda ;;Egipto;22/06/2026;3:00;Estadio BC Place;Grupo G
+41;Noruega ;;Senegal;23/06/2026;2:00;Lincoln Financial Field;Grupo I
+42;Francia ;;;22/06/2026;23:00;MetLife Stadium;Grupo I
+43;Argentina ;;Austria;22/06/2026;19:00;AT&T Stadium;Grupo J
+44;Jordania ;;Argelia;23/06/2026;5:00;Levi's Stadium;Grupo J
+45;Inglaterra ;;Ghana;23/06/2026;22:00;Gillette Stadium;Grupo L
+46;Panamá ;;Croacia;24/06/2026;1:00;Estadio Nacional de Canadá;Grupo L
+47;Portugal ;;Uzbekistán;23/06/2026;19:00;NRG Stadium;Grupo K
+48;Colombia ;;;24/06/2026;4:00;Estadio Chivas;Grupo K
+49;Escocia ;;Brasil;25/06/2026;0:00;Hard Rock Stadium;Grupo C
+50;Marruecos ;;Haití;25/06/2026;0:00;Mercedes-Benz Stadium;Grupo C
+51;Suiza ;;Canadá;24/06/2026;21:00;Estadio BC Place;Grupo B
+52;;;Catar;24/06/2026;21:00;Lumen Field;Grupo B
+53;;;México;25/06/2026;5:00;Estadio Azteca;Grupo A
+54;Sudáfrica ;;Corea del Sur;25/06/2026;5:00;Estadio Monterrey;Grupo A
+55;Curazao ;;Costa de Marfil;25/06/2026;22:00;Lincoln Financial Field;Grupo E
+56;Ecuador ;;Alemania;25/06/2026;22:00;MetLife Stadium;Grupo E
+57;Japón ;;;26/06/2026;1:00;AT&T Stadium;Grupo F
+58;Túnez ;;Países Bajos;26/06/2026;1:00;Arrowhead Stadium;Grupo F
+59;;;Estados Unidos;26/06/2026;4:00;SoFi Stadium;Grupo D
+60;Paraguay ;;Australia;26/06/2026;4:00;Levi's Stadium;Grupo D
+61;Noruega ;;Francia;26/06/2026;21:00;Gillette Stadium;Grupo I
+62;Senegal ;;;26/06/2026;21:00;Estadio Nacional de Canadá;Grupo I
+63;Egipto ;;Irán;27/06/2026;5:00;Lumen Field;Grupo G
+64;Nueva Zelanda ;;Bélgica;27/06/2026;5:00;Estadio BC Place;Grupo G
+65;Cabo Verde ;;Arabia Saudita;27/06/2026;2:00;NRG Stadium;Grupo H
+66;Uruguay ;;España;27/06/2026;2:00;Estadio Akron;Grupo H
+67;Panamá ;;Inglaterra;27/06/2026;23:00;MetLife Stadium;Grupo L
+68;Croacia ;;Ghana;27/06/2026;23:00;Lincoln Financial Field;Grupo L
+69;Argelia ;;Austria;28/06/2026;4:00;Arrowhead Stadium;Grupo J
+70;Jordania ;;Argentina;28/06/2026;4:00;AT&T Stadium;Grupo J
+71;Colombia ;;Portugal;28/06/2026;1:30;Hard Rock Stadium;Grupo K
+72;;;;28/06/2026;1:30;Mercedes-Benz Stadium;Grupo K
+73;;;;28/06/2026;21:00;SoFi Stadium;Diesciesisavos de final
+74;;;;29/06/2026;22:30;Gillette Stadium;Diesciesisavos de final
+75;;;;30/06/2026;3:00;Estadio Monterrey;Diesciesisavos de final
+76;;;;29/06/2026;19:00;NRG Stadium;Diesciesisavos de final
+77;;;;30/06/2026;23:00;MetLife Stadium;Diesciesisavos de final
+78;;;;30/06/2026;19:00;AT&T Stadium;Diesciesisavos de final
+79;;;;01/07/2026;3:00;Estadio Azteca;Diesciesisavos de final
+80;;;;01/07/2026;18:00;Mercedes-Benz Stadium;Diesciesisavos de final
+81;;;;02/07/2026;2:00;Levi's Stadium;Diesciesisavos de final
+82;;;;01/07/2026;22:00;Lumen Field;Diesciesisavos de final
+83;;;;03/07/2026;1:00;Estadio Nacional de Canadá;Diesciesisavos de final
+84;;;;02/07/2026;21:00;SoFi Stadium;Diesciesisavos de final
+85;;;;03/07/2026;5:00;Estadio BC Place;Diesciesisavos de final
+86;;;;04/07/2026;0:00;Hard Rock Stadium;Diesciesisavos de final
+87;;;;04/07/2026;3:30;Arrowhead Stadium;Diesciesisavos de final
+88;;;;03/07/2026;20:00;AT&T Stadium;Diesciesisavos de final
+89;;;;04/07/2026;23:00;Lincoln Financial Field;Octavos de final
+90;;;;04/07/2026;19:00;NRG Stadium;Octavos de final
+91;;;;05/07/2026;22:00;MetLife Stadium;Octavos de final
+92;;;;06/07/2026;2:00;Estadio Azteca;Octavos de final
+93;;;;06/07/2026;21:00;AT&T Stadium;Octavos de final
+94;;;;07/07/2026;2:00;Lumen Field;Octavos de final
+95;;;;07/07/2026;18:00;Mercedes-Benz Stadium;Octavos de final
+96;;;;07/07/2026;22:00;Estadio BC Place;Octavos de final
+97;;;;09/07/2026;22:00;Gillette Stadium;Cuartos de final
+98;;;;10/07/2026;21:00;SoFi Stadium;Cuartos de final
+99;;;;11/07/2026;23:00;Hard Rock Stadium;Cuartos de final
+100;;;;12/07/2026;3:00;Arrowhead Stadium;Cuartos de final
+101;;;;14/07/2026;21:00;AT&T Stadium;Semifinales
+102;;;;15/07/2026;21:00;Mercedes-Benz Stadium;Semifinales
+103;;;;18/07/2026;23:00;Hard Rock Stadium;Tercer puesto
+104;;;;19/07/2026;21:00;MetLife Stadium;Final

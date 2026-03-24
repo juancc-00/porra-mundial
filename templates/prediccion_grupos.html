@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Predicción fase de grupos</title>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../static/prediccion_grupos_style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<header class="topbar">
+
+    <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
+  <button class="nav-btn">Información</button>
+  <button class="nav-btn">Clasificación</button>
+  <button class="nav-btn">Próximos partidos</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'">Mis Predicciones</button>
+
+  <button id="guardarBtn" class="guardar">
+  Guardar predicción
+</button>
+ 
+</header>
+
+<main>
+
+<h1>Fase de grupos</h1>
+
+<div id="contenedorGrupos"></div>
+
+<!-- Picker flotante -->
+ 
+<div id="picker" class="picker" style="display:none;"></div>
+
+
+</main>
+
+</body>
+
+<script src="../static/js/codigos_paises.js"></script>
+<script type="module">
+
+
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+};
+
+// 🔥 Inicializar
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "home.html";
+    return;
+  }
+  // await cargarPrediccion(idPorra, user);
+});
+
+async function cargarPredicciones() {
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const ref = doc(db, "predicciones", user.uid);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  // recorrer partidos cargados
+  predicciones.forEach(p => {
+
+    const pred = data[p.Numero];
+
+    if (pred) {
+      p.g1 = pred.g1;
+      p.g2 = pred.g2;
+    }
+
+  });
+
+  actualizarUIconPredicciones();
+}
+
+function actualizarUIconPredicciones() {
+
+  document.querySelectorAll(".partido").forEach(div => {
+
+    const id = div.dataset.id;
+
+    const p = predicciones.find(x => x.Numero == id);
+    if (!p) return;
+
+    const goles = div.querySelectorAll(".gol");
+
+    if (p.g1 !== null) goles[0].textContent = p.g1;
+    if (p.g2 !== null) goles[1].textContent = p.g2;
+
+  });
+
+  // recalcular clasificaciones
+  Object.keys(gruposGlobal)
+    .forEach(actualizarClasificacion);
+}
+
+let gruposGlobal = {};
+let predicciones = [];
+
+
+const contenedor = document.getElementById("contenedorGrupos");
+
+async function cargarPartidosGrupos() {
+
+  const snapshot = await getDocs(collection(db, "partidos"));
+
+  const grupos = {};
+
+  
+
+  snapshot.forEach(doc => {
+
+    const p = doc.data();
+
+    if (!p.Fase.startsWith("Grupo")) return;
+
+    // console.log(p.Pais1);
+
+    if (!grupos[p.Fase]) grupos[p.Fase] = [];
+
+    grupos[p.Fase].push(p);
+
+  });
+
+  predicciones = [];
+  gruposGlobal = grupos;
+  mostrarGrupos(grupos);
+}
+
+
+
+function parseFechaHora(p) {
+
+  const [d, m, a] = p.Fecha.split("/");
+  const [h, min] = p.Hora.split(":");
+
+  return new Date(a, m - 1, d, h, min);
+
+}
+
+function formatearFecha(p) {
+
+  const meses = [
+    "Ene","Feb","Mar","Abr","May","Jun",
+    "Jul","Ago","Sep","Oct","Nov","Dic"
+  ];
+
+  const [d, m] = p.Fecha.split("/");
+
+  return `${parseInt(d)} ${meses[m - 1]} · ${p.Hora}`;
+}
+
+function mostrarGrupos(grupos) {
+
+  contenedor.innerHTML = "";
+
+  // ORDEN ALFABÉTICO DE GRUPOS
+  const nombresOrdenados = Object.keys(grupos).sort();
+
+  for (const nombreGrupo of nombresOrdenados) {
+
+    const divGrupo = document.createElement("div");
+    divGrupo.className = "grupo";
+
+    divGrupo.innerHTML = `<h2>${nombreGrupo}</h2>`;
+
+    // 🔥 ORDENAR PARTIDOS CRONOLÓGICAMENTE
+    grupos[nombreGrupo].sort(
+      (a, b) => parseFechaHora(a) - parseFechaHora(b)
+    );
+
+    // ===== CONTENEDOR PARTIDOS =====
+
+    const listaPartidos = document.createElement("div");
+
+    grupos[nombreGrupo].forEach(p => {
+      p.g1 = null;
+      p.g2 = null;
+      predicciones.push(p);
+      listaPartidos.appendChild(crearPartido(p, nombreGrupo));
+    });
+
+    // ===== CLASIFICACIÓN INICIAL =====
+
+    const tablaClasif =
+      crearTablaClasificacion(grupos[nombreGrupo]);
+
+    // ===== LAYOUT GRID =====
+
+    const layout = document.createElement("div");
+    layout.className = "grupo-layout";
+
+    layout.appendChild(listaPartidos);
+    layout.appendChild(tablaClasif);
+
+    divGrupo.appendChild(layout);
+
+    contenedor.appendChild(divGrupo);
+  }
+}
+
+function crearPartido(p, nombreGrupo) {
+
+  p.g1 = null;
+  p.g2 = null;
+
+  const div = document.createElement("div");
+  div.className = "partido";
+  div.dataset.id = p.Numero;
+
+  const codigo1 = codigos_pais[p.Pais1];
+  const codigo2 = codigos_pais[p.Pais2];
+
+  div.innerHTML = `
+    <div class="fecha">${formatearFecha(p)}</div>
+
+    <div class="equipo">${p.Pais1}</div>
+    <img class="bandera" src="https://flagcdn.com/w40/${codigo1}.png">
+
+    <div class="gol">-</div>
+    <div class="gol">-</div>
+
+    <img class="bandera" src="https://flagcdn.com/w40/${codigo2}.png">
+    <div class="equipo derecha">${p.Pais2}</div>
+  `;
+
+  const goles = div.querySelectorAll(".gol");
+
+  goles[0].onclick = () =>
+    abrirPicker(goles[0], val => {
+      goles[0].textContent = val;
+      p.g1 = val;
+
+      actualizarClasificacion(nombreGrupo);
+    });
+
+  goles[1].onclick = () =>
+    abrirPicker(goles[1], val => {
+      goles[1].textContent = val;
+      p.g2 = val;
+
+      actualizarClasificacion(nombreGrupo);
+    });
+
+  return div;
+}
+
+function actualizarClasificacion(nombreGrupo) {
+
+  const grupo = gruposGlobal[nombreGrupo];
+
+  const nuevaTabla =
+    crearTablaClasificacion(grupo);
+
+  // Reemplazar tabla existente
+
+  const grupoDiv = [...document.querySelectorAll(".grupo")]
+    .find(g => g.querySelector("h2").textContent === nombreGrupo);
+
+  const layout = grupoDiv.querySelector(".grupo-layout");
+
+  layout.replaceChild(
+    nuevaTabla,
+    layout.children[1]
+  );
+}
+
+
+const picker = document.getElementById("picker");
+let callbackActual = null;
+
+function abrirPicker(elemento, callback) {
+
+  callbackActual = callback;
+
+  const rect = elemento.getBoundingClientRect();
+
+  picker.style.left = rect.left + "px";
+  picker.style.top = rect.bottom + 5 + "px";
+
+  picker.style.display = "grid";
+
+  mostrarOpciones();
+}
+
+function mostrarOpciones() {
+
+  picker.innerHTML = "";
+
+  for (let i = 0; i <= 10; i++) {
+
+    const n = document.createElement("div");
+    n.textContent = i;
+
+    n.onclick = () => {
+
+      callbackActual(i);
+      picker.style.display = "none";
+
+    };
+
+    picker.appendChild(n);
+  }
+}
+
+document.addEventListener("click", e => {
+
+  if (!picker.contains(e.target) &&
+      !e.target.classList.contains("gol")) {
+
+    picker.style.display = "none";
+
+  }
+});
+
+function calcularClasificacion(partidos) {
+
+  const tabla = {};
+
+  partidos.forEach(p => {
+
+    const g1 = p.g1;
+    const g2 = p.g2;
+
+    if (g1 === null || g2 === null) return;
+
+    if (!tabla[p.equipo1]) {
+      tabla[p.equipo1] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
+    }
+
+    if (!tabla[p.equipo2]) {
+      tabla[p.equipo2] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
+    }
+
+    tabla[p.equipo1].gf += g1;
+    tabla[p.equipo1].gc += g2;
+
+    tabla[p.equipo2].gf += g2;
+    tabla[p.equipo2].gc += g1;
+
+    if (g1 > g2) {
+      tabla[p.equipo1].pts += 3;
+      tabla[p.equipo1].g++;
+      tabla[p.equipo2].p++;
+    }
+    else if (g2 > g1) {
+      tabla[p.equipo2].pts += 3;
+      tabla[p.equipo2].g++;
+      tabla[p.equipo1].p++;
+    }
+    else {
+      tabla[p.equipo1].pts++;
+      tabla[p.equipo2].pts++;
+      tabla[p.equipo1].e++;
+      tabla[p.equipo2].e++;
+    }
+
+  });
+
+  return Object.entries(tabla)
+    .map(([equipo, t]) => ({
+      equipo,
+      ...t,
+      dg: t.gf - t.gc
+    }))
+    .sort((a, b) =>
+      b.pts - a.pts ||
+      b.dg - a.dg ||
+      b.gf - a.gf
+    );
+}
+
+// function calcularClasificacion(partidos) {
+
+//   const tabla = {};
+
+//   partidos.forEach(p => {
+
+//     const g1 = p.g1;
+//     const g2 = p.g2;
+
+//     if (g1 === null || g2 === null) return;
+
+//     if (!tabla[p.Pais1]) {
+//       tabla[p.Pais1] = { pts:0, gf:0, gc:0 };
+//     }
+
+//     if (!tabla[p.Pais2]) {
+//       tabla[p.Pais2] = { pts:0, gf:0, gc:0 };
+//     }
+
+//     tabla[p.Pais1].gf += g1;
+//     tabla[p.Pais1].gc += g2;
+
+//     tabla[p.Pais2].gf += g2;
+//     tabla[p.Pais2].gc += g1;
+
+//     if (g1 > g2) tabla[p.Pais1].pts += 3;
+//     else if (g2 > g1) tabla[p.Pais2].pts += 3;
+//     else {
+//       tabla[p.Pais1].pts += 1;
+//       tabla[p.Pais2].pts += 1;
+//     }
+
+//   });
+
+//   return Object.entries(tabla)
+//     .map(([equipo, t]) => ({
+//       equipo,
+//       ...t,
+//       dg: t.gf - t.gc
+//     }))
+//     .sort((a, b) =>
+//       b.pts - a.pts ||
+//       b.dg - a.dg ||
+//       b.gf - a.gf
+//     );
+// }
+
+function crearTablaClasificacion(partidos) {
+
+  const clasif = calcularClasificacion(partidos);
+
+  const table = document.createElement("table");
+  table.className = "tabla-clasif";
+
+  table.innerHTML = `
+    <tr>
+      <th></th>
+      <th>Pts</th>
+      <th>G</th>
+      <th>E</th>
+      <th>P</th>
+      <th>GF</th>
+      <th>GC</th>
+    </tr>
+  `;
+
+  clasif.forEach((t, i) => {
+
+    table.innerHTML += `
+      <tr>
+        <td>${i+1}. ${t.equipo}</td>
+        <td>${t.pts}</td>
+        <td>${t.g}</td>
+        <td>${t.e}</td>
+        <td>${t.p}</td>
+        <td>${t.gf}</td>
+        <td>${t.gc}</td>
+      </tr>
+    `;
+  });
+
+  return table;
+}
+
+// function crearTablaClasificacion(partidos) {
+
+//   const clasif = calcularClasificacion(partidos);
+
+//   const div = document.createElement("div");
+//   div.className = "clasificacion";
+
+//   clasif.forEach((t, i) => {
+
+//     div.innerHTML += `
+//       <div class="fila">
+//         <span>${i+1}. ${t.equipo}</span>
+//         <span>${t.pts} pts</span>
+//       </div>
+//     `;
+//   });
+
+//   return div;
+// }
+
+guardarBtn.onclick = async () => {
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+
+  const data = {};
+
+  predicciones.forEach(p => {
+
+    if (p.g1 !== null && p.g2 !== null) {
+
+      data[p.Numero] = {
+        g1: p.g1,
+        g2: p.g2
+      };
+
+    }
+
+  });
+
+  await setDoc(
+    doc(db, "predicciones", user.uid),
+    data
+  );
+
+  alert("Predicción guardada");
+};
+
+await cargarPartidosGrupos();
+await cargarPredicciones();
+
+
+</script>
+
+
+</html>

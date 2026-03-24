@@ -22,8 +22,20 @@
     <div id ="userdiv" class="dropdown">
       <button id="userBtn" class="nav-btn dropdown-btn"></button>
       <div id="menu" class="dropdown-menu">
+        <div class="alias-box">
+          <span>Alias:</span>
+          <span id="aliasTexto">Cargando...</span>
+          <input
+            id="aliasInput"
+            type="text"
+            maxlength="20"
+            style="display:none"
+          >
+          <button id="editAliasBtn" class="alias-btn">✏️</button>
+          <button id="saveAliasBtn" class="alias-btn" style="display:none">✔️</button>
+        </div>
         <button onclick="location.href='misporras.html'">Mis porras</button>
-        <button onclick="alert('Configuración')">
+        <button onclick="location.href='mispredicciones.html'">
           Mis predicciones
         </button>
         <button id="logoutBtn" onclick="alert('Cerrar sesión')">
@@ -46,20 +58,6 @@
     <span id="countdowon" class="countdown"></span>
   </div>
 
-  <!-- Acciones -->
-  <div class="actions">
-
-    <button class="big-btn">Crear porra</button>
-
-    <button class="big-btn">Unirse a una porra</button>
-
-    <!-- <input
-      class="pool-input"
-      type="text"
-      placeholder="Id de porra"
-    /> -->
-
-  </div>
 
 </main>
 
@@ -75,9 +73,23 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
-  signOut
+  signOut, 
 } from 
   "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion,        
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   
 const firebaseConfig = {
@@ -92,6 +104,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
 
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -100,7 +115,72 @@ const loginSection = document.getElementById("login-section");
 const userdiv = document.getElementById("userdiv");
 const userBtn = document.getElementById("userBtn");
 
+async function cargarAlias(user) {
 
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+
+  const nombre = snap.data().nombre;
+
+  document.getElementById("aliasTexto").textContent =
+    nombre;
+
+}
+
+async function asegurarUsuario(user) {
+
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) {
+
+    const nombreGoogle =
+      user.displayName?.split(" ")[0] || "Jugador";
+
+    await setDoc(ref, {
+      nombre: nombreGoogle,
+      email: user.email,
+      creado: serverTimestamp()
+
+    });
+
+  }
+
+}
+
+
+
+const aliasTexto = document.getElementById("aliasTexto");
+const aliasInput = document.getElementById("aliasInput");
+
+const editBtn = document.getElementById("editAliasBtn");
+const saveBtn = document.getElementById("saveAliasBtn");
+
+editBtn.onclick = () => {
+
+  aliasInput.value = aliasTexto.textContent;
+
+  aliasTexto.style.display = "none";
+  aliasInput.style.display = "inline-block";
+
+  editBtn.style.display = "none";
+  saveBtn.style.display = "inline-block";
+
+  aliasInput.focus();
+
+};
+
+saveBtn.onclick = async () => {
+  const nuevo = aliasInput.value.trim();
+  if (!nuevo) return;
+  const ref = doc(db, "usuarios", currentUser.uid);
+  await updateDoc(ref, { nombre: nuevo });
+  aliasTexto.textContent = nuevo;
+  aliasTexto.style.display = "inline";
+  aliasInput.style.display = "none";
+  editBtn.style.display = "inline-block";
+  saveBtn.style.display = "none";
+};
 
 // 🔐 Login con Google
 loginBtn.onclick = async () => {
@@ -112,10 +192,13 @@ loginBtn.onclick = async () => {
 // 🔓 Logout
 logoutBtn.onclick = () => signOut(auth);
 
-
+ 
 // 👤 Detectar usuario
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
+    await asegurarUsuario(user);
+    await cargarAlias(user);
+    currentUser = user;
     loginBtn.style.display = "none";
     userdiv.style.display = "block";
     userBtn.textContent = `Hola, ${(user.displayName.split(' '))[0]}`;
@@ -158,6 +241,10 @@ var x = setInterval(function() {
 
 const btn = document.getElementById("userBtn");
 const menu = document.getElementById("menu");
+
+menu.addEventListener("click", (e) => {
+  e.stopPropagation();
+});
 
 btn.onclick = () => {
   menu.style.display =

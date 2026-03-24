@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mis predicciones</title>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../static/mispredicciones_style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+</head>
+<body>
+
+  
+<header class="topbar">
+  <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
+  <button class="nav-btn">Información</button>
+  <button class="nav-btn">Clasificación</button>
+  <button class="nav-btn">Próximos partidos</button>
+ 
+</header>
+
+  <main>
+
+<div class="container">
+
+  <div class="cabecera-container">
+    <h1 style="font-size: 3em;">Mis predicciones</h1>
+  </div>  
+
+
+<div id="listaPredicciones"></div>
+
+
+</div>
+</main>
+
+</body>
+
+<script type="module">
+
+  
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+  import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  deleteDoc,          
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from
+  "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// 🔐 Config Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+};
+
+// 🔥 Inicializar
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+</script>
+
+
+</html>

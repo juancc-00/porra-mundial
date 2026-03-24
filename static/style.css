@@ -160,3 +160,29 @@ body {
 .dropdown-menu button:hover {
   background: #eaf5e2; /* tono verde suave */
 }
+
+.alias-box {
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+
+  font-size: 0.95em;
+
+}
+
+.alias-btn {
+
+  background: #28a745;
+  border: none;
+  color: white;
+
+  border-radius: 6px;
+  padding: 4px 8px;
+
+  cursor: pointer;
+
+}

@@ -11,38 +11,63 @@
 
   
 <header class="topbar">
-
+  <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
   <button class="nav-btn">Información</button>
   <button class="nav-btn">Clasificación</button>
   <button class="nav-btn">Próximos partidos</button>
  
-  
-
 </header>
 
   <main>
+
 <div class="container">
-<h1 style="font-size: 3em;">Mis porras</h1>
 
-<ul id="listaPorras">Aun no participas en ninguna porra</ul>
+  <div class="cabecera-container">
+    <h1 style="font-size: 3em;">Mis porras</h1>
+    <div class="acciones-cabecera">
+      <button id="btnMostrarCrear">Crear</button>
+      <button id="btnUnirse">Unirse</button>
+    </div>
+  </div>  
 
-<button id="btnMostrarCrear">➕ Crear porra</button>
 
-<div id="crearPorraBox" style="display:none; margin-top:10px;">
-  <input
-    type="text"
-    id="nombrePorra"
-    placeholder="Nombre de la porra"
-  >
-  <button id="btnCrear">Crear</button>
-</div>
+<div id="listaPorras"></div>
 
-<button onclick="location.href='home.html'">
-  Volver
-</button>
 
 </div>
 </main>
+
+<div id="shareModal" class="modal" style="display:none;">
+  <div class="modal-content">
+
+    <h3>Invita a participar en esta porra</h3>
+
+    <textarea id="shareText" readonly></textarea>
+
+    <div class="modal-buttons">
+      <button id="copyBtn">Copiar</button>
+      <button id="closeModal">Cerrar</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="popup" class="popup" style="display:none;">
+  <div class="popup-content">
+
+    <h3 id="popupTitle"></h3>
+
+    <input id="popupInput" type="text" maxlength="20">
+
+    <p id="popupInfo" class="popup-info"></p>
+
+    <div class="popup-buttons">
+      <button id="popupConfirm">Confirmar</button>
+      <button id="popupCancel">Cancelar</button>
+    </div>
+
+  </div>
+</div>
 
 </body>
 
@@ -52,19 +77,27 @@
 import { initializeApp } from
   "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
+  import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  deleteDoc,          // 👈 AÑADIR
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 import {
   getAuth,
   onAuthStateChanged
 } from
   "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  serverTimestamp
-} from
-  "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
 // 🔐 Config Firebase
@@ -90,6 +123,9 @@ const btnMostrar = document.getElementById("btnMostrarCrear");
 const box = document.getElementById("crearPorraBox");
 const btnCrear = document.getElementById("btnCrear");
 const inputNombre = document.getElementById("nombrePorra");
+
+const popupConfirm =
+  document.getElementById("popupConfirm");
 
 
 // 👁️ Mostrar / ocultar formulario
@@ -125,55 +161,205 @@ onAuthStateChanged(auth, (user) => {
 });
 
 
-// 🏆 Crear porra
-btnCrear.onclick = async () => {
+btnMostrarCrear.onclick = async () => {
 
-  if (!currentUser) {
-    alert("Debes iniciar sesión");
-    return;
+  // contar porras creadas por el usuario
+  const q = query(
+    collection(db, "porras"),
+    where("owner", "==", currentUser.uid)
+  );
+
+  const snap = await getDocs(q);
+  const restantes = 3 - snap.size;
+
+  const title = document.getElementById("popupTitle");
+  const input = document.getElementById("popupInput");
+  const info = document.getElementById("popupInfo");
+
+  document.getElementById("popupCancel").textContent =
+  restantes <= 0 ? "Cerrar" : "Cancelar";
+
+  if (restantes <= 0) {
+
+  title.textContent = "Límite alcanzado";
+
+  input.style.display = "none";
+
+  info.textContent =
+    "Has alcanzado el máximo de porras creadas. Únete a porras creadas por otros usuarios o elimina alguna porra si aún no se ha unido nadie. ";
+
+  popupConfirm.style.display = "none";
+
+  } else {
+
+  title.textContent = "Crear porra";
+
+  input.style.display = "block";
+  input.value = "";
+  input.placeholder = "Nombre de la porra";
+
+  info.textContent =
+    `Puedes crear un máximo de 3 porras. ${restantes} restantes`;
+
+  popupConfirm.style.display = "inline-block";
   }
 
-  const nombre = inputNombre.value.trim();
+  document.getElementById("popupConfirm").onclick =
+    crearPorraDesdePopup;
 
-  if (!nombre) {
-    alert("Introduce un nombre");
-    return;
-  }
+  document.getElementById("popup").style.display = "flex";
+};
+
+async function crearPorraDesdePopup() {
+
+  const nombre =
+    document.getElementById("popupInput").value.trim();
+
+  if (!nombre) return;
 
   const id = generarID();
 
-  try {
+  await setDoc(doc(db, "porras", id), {
+    ID: id,
+    nombre,
+    owner: currentUser.uid,
+    miembros: [currentUser.uid],
+    fecha_creacion: serverTimestamp()
+  });
 
-    await setDoc(doc(db, "porras", id), {
+  cerrarPopup();
 
-      ID: id,
-      nombre: nombre,
-      owner: currentUser.uid,
-      miembros: [currentUser.uid],
-      fecha_creacion: serverTimestamp()
+  await cargarMisPorras(currentUser);
 
-    });
-    cargarMisPorras(currentUser);
-    alert(`Porra "${nombre}" creada con ID ${id}`);
+  alert(`Porra "${nombre}" creada con ID ${id}`);
+}
 
-    inputNombre.value = "";
-    box.style.display = "none";
+// 🏆 Crear porra
+// btnCrear.onclick = async () => {
 
-  } catch (e) {
+//   if (!currentUser) {
+//     alert("Debes iniciar sesión");
+//     return;
+//   }
 
-    console.error(e);
-    alert("Error al crear la porra");
+//   const nombre = inputNombre.value.trim();
+
+//   if (!nombre) {
+//     alert("Introduce un nombre");
+//     return;
+//   }
+
+//   const id = generarID();
+
+//   try {
+
+//     await setDoc(doc(db, "porras", id), {
+
+//       ID: id,
+//       nombre: nombre,
+//       owner: currentUser.uid,
+//       miembros: [currentUser.uid],
+//       fecha_creacion: serverTimestamp()
+
+//     });
+//     cargarMisPorras(currentUser);
+//     alert(`Porra "${nombre}" creada con ID ${id}`);
+
+//     inputNombre.value = "";
+//     box.style.display = "none";
+
+//   } catch (e) {
+
+//     console.error(e);
+//     alert("Error al crear la porra");
+
+//   }
+
+// };
+
+async function unirsePorID() {
+
+  const id =
+    document.getElementById("popupInput").value.trim();
+
+  if (!id) return;
+
+  const ref = doc(db, "porras", id);
+  const snap = await getDoc(ref);
+
+  const info = document.getElementById("popupInfo");
+
+  if (!snap.exists()) {
+
+    info.textContent =
+      "No existe ninguna porra con ese ID";
+    return;
 
   }
 
+  const data = snap.data();
+
+  if (data.miembros.includes(currentUser.uid)) {
+
+    info.textContent =
+      "Ya participas en esta porra";
+    return;
+
+  }
+
+  await updateDoc(ref, {
+    miembros: arrayUnion(currentUser.uid)
+  });
+
+  cerrarPopup();
+
+  await cargarMisPorras(currentUser);
+
+  alert(`Te has unido a "${data.nombre}"`);
+}
+
+
+
+btnUnirse.onclick = () => {
+
+  const title = document.getElementById("popupTitle");
+  const input = document.getElementById("popupInput");
+  const info = document.getElementById("popupInfo");
+
+  title.textContent = "Unirse a una porra";
+
+  input.style.display = "block";
+  input.value = "";
+  input.placeholder = "Introduce el ID";
+
+  info.textContent = "";
+
+  document.getElementById("popupConfirm").onclick =
+    unirsePorID;
+
+  document.getElementById("popup").style.display = "flex";
 };
 
-import {
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+btnUnirse.onclick = () => {
+
+  const title = document.getElementById("popupTitle");
+  const input = document.getElementById("popupInput");
+  const info = document.getElementById("popupInfo");
+
+  title.textContent = "Unirse a una porra";
+
+  input.style.display = "block";
+  input.value = "";
+  input.placeholder = "Introduce el ID";
+
+  info.textContent = "";
+
+  document.getElementById("popupConfirm").onclick =
+    unirsePorID;
+
+  document.getElementById("popup").style.display = "flex";
+};
+
 
 async function cargarMisPorras(user) {
 
@@ -188,7 +374,7 @@ async function cargarMisPorras(user) {
   lista.innerHTML = "";
 
   if (snapshot.empty) {
-    lista.innerHTML = "<li>No participas en ninguna porra</li>";
+    lista.innerHTML = "<p>Aún no participas en ninguna porra</p>";
     return;
   }
 
@@ -196,28 +382,141 @@ async function cargarMisPorras(user) {
 
     const data = docSnap.data();
 
-    const li = document.createElement("li");
+    const card = document.createElement("div");
+    card.className = "porra-card";
 
-    li.textContent =
-      `${data.nombre} — ID: ${data.ID}`;
+    // 👉 Abrir porra
+    card.onclick = () => {
+      window.location.href =
+        `porra.html?id=${data.ID}`;
+    };
 
-    lista.appendChild(li);
+    // NOMBRE
+    const nombre = document.createElement("div");
+    nombre.className = "porra-nombre";
+    nombre.textContent = data.nombre;
+
+    // LADO DERECHO
+    const right = document.createElement("div");
+    right.className = "porra-right";
+
+    // PARTICIPANTES
+    const miembros = document.createElement("div");
+    miembros.className = "porra-miembros";
+
+    if(data.miembros.length<2)
+    {miembros.textContent = `${data.miembros.length} participante`} else
+    {miembros.textContent = `${data.miembros.length} participantes`};
+
+    // BOTÓN COMPARTIR
+    const shareBtn = document.createElement("button");
+    shareBtn.className = "share-btn";
+    shareBtn.textContent = "🔗";
+
+    shareBtn.onclick = (e) => {
+      e.stopPropagation();
+      abrirCompartir(data);
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "🗑️";
+
+    // Solo si es owner y hay 1 miembro
+    if (
+      data.owner === currentUser.uid &&
+      data.miembros.length === 1
+    ) {
+
+      deleteBtn.onclick = async (e) => {
+
+        e.stopPropagation();
+
+        if (!confirm("¿Eliminar esta porra?")) return;
+
+        await deleteDoc(doc(db, "porras", data.ID));
+
+        await cargarMisPorras(currentUser);
+      };
+
+    } else {
+
+      deleteBtn.disabled = true;
+
+    }
+
+    
+
+    right.appendChild(miembros);
+    right.appendChild(shareBtn);
+    right.appendChild(deleteBtn);
+
+    card.appendChild(nombre);
+    card.appendChild(right);
+
+    lista.appendChild(card);
+
   });
+
 }
 
 
 onAuthStateChanged(auth, (user) => {
-
   if (user) {
     cargarMisPorras(user);
     console.log("porras cargadas");
   } else {
     window.location.href = "home.html";
   }
-
 });
 
+function abrirCompartir(data) {
 
+
+  const link =
+      // "http://link_de_prueba.com";
+    `${window.location.origin}/unirse.html?id=${data.ID}`;
+
+  const mensaje =
+`Únete a la porra ${data.nombre} introduciendo el ID ${data.ID}
+
+${link}`;
+
+  document.getElementById("shareText").value = mensaje;
+
+  document.getElementById("shareModal").style.display = "flex";
+
+  if (navigator.share) {
+
+    navigator.share({
+      title: "Porra Mundial",
+      text: `Únete a "${data.nombre}" con ID ${data.ID}`,
+      url: link
+    });
+
+    return;
+  }
+}
+
+document.getElementById("copyBtn").onclick = async () => {
+
+  const text =
+    document.getElementById("shareText").value;
+
+  await navigator.clipboard.writeText(text);
+
+  alert("Mensaje copiado");
+};
+
+document.getElementById("closeModal").onclick = () => {
+  document.getElementById("shareModal").style.display = "none";
+};
+
+function cerrarPopup() {
+  document.getElementById("popup").style.display = "none";
+}
+
+document.getElementById("popupCancel").onclick = cerrarPopup;
 
 </script>
 
