@@ -1,0 +1,189 @@
+/* ===== Reset básico ===== */
+body {
+  margin: 0;
+  font-family: "ADLaM Display", sans-serif;
+  background-color: #8cc86c; /* Verde fondo */
+  color: black;
+}
+
+main{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.nav-btn {
+  background: #bfe0a8;
+  border: none;
+  padding: 10px 18px;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 4px;
+}
+
+.nav-btn.warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn.dcha {
+  margin-left: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  width: 80%;
+  /* margin-top: 60px; */
+}
+
+.cabecera-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.big-btn {
+  background: #bfe0a8;
+  border: none;
+  padding: 18px 60px;
+  font-size: 36px;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 6px;
+}
+
+
+.logo{
+    width:20%;
+}
+
+
+/* Contenedor */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botón usuario */
+.dropdown-btn {
+  background: #bfe0a8;
+  border: none;
+  padding: 12px 16px;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* ===== MENÚ ===== */
+
+.dropdown-menu {
+  display: none;
+
+  position: absolute;
+  top: calc(100% + 8px);
+
+  /* 🔥 CLAVE: alineado a la derecha */
+  right: 8px;
+
+  background: #ffffff;
+  min-width: 200px;
+
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Botones del menú */
+.dropdown-menu button {
+  width: 100%;
+  padding: 14px 18px;
+
+  border: none;
+  background: white;
+
+  text-align: left;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background: #eaf5e2; /* tono verde suave */
+}
+
+#listaPredicciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* TARJETA */
+.prediccion-card {
+  background: #1e1e2f;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.prediccion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* NOMBRE */
+.prediccion-nombre {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+/* LADO DERECHO */
+.prediccion-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.2rem;
+}
+
+
+
+
+#shareText {
+  width: 100%;
+  height: 120px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: none;
+  padding: 10px;
+  resize: none;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.acciones-cabecera {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}

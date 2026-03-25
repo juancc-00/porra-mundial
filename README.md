@@ -2,14 +2,56 @@
 Sitio web para hacer porras del mundial de fútbol 2026
 
 
-Propuesta de flujo:
-
-1) Usar Google Sheets como DB mediante Google Apps Script -> generar API para carga de datos
-2) Crear Interfaz con Streamlit y lógica con Python: con "forms" de ST se leen respuestas y con libreria "requests" se envían a la API
-3) Desplegar en https://streamlit.io/cloud para alojarlo en url
-
+Firestore database:
+Colecciones: 
+- partidos
+    ID de cada tabla: número del partido
+    Variables:
+        - Estadio
+        - Fase
+        - Fecha
+        - Hora
+        - Numero
+        - Pais1
+        - Pais2
+        - Resultado
+- porras
+    ID generado aleatoriamente
+    Variables:
+        - ID
+        - fecha_creacion
+        - miembros (array)
+        - nombre
+        - owner
+- predicciones
+    ID: id de google del usuario (uid)
+    Variables: 
+        - {Numero partido: {g1, g2}}
+- usuarios
+    ID: id de google del usuario (uid)
+    Variables:
+        - creado
+        - email
+        - nombre
 
 TODO:
-- [ ] Configurar API de Google Sheets
-- [ ] Diseñar interfaz
-- [ ] Buscar API abierta donde consultar resultados
+
+- Decidir: 
+	- Qué se predice
+	- Cuántos puntos se suma por cada cosa
+	- Criterio prorrogas y penalties
+
+ALBERTO: 
+- Terminar paginas de predicciones
+- Lógica de activar/bloquear predicciones
+- Versión de paginas empezó/no empezó el mundial
+- Lógica API futbol
+
+
+JUAN: 
+- Info no loggeado (clasificación, cuadro, resultados y calendario + vista de calendario): verificar reglas desempates y clasificación. 
+- Página de porra: 
+	- Leaderboard con función que actualiza
+	- Pantalla de logs
+	- Gráfica progresión clasi
+	- Jugadores clickables -> pagina de sus predicciones/puntos sumados

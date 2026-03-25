@@ -1,4 +1,4 @@
-﻿Numero;Equipo 1;Resultado;Equipo 2;Fecha;Hora;Estadio;Fase
+﻿Numero;Pais1;Resultado;Pais2;Fecha;Hora;Estadio;Fase
 1;México ;;Sudáfrica;11/06/2026;21:00;Estadio Azteca;Grupo A
 2;Corea del Sur ;;;12/06/2026;4:00;Estadio Chivas;Grupo A
 3;Canadá ;;;12/06/2026;21:00;Estadio Nacional de Canadá;Grupo B
@@ -70,7 +70,7 @@
 69;Argelia ;;Austria;28/06/2026;4:00;Arrowhead Stadium;Grupo J
 70;Jordania ;;Argentina;28/06/2026;4:00;AT&T Stadium;Grupo J
 71;Colombia ;;Portugal;28/06/2026;1:30;Hard Rock Stadium;Grupo K
-72;;;;28/06/2026;1:30;Mercedes-Benz Stadium;Grupo K
+72;;;Uzbekistán;28/06/2026;1:30;Mercedes-Benz Stadium;Grupo K
 73;;;;28/06/2026;21:00;SoFi Stadium;Diesciesisavos de final
 74;;;;29/06/2026;22:30;Gillette Stadium;Diesciesisavos de final
 75;;;;30/06/2026;3:00;Estadio Monterrey;Diesciesisavos de final

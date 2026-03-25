@@ -46,6 +46,9 @@ body {
   font-family: Arial, sans-serif;
 }
 
+td{
+  align-items: center;
+}
 /* BLOQUES DE GRUPO */
 
 .grupo {
@@ -72,6 +75,18 @@ body {
   border-bottom: 1px solid #2c3a5c;
 }
 
+.resultado {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 70px;
+
+  font-weight: bold;
+  font-size: 18px;
+
+  font-variant-numeric: tabular-nums;
+}
 
 .equipo {
   text-align: right;
@@ -134,10 +149,11 @@ body {
 }
 
 .grupo-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  /* display: grid; */
+  /* grid-template-columns: 2fr 1fr; */
   gap: 20px;
 }
+
 
 @media (max-width: 700px) {
   .grupo-layout {
@@ -178,4 +194,11 @@ body {
 .tabla-clasif th:first-child,
 .tabla-clasif td:first-child {
   text-align: left;
+  font-size: 1.1em;
+}
+
+.tabla-clasif td:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

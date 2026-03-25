@@ -144,8 +144,6 @@ async function cargarPartidosGrupos() {
 
   const grupos = {};
 
-  
-
   snapshot.forEach(doc => {
 
     const p = doc.data();
@@ -362,35 +360,35 @@ function calcularClasificacion(partidos) {
 
     if (g1 === null || g2 === null) return;
 
-    if (!tabla[p.equipo1]) {
-      tabla[p.equipo1] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
+    if (!tabla[p.Pais1]) {
+      tabla[p.Pais1] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
     }
 
-    if (!tabla[p.equipo2]) {
-      tabla[p.equipo2] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
+    if (!tabla[p.Pais2]) {
+      tabla[p.Pais2] = { pts:0, g:0, e:0, p:0, gf:0, gc:0 };
     }
 
-    tabla[p.equipo1].gf += g1;
-    tabla[p.equipo1].gc += g2;
+    tabla[p.Pais1].gf += g1;
+    tabla[p.Pais1].gc += g2;
 
-    tabla[p.equipo2].gf += g2;
-    tabla[p.equipo2].gc += g1;
+    tabla[p.Pais2].gf += g2;
+    tabla[p.Pais2].gc += g1;
 
     if (g1 > g2) {
-      tabla[p.equipo1].pts += 3;
-      tabla[p.equipo1].g++;
-      tabla[p.equipo2].p++;
+      tabla[p.Pais1].pts += 3;
+      tabla[p.Pais1].g++;
+      tabla[p.Pais2].p++;
     }
     else if (g2 > g1) {
-      tabla[p.equipo2].pts += 3;
-      tabla[p.equipo2].g++;
-      tabla[p.equipo1].p++;
+      tabla[p.Pais2].pts += 3;
+      tabla[p.Pais2].g++;
+      tabla[p.Pais1].p++;
     }
     else {
-      tabla[p.equipo1].pts++;
-      tabla[p.equipo2].pts++;
-      tabla[p.equipo1].e++;
-      tabla[p.equipo2].e++;
+      tabla[p.Pais1].pts++;
+      tabla[p.Pais2].pts++;
+      tabla[p.Pais1].e++;
+      tabla[p.Pais2].e++;
     }
 
   });
@@ -407,53 +405,6 @@ function calcularClasificacion(partidos) {
       b.gf - a.gf
     );
 }
-
-// function calcularClasificacion(partidos) {
-
-//   const tabla = {};
-
-//   partidos.forEach(p => {
-
-//     const g1 = p.g1;
-//     const g2 = p.g2;
-
-//     if (g1 === null || g2 === null) return;
-
-//     if (!tabla[p.Pais1]) {
-//       tabla[p.Pais1] = { pts:0, gf:0, gc:0 };
-//     }
-
-//     if (!tabla[p.Pais2]) {
-//       tabla[p.Pais2] = { pts:0, gf:0, gc:0 };
-//     }
-
-//     tabla[p.Pais1].gf += g1;
-//     tabla[p.Pais1].gc += g2;
-
-//     tabla[p.Pais2].gf += g2;
-//     tabla[p.Pais2].gc += g1;
-
-//     if (g1 > g2) tabla[p.Pais1].pts += 3;
-//     else if (g2 > g1) tabla[p.Pais2].pts += 3;
-//     else {
-//       tabla[p.Pais1].pts += 1;
-//       tabla[p.Pais2].pts += 1;
-//     }
-
-//   });
-
-//   return Object.entries(tabla)
-//     .map(([equipo, t]) => ({
-//       equipo,
-//       ...t,
-//       dg: t.gf - t.gc
-//     }))
-//     .sort((a, b) =>
-//       b.pts - a.pts ||
-//       b.dg - a.dg ||
-//       b.gf - a.gf
-//     );
-// }
 
 function crearTablaClasificacion(partidos) {
 
@@ -475,10 +426,10 @@ function crearTablaClasificacion(partidos) {
   `;
 
   clasif.forEach((t, i) => {
-
+  const codpais = codigos_pais[t.equipo];
     table.innerHTML += `
       <tr>
-        <td>${i+1}. ${t.equipo}</td>
+        <td>${i+1}. <img class="bandera" src="https://flagcdn.com/w40/${codpais}.png"> ${t.equipo}</td>
         <td>${t.pts}</td>
         <td>${t.g}</td>
         <td>${t.e}</td>
@@ -491,26 +442,6 @@ function crearTablaClasificacion(partidos) {
 
   return table;
 }
-
-// function crearTablaClasificacion(partidos) {
-
-//   const clasif = calcularClasificacion(partidos);
-
-//   const div = document.createElement("div");
-//   div.className = "clasificacion";
-
-//   clasif.forEach((t, i) => {
-
-//     div.innerHTML += `
-//       <div class="fila">
-//         <span>${i+1}. ${t.equipo}</span>
-//         <span>${t.pts} pts</span>
-//       </div>
-//     `;
-//   });
-
-//   return div;
-// }
 
 guardarBtn.onclick = async () => {
 
