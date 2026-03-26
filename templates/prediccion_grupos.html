@@ -40,6 +40,7 @@
 </body>
 
 <script src="../static/js/codigos_paises.js"></script>
+<script src="../static/js/fases.js"></script>
 <script type="module">
 
 
@@ -75,6 +76,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+
+// Si ya empezó la fase de grupos, se bloquea y no permite cambiar predicciones
+
+const estado = obtenerEstadoFase("grupos");
+const editable = estado === "activa";
+
+
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -262,21 +271,32 @@ function crearPartido(p, nombreGrupo) {
 
   const goles = div.querySelectorAll(".gol");
 
-  goles[0].onclick = () =>
-    abrirPicker(goles[0], val => {
-      goles[0].textContent = val;
-      p.g1 = val;
+  // ⭐ SOLO si editable
+  if (editable) {
 
-      actualizarClasificacion(nombreGrupo);
+    goles[0].onclick = () =>
+      abrirPicker(goles[0], val => {
+        goles[0].textContent = val;
+        p.g1 = val;
+        actualizarClasificacion(nombreGrupo);
+      });
+
+    goles[1].onclick = () =>
+      abrirPicker(goles[1], val => {
+        goles[1].textContent = val;
+        p.g2 = val;
+        actualizarClasificacion(nombreGrupo);
+      });
+
+  } else {
+
+    // ⭐ Visualmente bloqueados
+    goles.forEach(g => {
+      g.style.opacity = "0.6";
+      g.style.cursor = "default";
     });
 
-  goles[1].onclick = () =>
-    abrirPicker(goles[1], val => {
-      goles[1].textContent = val;
-      p.g2 = val;
-
-      actualizarClasificacion(nombreGrupo);
-    });
+  }
 
   return div;
 }

@@ -26,52 +26,73 @@
     <h1 style="font-size: 3em;">Mis predicciones</h1>
   </div>  
 
-
 <div id="listaPredicciones">
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_grupos.html'">
-    <div class="prediccion-nombre">
-      General
+
+  <div class="prediccion-card" data-fase="general" data-url="prediccion_general.html">
+    <div class="prediccion-nombre">General</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_grupos.html'">
-    <div class="prediccion-nombre">
-      Fase de grupos
+
+  <div class="prediccion-card" data-fase="grupos" data-url="prediccion_grupos.html">
+    <div class="prediccion-nombre">Fase de grupos</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_dieciseisavos.html'">
-    <div class="prediccion-nombre">
-      Dieciseisavos de final
+
+  <div class="prediccion-card" data-fase="dieciseisavos" data-url="prediccion_dieciseisavos.html">
+    <div class="prediccion-nombre">Dieciseisavos de final</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_octavos.html'">
-    <div class="prediccion-nombre">
-      Octavos de final
+
+  <div class="prediccion-card" data-fase="octavos" data-url="prediccion_octavos.html">
+    <div class="prediccion-nombre">Octavos de final</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_cuartos.html'">
-    <div class="prediccion-nombre">
-      Cuartos de final
+
+  <div class="prediccion-card" data-fase="cuartos" data-url="prediccion_cuartos.html">
+    <div class="prediccion-nombre">Cuartos de final</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_semis.html'">
-    <div class="prediccion-nombre">
-      Semifinal
+
+  <div class="prediccion-card" data-fase="semis" data-url="prediccion_semis.html">
+    <div class="prediccion-nombre">Semifinal</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
-  <div class="prediccion-card" onclick="window.location.href ='prediccion_final.html'">
-    <div class="prediccion-nombre">
-      Final
+
+  <div class="prediccion-card" data-fase="final" data-url="prediccion_final.html">
+    <div class="prediccion-nombre">Final</div>
+    <div class="prediccion-container-derecha">
+      <div class="prediccion-estado"></div>
+      <div class="prediccion-icono"></div>
     </div>
   </div>
+
+</div>
 </div>
 
-
-</div>
 </main>
 
 </body>
 
 <script src="../static/js/fases.js"></script>
+<script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 
 <script type="module">
 
@@ -115,6 +136,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+onAuthStateChanged(auth, user => {
+
+  if (!user) return;
+
+  actualizarTarjetas();           
+  setInterval(actualizarTarjetas, 60000);
+
+});
+
+
+
+async function prediccionCompleta(uid, fase) {
+
+  const snap = await getDoc(doc(db, "predicciones", uid));
+
+  if (!snap.exists()) return false;
+
+  const data = snap.data();
+
+  // Simplificación MVP:
+  // si tiene al menos una predicción → incompleta
+  // si tiene todas → completa
+
+  return Object.keys(data).length > 0;
+}
+
+async function actualizarTarjetas() {
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  document.querySelectorAll(".prediccion-card")
+    .forEach(async card => {
+
+      const fase = card.dataset.fase;
+      const url  = card.dataset.url;
+
+      const estado = obtenerEstadoFase(fase);
+      const info = card.querySelector(".prediccion-estado");
+      const icono_container = card.querySelector(".prediccion-icono");
+
+      card.classList.remove("inactiva", "bloqueada");
+
+      if (estado === "inactiva") {
+
+        const f = fases[fase].activaDesde;
+
+        info.textContent = `${tiempoRestante(f)}`;
+        icono_container.innerHTML = `<i class="fa-solid fa-hourglass-start" style="color: #130f2b;"></i>`
+        card.classList.add("inactiva");
+
+      }
+      else if (estado === "bloqueada") {
+
+        icono_container.innerHTML = `<i class="fa-solid fa-lock" style="color: white;"></i>`;
+        card.classList.add("bloqueada");
+
+        card.onclick = () => window.location.href = url;
+
+      }
+      else {
+
+        const completa =
+          await prediccionCompleta(user.uid, fase);
+
+        const cierre = fases[fase].bloqueadaDesde;
+
+        info.innerHTML = " Cierra en " + tiempoRestante(cierre);
+        icono_container.innerHTML = (completa ? `<i class="fa-solid fa-circle-check" style="color: #8cc86c"></i>` : `<i class="fa-solid fa-triangle-exclamation"></i>`)
+
+        card.onclick = () => window.location.href = url;
+
+      }
+
+    });
+}
+
+function tiempoRestante(fecha) {
+
+  const diff = fecha - new Date();
+
+  if (diff <= 0) return "0h";
+
+  const horas = Math.floor(diff / 3600000);
+  const dias = Math.floor(horas / 24);
+
+  return dias > 0
+    ? `${dias}d ${horas % 24}h`
+    : `${horas}h`;
+}
+
+
 
 
 </script>

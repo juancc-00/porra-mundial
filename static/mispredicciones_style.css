@@ -133,20 +133,47 @@ main{
 
 /* TARJETA */
 .prediccion-card {
-  background: #1e1e2f;
-  color: white;
-  padding: 12px;
-  border-radius: 12px;
   display: flex;
-  align-items: center;
+  color: white;
+  border-radius: 12px;
   justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #1f2a44;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: 0.2s;
 }
 
 .prediccion-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* INACTIVA */
+
+.prediccion-card.inactiva {
+  background: #7f8a7d;
+  color: #ccc;
+  cursor: default;
+  pointer-events: none;
+}
+
+.prediccion-card.inactiva:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* BLOQUEADA */
+
+.prediccion-card.bloqueada {
+  opacity: 0.75;
+}
+
+/* Iconos / texto */
+
+.prediccion-estado {
+  /* font-size: 0.9rem; */
+  text-align: right;
 }
 
 /* NOMBRE */
@@ -160,7 +187,7 @@ main{
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 
 
@@ -186,4 +213,19 @@ main{
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.icono{
+  width: 180px;
+  color: #b0ef8e;
+}
+
+.prediccion-container-derecha{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.prediccion-icono{
+  font-size: 1.8em;
 }
