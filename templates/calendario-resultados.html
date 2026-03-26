@@ -3,6 +3,7 @@
 
 <head>
     <title>Calendario y Resultados</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../static/calendario-resultados_style.css">
     <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
@@ -22,69 +23,15 @@
 
 
     <main>
-
-        <div id="contenedorCalendario">
-
-            <div class="dia-calendario">
-                <div class="dia-encabezado">
-                    <h3>jueves 11 junio 2026</h3>
-                    <a href="#" class="ver-grupos">Ver grupos</a>
-                </div>
-
-                <div class="partido-calendario">
-                    <div class="partido-fila">
-                        <div class="equipo">México</div>
-                        <img class="bandera-calendario" src="https://flagcdn.com/w40/mx.png" alt="Bandera de México">
-                        <div class="hora-partido">21:00</div>
-                        <img class="bandera-calendario" src="https://flagcdn.com/w40/za.png" alt="Bandera de Sudáfrica">
-                        <div class="equipo">Sudáfrica</div>
-                    </div>
-                    <div class="partido-detalles">Primera fase · Grupo A · Estadio Ciudad de México (Ciudad de México)
-                    </div>
-                </div>
-            </div>
-
-            <div class="dia-calendario">
-                <div class="dia-encabezado">
-                    <h3>viernes 12 junio 2026</h3>
-                    <a href="#" class="ver-grupos">Ver grupos</a>
-                </div>
-
-                <div class="partido-calendario">
-                    <div class="partido-fila">
-                        <div class="equipo">República de Corea</div>
-                        <img class="bandera-calendario" src="https://flagcdn.com/w40/kr.png"
-                            alt="Bandera de Corea del Sur">
-                        <div class="hora-partido">04:00</div>
-                        <img class="bandera-calendario" src="https://via.placeholder.com/40x40.png?text=🛡️"
-                            alt="Escudo Play-off">
-                        <div class="equipo">DEN/MKD/CZE/IRL</div>
-                    </div>
-                    <div class="partido-detalles">Primera fase · Grupo A · Estadio Guadalajara (Guadalajara)</div>
-                </div>
-
-                <div class="partido-calendario">
-                    <div class="partido-fila">
-                        <div class="equipo">Canadá</div>
-                        <img class="bandera-calendario" src="https://flagcdn.com/w40/ca.png" alt="Bandera de Canadá">
-                        <div class="hora-partido">21:00</div>
-                        <img class="bandera-calendario" src="https://via.placeholder.com/40x40.png?text=🛡️"
-                            alt="Escudo Play-off">
-                        <div class="equipo">ITA/NIR/WAL/BIH</div>
-                    </div>
-                    <div class="partido-detalles">Primera fase · Grupo B · Estadio de Toronto (Toronto)</div>
-                </div>
-            </div>
-
-            <div class="dia-calendario">
-                <div class="dia-encabezado">
-                    <h3>sábado 13 junio 2026</h3>
-                    <a href="#" class="ver-grupos">Ver grupos</a>
-                </div>
-            </div>
-
+        <div class="controles-vista">
+            <button id="btnToggleVista" class="nav-btn btn-secundario">Vista de Calendario</button>
         </div>
 
+        <div id="contenedorVistaCalendario" style="display: none; margin-bottom: 40px;">
+            <div id="calendarioPlugin"></div>
+        </div>
+
+        <div id="contenedorCalendario"></div>
     </main>
 
 </body>
@@ -145,29 +92,49 @@
         }
         // await cargarPrediccion(idPorra, user);
     });
-    // ========== LÓGICA DEL CALENDARIO ==========
 
-    async function cargarCalendario() {
+    // Variables globales
+    let calendarioInstancia = null;
+    let eventosCalendario = [];
+
+    async function cargarDatos() {
         const snapshot = await getDocs(collection(db, "partidos"));
         const partidosPorFecha = {};
+        eventosCalendario = [];
 
         snapshot.forEach(doc => {
             const p = doc.data();
 
-            // Agrupar los partidos usando la fecha como clave
+            // 1. Agrupar para la lista
             if (!partidosPorFecha[p.Fecha]) {
                 partidosPorFecha[p.Fecha] = [];
             }
             partidosPorFecha[p.Fecha].push(p);
+
+            // 2. Preparar datos para FullCalendar
+            const [d, m, a] = p.Fecha.split("/");
+            const fechaISO = `${a}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            const fechaHoraISO = `${fechaISO}T${p.Hora}:00`;
+            const tituloEvento = (p.Resultado && p.Resultado.trim() !== "")
+                ? `${p.Pais1} ${p.Resultado} ${p.Pais2}`
+                : `${p.Pais1} vs ${p.Pais2}`;
+
+            eventosCalendario.push({
+                title: tituloEvento,
+                start: fechaHoraISO,
+                allDay: false
+            });
         });
 
-        mostrarCalendario(partidosPorFecha);
+        // Pintar la lista (siempre visible)
+        mostrarLista(partidosPorFecha);
+
+        // Inicializar el calendario (aunque esté oculto en el HTML)
+        inicializarCalendarioPlugin();
     }
 
     // --- Funciones de utilidad para fechas ---
-
     function parseFecha(fechaStr) {
-        // Convierte "14/06/2026" en un objeto Date para poder ordenar cronológicamente
         const [d, m, a] = fechaStr.split("/");
         return new Date(a, m - 1, d);
     }
@@ -181,39 +148,23 @@
     function formatearFechaLarga(fechaStr) {
         const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
         const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-
         const date = parseFecha(fechaStr);
-        const diaSemana = dias[date.getDay()];
-        const diaMes = date.getDate();
-        const mes = meses[date.getMonth()];
-        const anio = date.getFullYear();
-
-        // Formato: "jueves 11 junio 2026" (Igual que tu imagen)
-        return `${diaSemana} ${diaMes} ${mes} ${anio}`;
+        return `${dias[date.getDay()]} ${date.getDate()} ${meses[date.getMonth()]} ${date.getFullYear()}`;
     }
 
-    // --- Renderizado en el DOM ---
-
-    function mostrarCalendario(partidosPorFecha) {
+    // --- Renderizar la lista inferior ---
+    function mostrarLista(partidosPorFecha) {
         const contenedor = document.getElementById("contenedorCalendario");
         contenedor.innerHTML = "";
 
-        // 1. Ordenar las fechas de más antigua a más reciente
-        const fechasOrdenadas = Object.keys(partidosPorFecha).sort((a, b) => {
-            return parseFecha(a) - parseFecha(b);
-        });
+        const fechasOrdenadas = Object.keys(partidosPorFecha).sort((a, b) => parseFecha(a) - parseFecha(b));
 
-        // 2. Iterar sobre cada día y crear su bloque HTML
         fechasOrdenadas.forEach(fecha => {
             const partidosDelDia = partidosPorFecha[fecha];
-
-            // Ordenar los partidos de ese mismo día por hora
             partidosDelDia.sort((a, b) => parseFechaHora(a.Fecha, a.Hora) - parseFechaHora(b.Fecha, b.Hora));
 
-            // Crear contenedor del día
             const divDia = document.createElement("div");
             divDia.className = "dia-calendario";
-
             divDia.innerHTML = `
               <div class="dia-encabezado">
                   <h3>${formatearFechaLarga(fecha)}</h3>
@@ -221,36 +172,66 @@
               </div>
           `;
 
-            // Iterar sobre los partidos de ese día
             partidosDelDia.forEach(p => {
-                // Buscar bandera o poner placeholder si es un equipo de play-off no definido
                 const codPais1 = codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
                 const codPais2 = codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
-
-                // Si hay resultado guardado lo mostramos, si no, mostramos la hora
                 const textoCentro = (p.Resultado && p.Resultado.trim() !== "") ? p.Resultado : p.Hora;
 
-                const divPartido = document.createElement("div");
-                divPartido.className = "partido-calendario";
-                divPartido.innerHTML = `
-                    <div class="partido-fila">
-                        <div class="equipo">${p.Pais1}</div>
-                        <img class="bandera-calendario" src="${codPais1}" alt="Bandera ${p.Pais1}">
-                        <div class="hora-partido">${textoCentro}</div>
-                        <img class="bandera-calendario" src="${codPais2}" alt="Bandera ${p.Pais2}">
-                        <div class="equipo">${p.Pais2}</div>
-                    </div>
-                <div class="partido-detalles">Primera fase · ${p.Fase} · ${p.Estadio}</div>
-                `;
-
-                divDia.appendChild(divPartido);
+                divDia.innerHTML += `
+                  <div class="partido-calendario">
+                      <div class="partido-fila">
+                          <div class="equipo">${p.Pais1}</div>
+                          <img class="bandera-calendario" src="${codPais1}">
+                          <div class="hora-partido">${textoCentro}</div>
+                          <img class="bandera-calendario" src="${codPais2}">
+                          <div class="equipo">${p.Pais2}</div>
+                      </div>
+                      <div class="partido-detalles">Primera fase · ${p.Fase} · ${p.Estadio}</div>
+                  </div>
+              `;
             });
-
             contenedor.appendChild(divDia);
         });
     }
 
-    // Cargar datos al iniciar
-    await cargarCalendario();
+    // --- Configurar FullCalendar ---
+    function inicializarCalendarioPlugin() {
+        const calendarEl = document.getElementById('calendarioPlugin');
+        calendarioInstancia = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            initialDate: '2026-06-11',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: eventosCalendario,
+            eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false }
+        });
+        calendarioInstancia.render();
+    }
+
+    // --- Lógica del botón (Solo muestra/oculta el calendario superior) ---
+    document.getElementById('btnToggleVista').addEventListener('click', () => {
+        const contCalendario = document.getElementById('contenedorVistaCalendario');
+        const btn = document.getElementById('btnToggleVista');
+
+        if (contCalendario.style.display === 'none') {
+            contCalendario.style.display = 'block';
+            btn.innerHTML = 'Ocultar Vista de Calendario';
+
+            // 🔥 Forzar renderizado para que FullCalendar calcule bien su tamaño al volverse visible
+            if (calendarioInstancia) {
+                calendarioInstancia.render();
+            }
+        } else {
+            contCalendario.style.display = 'none';
+            btn.innerHTML = 'Vista de Calendario';
+        }
+    });
+
+    // Iniciar todo
+    await cargarDatos();
 
 </script>

@@ -289,3 +289,51 @@ main {
     margin-top: -3px;
     max-width: 600px;
 }
+
+/* ===== Controles de Vista y Plugin de Calendario ===== */
+.controles-vista {
+    max-width: 900px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    justify-content: flex-end;
+    /* Alinea el botón a la derecha */
+}
+
+.btn-secundario {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #333;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+
+.btn-secundario:hover {
+    background-color: #e4e4e4;
+    color: #000;
+}
+
+#contenedorVistaCalendario {
+    max-width: 1000px;
+    /* Un poco más ancho para que los días quepan bien */
+    margin: 0 auto;
+}
+
+#calendarioPlugin {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    font-family: Arial, sans-serif;
+    /* FullCalendar se ve mejor con fuentes sin serifa estándar */
+}
+
+/* Modificar un poco el estilo de los eventos de FullCalendar */
+.fc-event-title {
+    font-weight: normal;
+    font-size: 0.85em;
+}
+
+.fc-event-time {
+    font-weight: bold;
+}
