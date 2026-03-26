@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Calendario y Resultados</title>
-  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../static/misporras_style.css">
-  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
-  <meta charset="UTF-8">
+    <title>Calendario y Resultados</title>
+    <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../static/calendario-resultados_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
 </head>
 
 <body>
@@ -19,4 +20,237 @@
 
     </header>
 
+
+    <main>
+
+        <div id="contenedorCalendario">
+
+            <div class="dia-calendario">
+                <div class="dia-encabezado">
+                    <h3>jueves 11 junio 2026</h3>
+                    <a href="#" class="ver-grupos">Ver grupos</a>
+                </div>
+
+                <div class="partido-calendario">
+                    <div class="partido-fila">
+                        <div class="equipo">México</div>
+                        <img class="bandera-calendario" src="https://flagcdn.com/w40/mx.png" alt="Bandera de México">
+                        <div class="hora-partido">21:00</div>
+                        <img class="bandera-calendario" src="https://flagcdn.com/w40/za.png" alt="Bandera de Sudáfrica">
+                        <div class="equipo">Sudáfrica</div>
+                    </div>
+                    <div class="partido-detalles">Primera fase · Grupo A · Estadio Ciudad de México (Ciudad de México)
+                    </div>
+                </div>
+            </div>
+
+            <div class="dia-calendario">
+                <div class="dia-encabezado">
+                    <h3>viernes 12 junio 2026</h3>
+                    <a href="#" class="ver-grupos">Ver grupos</a>
+                </div>
+
+                <div class="partido-calendario">
+                    <div class="partido-fila">
+                        <div class="equipo">República de Corea</div>
+                        <img class="bandera-calendario" src="https://flagcdn.com/w40/kr.png"
+                            alt="Bandera de Corea del Sur">
+                        <div class="hora-partido">04:00</div>
+                        <img class="bandera-calendario" src="https://via.placeholder.com/40x40.png?text=🛡️"
+                            alt="Escudo Play-off">
+                        <div class="equipo">DEN/MKD/CZE/IRL</div>
+                    </div>
+                    <div class="partido-detalles">Primera fase · Grupo A · Estadio Guadalajara (Guadalajara)</div>
+                </div>
+
+                <div class="partido-calendario">
+                    <div class="partido-fila">
+                        <div class="equipo">Canadá</div>
+                        <img class="bandera-calendario" src="https://flagcdn.com/w40/ca.png" alt="Bandera de Canadá">
+                        <div class="hora-partido">21:00</div>
+                        <img class="bandera-calendario" src="https://via.placeholder.com/40x40.png?text=🛡️"
+                            alt="Escudo Play-off">
+                        <div class="equipo">ITA/NIR/WAL/BIH</div>
+                    </div>
+                    <div class="partido-detalles">Primera fase · Grupo B · Estadio de Toronto (Toronto)</div>
+                </div>
+            </div>
+
+            <div class="dia-calendario">
+                <div class="dia-encabezado">
+                    <h3>sábado 13 junio 2026</h3>
+                    <a href="#" class="ver-grupos">Ver grupos</a>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
 </body>
+
+</html>
+
+
+
+<script src="../static/js/codigos_paises.js"></script>
+<script src="../static/js/fases.js"></script>
+<script type="module">
+
+    import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+
+    import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        collection,
+        getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    import {
+        getAuth,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+        authDomain: "porra-mundial-91819.firebaseapp.com",
+        projectId: "porra-mundial-91819",
+        storageBucket: "porra-mundial-91819.firebasestorage.app",
+        messagingSenderId: "281151008271",
+        appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+        measurementId: "G-G37R8RYVXQ"
+    };
+
+    // 🔥 Inicializar
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+
+    // Si ya empezó la fase de grupos, se bloquea y no permite cambiar predicciones
+
+    const estado = obtenerEstadoFase("grupos");
+    const editable = estado === "activa";
+
+
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "home.html";
+            return;
+        }
+        // await cargarPrediccion(idPorra, user);
+    });
+    // ========== LÓGICA DEL CALENDARIO ==========
+
+    async function cargarCalendario() {
+        const snapshot = await getDocs(collection(db, "partidos"));
+        const partidosPorFecha = {};
+
+        snapshot.forEach(doc => {
+            const p = doc.data();
+
+            // Agrupar los partidos usando la fecha como clave
+            if (!partidosPorFecha[p.Fecha]) {
+                partidosPorFecha[p.Fecha] = [];
+            }
+            partidosPorFecha[p.Fecha].push(p);
+        });
+
+        mostrarCalendario(partidosPorFecha);
+    }
+
+    // --- Funciones de utilidad para fechas ---
+
+    function parseFecha(fechaStr) {
+        // Convierte "14/06/2026" en un objeto Date para poder ordenar cronológicamente
+        const [d, m, a] = fechaStr.split("/");
+        return new Date(a, m - 1, d);
+    }
+
+    function parseFechaHora(fechaStr, horaStr) {
+        const [d, m, a] = fechaStr.split("/");
+        const [h, min] = horaStr.split(":");
+        return new Date(a, m - 1, d, h, min);
+    }
+
+    function formatearFechaLarga(fechaStr) {
+        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+        const date = parseFecha(fechaStr);
+        const diaSemana = dias[date.getDay()];
+        const diaMes = date.getDate();
+        const mes = meses[date.getMonth()];
+        const anio = date.getFullYear();
+
+        // Formato: "jueves 11 junio 2026" (Igual que tu imagen)
+        return `${diaSemana} ${diaMes} ${mes} ${anio}`;
+    }
+
+    // --- Renderizado en el DOM ---
+
+    function mostrarCalendario(partidosPorFecha) {
+        const contenedor = document.getElementById("contenedorCalendario");
+        contenedor.innerHTML = "";
+
+        // 1. Ordenar las fechas de más antigua a más reciente
+        const fechasOrdenadas = Object.keys(partidosPorFecha).sort((a, b) => {
+            return parseFecha(a) - parseFecha(b);
+        });
+
+        // 2. Iterar sobre cada día y crear su bloque HTML
+        fechasOrdenadas.forEach(fecha => {
+            const partidosDelDia = partidosPorFecha[fecha];
+
+            // Ordenar los partidos de ese mismo día por hora
+            partidosDelDia.sort((a, b) => parseFechaHora(a.Fecha, a.Hora) - parseFechaHora(b.Fecha, b.Hora));
+
+            // Crear contenedor del día
+            const divDia = document.createElement("div");
+            divDia.className = "dia-calendario";
+
+            divDia.innerHTML = `
+              <div class="dia-encabezado">
+                  <h3>${formatearFechaLarga(fecha)}</h3>
+                  <a href="clasificacion.html" class="ver-grupos">Ver grupos</a>
+              </div>
+          `;
+
+            // Iterar sobre los partidos de ese día
+            partidosDelDia.forEach(p => {
+                // Buscar bandera o poner placeholder si es un equipo de play-off no definido
+                const codPais1 = codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+                const codPais2 = codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+
+                // Si hay resultado guardado lo mostramos, si no, mostramos la hora
+                const textoCentro = (p.Resultado && p.Resultado.trim() !== "") ? p.Resultado : p.Hora;
+
+                const divPartido = document.createElement("div");
+                divPartido.className = "partido-calendario";
+                divPartido.innerHTML = `
+                    <div class="partido-fila">
+                        <div class="equipo">${p.Pais1}</div>
+                        <img class="bandera-calendario" src="${codPais1}" alt="Bandera ${p.Pais1}">
+                        <div class="hora-partido">${textoCentro}</div>
+                        <img class="bandera-calendario" src="${codPais2}" alt="Bandera ${p.Pais2}">
+                        <div class="equipo">${p.Pais2}</div>
+                    </div>
+                <div class="partido-detalles">Primera fase · ${p.Fase} · ${p.Estadio}</div>
+                `;
+
+                divDia.appendChild(divPartido);
+            });
+
+            contenedor.appendChild(divDia);
+        });
+    }
+
+    // Cargar datos al iniciar
+    await cargarCalendario();
+
+</script>

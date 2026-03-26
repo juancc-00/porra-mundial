@@ -188,3 +188,104 @@ body {
     cursor: pointer;
 
 }
+
+
+/* ===== Estilos del Contenedor Principal ===== */
+main {
+    padding: 20px 40px;
+    /* Padding generoso a los lados */
+}
+
+#contenedorCalendario {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===== Estilos del Calendario por Día ===== */
+.dia-calendario {
+    margin-bottom: 40px;
+}
+
+.dia-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    color: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.dia-encabezado h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #000000;
+}
+
+/* Enlace "Ver grupos" a la derecha */
+.ver-grupos {
+    font-size: 14px;
+    color: #f3ffe6;
+    /* Gris muy claro */
+    text-decoration: none;
+}
+
+.ver-grupos:hover {
+    text-decoration: underline;
+}
+
+/* ===== Estilos de cada Fila de Partido ===== */
+.partido-calendario {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* background-color: #caf7be; */
+}
+
+.partido-fila {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.equipo {
+    font-size: 16px;
+    color: #333;
+    width: 280px;
+}
+
+.equipo:first-child {
+    text-align: right;
+}
+
+.equipo:last-child {
+    text-align: left;
+}
+
+/* Banderas */
+.bandera-calendario {
+    width: 40px;
+    height: auto;
+    margin: 0 15px;
+}
+
+.hora-partido {
+    font-size: 22px;
+    font-weight: bold;
+    color: #000000;
+    width: 100px;
+    /* Ancho fijo para la hora */
+    text-align: center;
+}
+
+/* Detalles del partido debajo (Fase, Grupo, Estadio, Ciudad) */
+.partido-detalles {
+    font-size: 12px;
+    color: #000000;
+    text-align: center;
+    margin-top: -3px;
+    max-width: 600px;
+}
