@@ -46,7 +46,8 @@ ALBERTO:
 - Lógica de activar/bloquear predicciones
 - Versión de paginas empezó/no empezó el mundial
 - Lógica API futbol
-
+- Meter 'Jugados' en la tabla de clasificación de las predicciones
+- Separador por jornadas en predicciones (2+2+2 partidos)
 
 JUAN: 
 - Info no loggeado (clasificación, cuadro, resultados y calendario + vista de calendario): verificar reglas desempates y clasificación. 
@@ -55,3 +56,10 @@ JUAN:
 	- Pantalla de logs
 	- Gráfica progresión clasi
 	- Jugadores clickables -> pagina de sus predicciones/puntos sumados
+
+## Calendario y resultados
+
+copiar layout de [aquí](https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures?country=&wtw-filter=ALL)
+
+A partir de 16avos -> meter cuadro
+
