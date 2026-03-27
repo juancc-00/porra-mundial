@@ -2,14 +2,16 @@
 body {
   margin: 0;
   font-family: "ADLaM Display", sans-serif;
-  background-color: #8cc86c; /* Verde fondo */
+  background-color: #ffffff; /* Verde fondo */
   color: black;
 }
 
-main{
+main {
+  /* Quitamos el align-items: center que estaba rompiendo la izquierda */
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 100%;
+  overflow-x: hidden; /* Evita cualquier scroll fantasma general */
 }
 
 
@@ -41,11 +43,16 @@ main{
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  width: 80%;
-  margin-top: 60px;
+  width: 90%;
+  max-width: 1200px; /* Un tope máximo para que en pantallas gigantes no se estire demasiado */
+  margin: 60px auto 40px auto; /* El "auto" a los lados es la forma correcta de centrarlo */
+  /* Quitamos el align-items: left; porque 'left' no es un valor válido de flexbox */
+}
+
+.partidos-section {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .cabecera-container{
@@ -53,15 +60,15 @@ main{
   align-items: center;
   justify-content: space-between;
 }
-
 /* Contenedor principal de la galería */
 .galeria-partidos {
   display: flex;
+  flex: 1;           /* <-- NUEVO: Le dice que ocupe solo el espacio entre los botones */
+  min-width: 0;      /* <-- NUEVO: Es la magia que evita que rompa el ancho de la página */
   overflow-x: auto;
   gap: 20px;
   padding: 20px 0;
   scroll-snap-type: x mandatory;
-  /* Ocultar barra de scroll en navegadores webkit (opcional, queda más limpio) */
   scrollbar-width: none; 
 }
 .galeria-partidos::-webkit-scrollbar {
@@ -167,4 +174,131 @@ main{
   .btn-scroll {
     display: none;
   }
+}
+
+/* --- LAYOUT DEL DASHBOARD --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.panel-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #eaeaea;
+  box-sizing: border-box; /* <-- LA MAGIA ESTÁ AQUÍ */
+  width: 100%;            /* Asegura que ocupen el ancho disponible */
+}
+
+.panel-box h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+/* --- LEADERBOARD --- */
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f9f9f9;
+  font-size: 1.1em;
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.pos {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  background: #eee;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.pts {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Colores para el Top 3 */
+.top-1 .pos { background: #FFD700; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+.top-2 .pos { background: #C0C0C0; color: #fff; }
+.top-3 .pos { background: #CD7F32; color: #fff; }
+.top-1 { background-color: #fffdf0; border-radius: 8px; } /* Resalte sutil al primero */
+
+/* --- LOGS / NOVEDADES --- */
+.logs-container {
+  max-height: 250px; /* Altura máxima para que no empuje todo hacia abajo */
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.log-item {
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  display: block;
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.log-item p {
+  margin: 0;
+  font-size: 0.95em;
+  color: #444;
+  line-height: 1.4;
+}
+
+/* Responsive: 1 columna en móviles */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- GRÁFICO DE PROGRESIÓN --- */
+.chart-section {
+  width: 100%;
+  box-sizing: border-box; /* Obliga a que el padding no engorde la caja */
+  margin-bottom: 20px;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px; /* Altura fija para que no se descontrole */
+  width: 100%;
 }

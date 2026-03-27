@@ -23,25 +23,61 @@
 
   <main>
     <div class="container">
+
       <div class="cabecera-container">
-        <h1 id="nombrePorra" style="font-size: 3em;">Cargando...</h1>
+        <h1 id="nombrePorra">Cargando...</h1>
+        <p>ID: <span id="idPorra"></span></p>
       </div>
 
-      <p>ID: <span id="idPorra"></span></p>
+      <div class="dashboard-grid">
+        <section class="panel-box">
+          <h2>🏆 Clasificación</h2>
+          <ul class="ranking-list" id="listaClasificacion">
+            <li class="ranking-item top-1">
+              <div class="ranking-user"><span class="pos">1</span> Juan</div><span class="pts">120 pts</span>
+            </li>
+            <li class="ranking-item top-2">
+              <div class="ranking-user"><span class="pos">2</span> Alberto</div><span class="pts">105 pts</span>
+            </li>
+            <li class="ranking-item top-3">
+              <div class="ranking-user"><span class="pos">3</span> Lalo</div><span class="pts">90 pts</span>
+            </li>
+          </ul>
+        </section>
 
-      <div class="galeria-wrapper">
-        <button id="btnScrollIzq" class="btn-scroll">❮</button>
-
-        <div id="contenedorGaleria" class="galeria-partidos"></div>
-
-        <button id="btnScrollDer" class="btn-scroll">❯</button>
+        <section class="panel-box">
+          <h2>Logs</h2>
+          <div class="logs-container" id="listaLogs">
+            <div class="log-item"><span class="log-time">Hace 2 horas</span>
+              <p>Comienza la fase de grupos</p>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <section class="panel-box partidos-section">
+        <h2>Próximos Partidos</h2>
+        <div class="galeria-wrapper">
+          <button id="btnScrollIzq" class="btn-scroll">❮</button>
+          <div id="contenedorGaleria" class="galeria-partidos">
+          </div>
+          <button id="btnScrollDer" class="btn-scroll">❯</button>
+        </div>
+      </section>
+
+      <section class="panel-box chart-section">
+        <h2>Progresión del Grupo</h2>
+        <div class="chart-container">
+          <canvas id="graficoProgresion"></canvas>
+        </div>
+      </section>
 
     </div>
   </main>
 
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script type="module">
 
@@ -55,12 +91,6 @@
 
   import { initializeApp } from
     "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-  // import {
-  //   getFirestore,
-  //   doc,
-  //   getDoc
-  // } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   import {
     getAuth,
@@ -92,37 +122,6 @@
     }
     await cargarPorra(idPorra, user);
   });
-
-  // async function cargarPorra(id, user) {
-  //   const ref = doc(db, "porras", id);
-  //   const snap = await getDoc(ref);
-  //   if (!snap.exists()) {
-  //     alert("La porra no existe");
-  //     window.location.href = "misporras.html";
-  //     return;
-  //   }
-  //   const data = snap.data();
-
-  //   // ===== MOSTRAR DATOS =====
-
-  //   document.getElementById("nombrePorra").textContent =
-  //     data.nombre;
-  //   document.getElementById("idPorra").textContent =
-  //     data.ID;
-
-  //   // ===== LISTA DE MIEMBROS =====
-
-  //   const lista =
-  //     document.getElementById("listaMiembros");
-  //   lista.innerHTML = "";
-  //   for (const uid of data.miembros) {
-  //     const alias = await obtenerAlias(uid);
-  //     const li = document.createElement("li");
-  //     li.textContent = alias;
-  //     lista.appendChild(li);
-  //   }
-
-  // }
 
   async function obtenerAlias(uid) {
 
@@ -252,6 +251,85 @@
     // Desplaza hacia la derecha suavemente
     galeria.scrollBy({ left: 340, behavior: 'smooth' });
   });
+
+  // Función para renderizar el gráfico con Chart.js
+  function renderizarGrafico() {
+    const ctx = document.getElementById('graficoProgresion').getContext('2d');
+
+    // Datos de prueba (Eje X: Partidos jugados)
+    const labelsPartidos = ['Partido 1', 'Partido 2', 'Partido 3', 'Partido 4', 'Partido 5', 'Partido 6'];
+
+    const data = {
+      labels: labelsPartidos,
+      datasets: [
+        {
+          label: 'Juan',
+          data: [0, 3, 3, 6, 8, 12], // Puntos acumulados en cada partido
+          borderColor: '#FFD700',    // Color de la línea (Dorado)
+          backgroundColor: '#FFD700',
+          tension: 0.3,              // Curva suave
+          borderWidth: 3
+        },
+        {
+          label: 'Alberto',
+          data: [0, 0, 2, 5, 5, 10],
+          borderColor: '#4bc0c0',    // Turquesa
+          backgroundColor: '#4bc0c0',
+          tension: 0.3,
+          borderWidth: 2
+        },
+        {
+          label: 'Lalo',
+          data: [0, 3, 6, 6, 9, 9],
+          borderColor: '#ff6384',    // Rosa
+          backgroundColor: '#ff6384',
+          tension: 0.3,
+          borderWidth: 2
+        }
+      ]
+    };
+
+    new Chart(ctx, {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Puntos Acumulados'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Partidos'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        }
+      }
+    });
+  }
+
+  // Llama a la función para que se pinte (asegúrate de llamarla en tu flujo real)
+  renderizarGrafico();
 
 </script>
 
