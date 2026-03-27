@@ -53,3 +53,74 @@ main{
   align-items: center;
   justify-content: space-between;
 }
+
+/* Contenedor principal de la galería */
+.galeria-partidos {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px 0;
+  scroll-snap-type: x mandatory;
+  /* Ocultar barra de scroll en navegadores webkit (opcional, queda más limpio) */
+  scrollbar-width: none; 
+}
+.galeria-partidos::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tarjeta individual de cada partido */
+.partido-card {
+  flex: 0 0 320px; /* Ancho fijo de la tarjeta */
+  scroll-snap-align: center;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+}
+
+.partido-info-top {
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.partido-equipos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.bandera-card {
+  width: 40px;
+  border-radius: 4px;
+}
+
+/* Zona de predicciones de los usuarios */
+.predicciones-grupo {
+  border-top: 2px dashed #eee;
+  padding-top: 15px;
+}
+
+.prediccion-fila {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f9f9f9;
+  font-size: 0.95em;
+}
+
+.prediccion-fila:last-child {
+  border-bottom: none;
+}
+
+.resultado-pred {
+  font-weight: bold;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 6px;
+}

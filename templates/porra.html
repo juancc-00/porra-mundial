@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Porra</title>
   <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
@@ -8,58 +8,61 @@
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
 </head>
+
 <body>
 
-<header class="topbar">
+  <header class="topbar">
 
     <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
-  <button class="nav-btn">Información</button>
-  <button class="nav-btn">Clasificación</button>
-  <button class="nav-btn">Próximos partidos</button>
-  <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
- 
-</header>
+    <button class="nav-btn">Información</button>
+    <button class="nav-btn" onclick="location.href='clasificacion.html'">Clasificación</button>
+    <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+    <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
 
-<main>
+  </header>
 
-<div class="container">
+  <main>
+    <div class="container">
 
-<div class="cabecera-container">
-    <h1 id="nombrePorra" style="font-size: 3em;">Cargando...</h1>
-</div>  
+      <div class="cabecera-container">
+        <h1 id="nombrePorra" style="font-size: 3em;">Cargando...</h1>
+      </div>
 
+      <p>ID: <span id="idPorra"></span></p>
 
+      <div id="contenedorGaleria" class="galeria-partidos"></div>
 
-<p>ID: <span id="idPorra"></span></p>
-
-<h2>Participantes</h2>
-<ul id="listaMiembros"></ul>
-
-</div>
-
-</main>
+    </div>
+  </main>
 
 </body>
 
 <script type="module">
 
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,   // <-- Añadimos esto aquí
+    getDocs       // <-- Y esto aquí
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { initializeApp } from
-  "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // import {
+  //   getFirestore,
+  //   doc,
+  //   getDoc
+  // } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
     authDomain: "porra-mundial-91819.firebaseapp.com",
     projectId: "porra-mundial-91819",
@@ -67,82 +70,162 @@ const firebaseConfig = {
     messagingSenderId: "281151008271",
     appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
     measurementId: "G-G37R8RYVXQ"
-};
+  };
 
-const params = new URLSearchParams(window.location.search);
-const idPorra = params.get("id");
+  const params = new URLSearchParams(window.location.search);
+  const idPorra = params.get("id");
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "home.html";
-    return;
-  }
-  await cargarPorra(idPorra, user);
-});
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "home.html";
+      return;
+    }
+    await cargarPorra(idPorra, user);
+  });
 
+  // async function cargarPorra(id, user) {
+  //   const ref = doc(db, "porras", id);
+  //   const snap = await getDoc(ref);
+  //   if (!snap.exists()) {
+  //     alert("La porra no existe");
+  //     window.location.href = "misporras.html";
+  //     return;
+  //   }
+  //   const data = snap.data();
 
-async function cargarPorra(id, user) {
+  //   // ===== MOSTRAR DATOS =====
 
-  const ref = doc(db, "porras", id);
-  const snap = await getDoc(ref);
+  //   document.getElementById("nombrePorra").textContent =
+  //     data.nombre;
+  //   document.getElementById("idPorra").textContent =
+  //     data.ID;
 
-  if (!snap.exists()) {
+  //   // ===== LISTA DE MIEMBROS =====
 
-    alert("La porra no existe");
-    window.location.href = "mis-porras.html";
-    return;
+  //   const lista =
+  //     document.getElementById("listaMiembros");
+  //   lista.innerHTML = "";
+  //   for (const uid of data.miembros) {
+  //     const alias = await obtenerAlias(uid);
+  //     const li = document.createElement("li");
+  //     li.textContent = alias;
+  //     lista.appendChild(li);
+  //   }
 
-  }
+  // }
 
-  const data = snap.data();
+  async function obtenerAlias(uid) {
 
-  // ===== MOSTRAR DATOS =====
+    const ref = doc(db, "usuarios", uid);
+    const snap = await getDoc(ref);
 
-  document.getElementById("nombrePorra").textContent =
-    data.nombre;
+    if (snap.exists()) {
+      return snap.data().nombre;
+    }
 
-  document.getElementById("idPorra").textContent =
-    data.ID;
+    return "Jugador";
 
-  // ===== LISTA DE MIEMBROS =====
-
-  const lista =
-    document.getElementById("listaMiembros");
-
-  lista.innerHTML = "";
-
-  // ⭐ IMPORTANTE: usar for...of
-
-  for (const uid of data.miembros) {
-
-    const alias = await obtenerAlias(uid);
-
-    const li = document.createElement("li");
-    li.textContent = alias;
-
-    lista.appendChild(li);
-
-  }
-
-}
-
-async function obtenerAlias(uid) {
-
-  const ref = doc(db, "usuarios", uid);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    return snap.data().nombre;
   }
 
-  return "Jugador";
+  async function cargarPorra(id, user) {
+    const ref = doc(db, "porras", id);
+    const snap = await getDoc(ref);
 
-}
+    if (!snap.exists()) {
+      alert("La porra no existe");
+      window.location.href = "mis-porras.html";
+      return;
+    }
 
+    const dataPorra = snap.data();
+    document.getElementById("nombrePorra").textContent = dataPorra.nombre;
+    document.getElementById("idPorra").textContent = dataPorra.ID;
+
+    // 1. Cargar la información y predicciones de TODOS los miembros del grupo
+    const miembrosData = [];
+    for (const uid of dataPorra.miembros) {
+      const userRef = doc(db, "usuarios", uid);
+      const userSnap = await getDoc(userRef);
+      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
+
+      const predRef = doc(db, "predicciones", uid);
+      const predSnap = await getDoc(predRef);
+      const predicciones = predSnap.exists() ? predSnap.data() : {};
+
+      miembrosData.push({ uid, nombre, predicciones });
+    }
+
+    // 2. Cargar todos los partidos
+    const partidosSnap = await getDocs(collection(db, "partidos"));
+    let partidos = [];
+    partidosSnap.forEach(doc => partidos.push({ idDoc: doc.id, ...doc.data() }));
+
+    // Ordenar cronológicamente (usando una función auxiliar básica)
+    partidos.sort((a, b) => {
+      const fechaA = a.Fecha.split("/").reverse().join(""); // DD/MM/YYYY -> YYYYMMDD
+      const fechaB = b.Fecha.split("/").reverse().join("");
+      if (fechaA === fechaB) return a.Hora.localeCompare(b.Hora);
+      return fechaA.localeCompare(fechaB);
+    });
+
+    // 3. Construir la galería en el DOM
+    renderizarGaleria(partidos, miembrosData);
+  }
+
+  function renderizarGaleria(partidos, miembros) {
+    const contenedor = document.getElementById("contenedorGaleria");
+    contenedor.innerHTML = "";
+
+    partidos.forEach(p => {
+      // Si usas un diccionario de banderas, puedes integrarlo aquí. Usaremos emojis o un placeholder de momento.
+      const bandera1 = `https://via.placeholder.com/40x40.png?text=${p.Pais1.charAt(0)}`;
+      const bandera2 = `https://via.placeholder.com/40x40.png?text=${p.Pais2.charAt(0)}`;
+
+      const card = document.createElement("div");
+      card.className = "partido-card";
+
+      // Cabecera del partido
+      let htmlContent = `
+      <div class="partido-info-top">
+        ${p.Fecha} - ${p.Hora} | ${p.Fase}
+      </div>
+      <div class="partido-equipos">
+        <span><img src="${bandera1}" class="bandera-card"> ${p.Pais1}</span>
+        <span>vs</span>
+        <span>${p.Pais2} <img src="${bandera2}" class="bandera-card"></span>
+      </div>
+      <div class="predicciones-grupo">
+        <h4 style="margin-top:0; color:#444; font-size: 0.9em;">Predicciones del grupo:</h4>
+    `;
+
+      // Filas de predicciones de cada miembro
+      miembros.forEach(miembro => {
+        // Asumimos que la clave en firebase coincide con alguna propiedad, como p.Numero o el id del documento
+        // Asegúrate de ajustar "p.Numero" al nombre exacto del campo que usas en la BBDD
+        const predPartido = miembro.predicciones[p.Numero];
+
+        let textoPred = "-";
+        if (predPartido && predPartido.g1 !== undefined && predPartido.g2 !== undefined) {
+          textoPred = `${predPartido.g1} - ${predPartido.g2}`;
+        }
+
+        htmlContent += `
+        <div class="prediccion-fila">
+          <span>${miembro.nombre}</span>
+          <span class="resultado-pred">${textoPred}</span>
+        </div>
+      `;
+      });
+
+      htmlContent += `</div>`; // Cierra predicciones-grupo
+      card.innerHTML = htmlContent;
+      contenedor.appendChild(card);
+    });
+  }
 
 </script>
 
