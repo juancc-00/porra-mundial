@@ -212,3 +212,64 @@ td{
   background-color: #fff3cd; /* amarillo claro */
   color: #2c3a5c;
 }
+
+.bracket {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+  font-family: sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.lado {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  /* align-items: center; */
+}
+
+.ronda {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.partido-bracket {
+  background: #01172e;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px;
+  width: 40px;
+}
+
+.equipo {
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.equipo:hover {
+  background: #e9ecef;
+}
+
+.ganador {
+  background: #cfe2ff;
+  font-weight: bold;
+}
+
+.centro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.final {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+}
+
