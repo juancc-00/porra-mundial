@@ -28,12 +28,15 @@
 
 <h1>Fase de grupos</h1>
 
+<button id="btnSimular">Simular fase eliminatoria</button>
+
+<div id="bracket" class="bracket hidden"></div>
+
+
 <div id="contenedorGrupos"></div>
 
 <!-- Picker flotante -->
- 
 <div id="picker" class="picker" style="display:none;"></div>
-
 
 </main>
 
@@ -41,6 +44,8 @@
 
 <script src="../static/js/codigos_paises.js"></script>
 <script src="../static/js/fases.js"></script>
+<script src="../static/js/combis_16.js"></script>
+<script src="../static/js/emparejamientos.js"></script>
 <script type="module">
 
 
@@ -94,6 +99,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 async function cargarPredicciones() {
+  console.log("predicciones cargadas")
 
   const user = auth.currentUser;
   if (!user) return;
@@ -369,12 +375,9 @@ function mostrarOpciones() {
 }
 
 document.addEventListener("click", e => {
-
   if (!picker.contains(e.target) &&
       !e.target.classList.contains("gol")) {
-
     picker.style.display = "none";
-
   }
 });
 
@@ -533,6 +536,179 @@ guardarBtn.onclick = async () => {
 
   alert("Predicción guardada");
 };
+
+import { generarCuadroEliminatorias } from "../static/js/pipeline_eliminatorias.js";
+
+
+
+const btn = document.getElementById("btnSimular");
+const contenedor_bracket = document.getElementById("bracket");
+
+let partidosGlobal = {};
+
+const estructura = {
+  izquierda: {
+    dieciseisavos: [74,77,73,75,83,84,81,82],
+    octavos: [89,90,93,94],
+    cuartos: [97,98],
+    semis: [101]
+  },
+  derecha: {
+    dieciseisavos: [86,88,85,87,76,78,79,80],
+    octavos: [95,96,91,92],
+    cuartos: [100,99],
+    semis: [102]
+  },
+  centro: {
+    final: [104],
+    tercer: [103]
+  }
+};
+
+btn.onclick = () => {
+
+  partidosGlobal = generarCuadroEliminatorias(grupos, combinaciones, emparejamientos);
+  console.log(partidosGlobal);
+
+  contenedor_bracket.classList.remove("hidden");
+
+  renderBracket(partidosGlobal);
+};
+
+
+function renderBracket(partidos) {
+
+  contenedor_bracket.innerHTML = "";
+
+  const izq = crearLado(estructura.izquierda, partidos, false);
+  const der = crearLado(estructura.derecha, partidos, true);
+
+  const centro = crearCentro(partidos);
+
+  contenedor_bracket.appendChild(izq);
+  contenedor_bracket.appendChild(centro);
+  contenedor_bracket.appendChild(der);
+}
+
+
+function crearLado(config, partidos, invertido = false) {
+
+  const lado = document.createElement("div");
+  lado.className = "lado";
+
+  let rondas = Object.entries(config);
+
+  // 🔥 invertir orden para el lado derecho
+  if (invertido) {
+    rondas = rondas.reverse();
+    // lado.style.flexDirection = "row-reverse";
+  }
+
+
+  rondas.forEach(([ronda, partidosNums]) => {
+
+    const col = document.createElement("div");
+    col.className = "ronda";
+
+    partidosNums.forEach(num => {
+      col.appendChild(crearPartidoBracket(num, partidos));
+    });
+
+    lado.appendChild(col);
+  });
+
+  return lado;
+}
+
+
+function crearCentro(partidos) {
+
+  const div = document.createElement("div");
+  div.className = "centro";
+
+  estructura.centro.final.forEach(n => {
+    const p = crearPartidoBracket(n, partidos);
+    p.classList.add("final");
+    div.appendChild(p);
+  });
+
+  estructura.centro.tercer.forEach(n => {
+    div.appendChild(crearPartidoBracket(n, partidos));
+  });
+
+  return div;
+}
+
+function crearPartidoBracket(num, partidos) {
+
+  const p = partidos[num];
+
+  const div = document.createElement("div");
+  div.className = "partido-bracket";
+
+  const e1 = crearEquipo(p.Pais1, num, 1);
+  const e2 = crearEquipo(p.Pais2, num, 2);
+
+  if (p.ganador === p.Pais1) e1.classList.add("ganador");
+  if (p.ganador === p.Pais2) e2.classList.add("ganador");
+
+  div.appendChild(e1);
+  div.appendChild(e2);
+
+  return div;
+}
+
+function crearEquipo(nombre, numPartido, lado) {
+
+  const div = document.createElement("div");
+  div.className = "equipo";
+  const codigo = codigos_pais[nombre];
+  div.innerHTML = `<img class="bandera" src="https://flagcdn.com/w40/${codigo}.png">` || "-";
+
+  div.onclick = () => {
+
+    if (!nombre) return;
+
+    const p = partidosGlobal[numPartido];
+
+    if (lado === 1) {
+      p.ganador = p.Pais1;
+      p.perdedor = p.Pais2;
+    } else {
+      p.ganador = p.Pais2;
+      p.perdedor = p.Pais1;
+    }
+
+    avanzarGanador(numPartido);
+
+    renderBracket(partidosGlobal);
+  };
+
+  return div;
+}
+
+function avanzarGanador(num) {
+
+  Object.values(emparejamientos).forEach(e => {
+
+    if (e.pais1 === "W"+num) {
+      partidosGlobal[e.Numero].Pais1 = partidosGlobal[num].ganador;
+    }
+
+    if (e.pais2 === "W"+num) {
+      partidosGlobal[e.Numero].Pais2 = partidosGlobal[num].ganador;
+    }
+
+    if (e.pais1 === "L"+num) {
+      partidosGlobal[e.Numero].Pais1 = partidosGlobal[num].perdedor;
+    }
+
+    if (e.pais2 === "L"+num) {
+      partidosGlobal[e.Numero].Pais2 = partidosGlobal[num].perdedor;
+    }
+
+  });
+}
 
 await cargarPartidosGrupos();
 await cargarPredicciones();
