@@ -143,15 +143,17 @@ function actualizarUIconPredicciones() {
 
 let gruposGlobal = {};
 let predicciones = [];
+let grupos = {};
 
 
 const contenedor = document.getElementById("contenedorGrupos");
+let mejoresTerceros = [];
 
 async function cargarPartidosGrupos() {
 
   const snapshot = await getDocs(collection(db, "partidos"));
 
-  const grupos = {};
+  // const grupos = {};
 
   snapshot.forEach(doc => {
 
@@ -169,6 +171,7 @@ async function cargarPartidosGrupos() {
 
   predicciones = [];
   gruposGlobal = grupos;
+  console.log(grupos);
   mostrarGrupos(grupos);
 }
 
@@ -227,8 +230,9 @@ function mostrarGrupos(grupos) {
 
     // ===== CLASIFICACIÓN INICIAL =====
 
+    // console.log(mejoresTerceros);
     const tablaClasif =
-      crearTablaClasificacion(grupos[nombreGrupo]);
+      crearTablaClasificacion(grupos[nombreGrupo], grupos);
 
     // ===== LAYOUT GRID =====
 
@@ -303,22 +307,27 @@ function crearPartido(p, nombreGrupo) {
 
 function actualizarClasificacion(nombreGrupo) {
 
-  const grupo = gruposGlobal[nombreGrupo];
+  // 🔥 recalcular terceros globales
+  const mejoresTerceros = obtenerMejoresTerceros(grupos);
 
-  const nuevaTabla =
-    crearTablaClasificacion(grupo);
+  // 🔥 recorrer TODOS los grupos
+  document.querySelectorAll(".grupo").forEach(grupoDiv => {
 
-  // Reemplazar tabla existente
+    const nombre = grupoDiv.querySelector("h2").textContent;
 
-  const grupoDiv = [...document.querySelectorAll(".grupo")]
-    .find(g => g.querySelector("h2").textContent === nombreGrupo);
+    const partidosGrupo = grupos[nombre];
 
-  const layout = grupoDiv.querySelector(".grupo-layout");
+    const nuevaTabla =
+      crearTablaClasificacion(partidosGrupo, mejoresTerceros);
 
-  layout.replaceChild(
-    nuevaTabla,
-    layout.children[1]
-  );
+    const layout = grupoDiv.querySelector(".grupo-layout");
+
+    layout.replaceChild(
+      nuevaTabla,
+      layout.children[1]
+    );
+
+  });
 }
 
 
@@ -368,6 +377,26 @@ document.addEventListener("click", e => {
 
   }
 });
+
+function obtenerMejoresTerceros(grupos) {
+  const terceros = [];
+  Object.values(grupos).forEach(partidos => {
+    const clasif = calcularClasificacion(partidos);
+    if (clasif.length >= 3) {
+      terceros.push(clasif[2]); // tercer clasificado
+    }
+
+  });
+
+  return terceros
+    .sort((a, b) =>
+      b.pts - a.pts ||
+      b.dg - a.dg ||
+      b.gf - a.gf
+    )
+    .slice(0, 8)
+    .map(t => t.equipo);
+}
 
 function calcularClasificacion(partidos) {
 
@@ -426,7 +455,8 @@ function calcularClasificacion(partidos) {
     );
 }
 
-function crearTablaClasificacion(partidos) {
+
+function crearTablaClasificacion(partidos, mejoresTerceros = []) {
 
   const clasif = calcularClasificacion(partidos);
 
@@ -440,20 +470,29 @@ function crearTablaClasificacion(partidos) {
       <th>G</th>
       <th>E</th>
       <th>P</th>
+      <th>DG</th>
       <th>GF</th>
       <th>GC</th>
     </tr>
   `;
 
   clasif.forEach((t, i) => {
+  let clase = "";
+  if (i < 2) {
+    clase = "clasificado"; // azul
+  }
+  else if (i === 2 && mejoresTerceros.includes(t.equipo)) {
+    clase = "mejor-tercero"; // amarillo
+  }
   const codpais = codigos_pais[t.equipo];
     table.innerHTML += `
-      <tr>
+      <tr class="${clase}">
         <td>${i+1}. <img class="bandera" src="https://flagcdn.com/w40/${codpais}.png"> ${t.equipo}</td>
         <td>${t.pts}</td>
         <td>${t.g}</td>
         <td>${t.e}</td>
         <td>${t.p}</td>
+        <td>${t.dg}</td>
         <td>${t.gf}</td>
         <td>${t.gc}</td>
       </tr>

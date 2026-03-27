@@ -202,3 +202,13 @@ td{
   align-items: center;
   gap: 6px;
 }
+
+.clasificado {
+  background-color: #cfe9ff; /* azul claro */
+  color: #2c3a5c;
+}
+
+.mejor-tercero {
+  background-color: #fff3cd; /* amarillo claro */
+  color: #2c3a5c;
+}
