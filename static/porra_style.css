@@ -70,7 +70,7 @@ main{
 
 /* Tarjeta individual de cada partido */
 .partido-card {
-  flex: 0 0 320px; /* Ancho fijo de la tarjeta */
+  flex: 0 0 400px; 
   scroll-snap-align: center;
   background: #ffffff;
   border-radius: 12px;
@@ -98,6 +98,7 @@ main{
 .bandera-card {
   width: 40px;
   border-radius: 4px;
+  vertical-align: middle;
 }
 
 /* Zona de predicciones de los usuarios */
@@ -123,4 +124,47 @@ main{
   background: #f0f0f0;
   padding: 2px 8px;
   border-radius: 6px;
+}
+
+/* Contenedor que agrupa botones y galería */
+.galeria-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+/* Estilo de las flechas */
+.btn-scroll {
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-scroll:hover {
+  background-color: #555;
+  transform: scale(1.05);
+}
+
+.btn-scroll:active {
+  transform: scale(0.95);
+}
+
+/* Opcional: ocultar los botones en móviles si prefieres que ahí sí usen el dedo */
+@media (max-width: 800) {
+  .btn-scroll {
+    display: none;
+  }
 }

@@ -23,20 +23,26 @@
 
   <main>
     <div class="container">
-
       <div class="cabecera-container">
         <h1 id="nombrePorra" style="font-size: 3em;">Cargando...</h1>
       </div>
 
       <p>ID: <span id="idPorra"></span></p>
 
-      <div id="contenedorGaleria" class="galeria-partidos"></div>
+      <div class="galeria-wrapper">
+        <button id="btnScrollIzq" class="btn-scroll">❮</button>
+
+        <div id="contenedorGaleria" class="galeria-partidos"></div>
+
+        <button id="btnScrollDer" class="btn-scroll">❯</button>
+      </div>
 
     </div>
   </main>
 
 </body>
 
+<script src="../static/js/codigos_paises.js"></script>
 <script type="module">
 
   import {
@@ -185,6 +191,13 @@
       const bandera1 = `https://via.placeholder.com/40x40.png?text=${p.Pais1.charAt(0)}`;
       const bandera2 = `https://via.placeholder.com/40x40.png?text=${p.Pais2.charAt(0)}`;
 
+
+      const codPais1 = codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+      const codPais2 = codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+
+
+      // <img class="bandera-calendario" src="${codPais1}">
+
       const card = document.createElement("div");
       card.className = "partido-card";
 
@@ -194,9 +207,9 @@
         ${p.Fecha} - ${p.Hora} | ${p.Fase}
       </div>
       <div class="partido-equipos">
-        <span><img src="${bandera1}" class="bandera-card"> ${p.Pais1}</span>
+        <span><img src="${codPais1}" class="bandera-card"> ${p.Pais1}</span>
         <span>vs</span>
-        <span>${p.Pais2} <img src="${bandera2}" class="bandera-card"></span>
+        <span>${p.Pais2} <img src="${codPais2}" class="bandera-card"></span>
       </div>
       <div class="predicciones-grupo">
         <h4 style="margin-top:0; color:#444; font-size: 0.9em;">Predicciones del grupo:</h4>
@@ -226,6 +239,19 @@
       contenedor.appendChild(card);
     });
   }
+
+  // Lógica para los botones de scroll de la galería
+  document.getElementById("btnScrollIzq").addEventListener("click", () => {
+    const galeria = document.getElementById("contenedorGaleria");
+    // Desplaza hacia la izquierda suavemente
+    galeria.scrollBy({ left: -340, behavior: 'smooth' });
+  });
+
+  document.getElementById("btnScrollDer").addEventListener("click", () => {
+    const galeria = document.getElementById("contenedorGaleria");
+    // Desplaza hacia la derecha suavemente
+    galeria.scrollBy({ left: 340, behavior: 'smooth' });
+  });
 
 </script>
 
