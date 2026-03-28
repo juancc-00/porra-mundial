@@ -26,6 +26,27 @@
 
 <main>
 
+<div id="predicciones-generales">
+
+  <h2>Predicciones generales</h2>
+  <div style="display: flex; align-items: center;width: 100%">
+    <i class="fa-solid fa-trophy" style="font-size:2em; color: rgb(236, 203, 70)"></i>
+    <div class="campo">
+      <label>Ganador</label>
+      <div class="selector" data-tipo="ganador"></div>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center;width: 100%">
+    <i class="fa-solid fa-medal" style="font-size:2em; color: rgb(174, 169, 148)"></i>
+    <div class="campo">
+      <label>Finalista</label>
+      <div class="selector" data-tipo="finalista"></div>
+    </div>
+  </div>
+
+</div>
+
 <h1>Fase de grupos</h1>
 
 <button id="btnSimular">Simular fase eliminatoria</button>
@@ -42,6 +63,7 @@
 
 </body>
 
+<script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script src="../static/js/fases.js"></script>
 <script src="../static/js/combis_16.js"></script>
@@ -95,36 +117,83 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "home.html";
     return;
   }
-  // await cargarPrediccion(idPorra, user);
 });
 
-async function cargarPredicciones() {
-  console.log("predicciones cargadas")
+async function cargarTodasLasPredicciones() {
 
   const user = auth.currentUser;
   if (!user) return;
 
-  const ref = doc(db, "predicciones", user.uid);
-  const snap = await getDoc(ref);
+  const uid = user.uid;
 
-  if (!snap.exists()) return;
+  // ========================
+  // 1) CARGAR GRUPOS
+  // ========================
 
-  const data = snap.data();
+  const refGrupos = doc(db, "predicciones", uid, "grupos", "datos");
+  const snapGrupos = await getDoc(refGrupos);
 
-  // recorrer partidos cargados
-  predicciones.forEach(p => {
+  if (snapGrupos.exists()) {
 
-    const pred = data[p.Numero];
+    const data = snapGrupos.data();
 
-    if (pred) {
-      p.g1 = pred.g1;
-      p.g2 = pred.g2;
-    }
+    predicciones.forEach(p => {
 
-  });
+      const pred = data[p.Numero];
 
-  actualizarUIconPredicciones();
+      if (pred) {
+        p.g1 = pred.g1;
+        p.g2 = pred.g2;
+      }
+
+    });
+
+    actualizarUIconPredicciones();
+  }
+
+  // ========================
+  // 2) CARGAR GENERALES
+  // ========================
+
+  const refGeneral = doc(db, "predicciones", uid, "general", "datos");
+  const snapGeneral = await getDoc(refGeneral);
+
+  if (snapGeneral.exists()) {
+
+    const data = snapGeneral.data();
+
+    selGanador.setValor(data.ganador);
+    selFinalista.setValor(data.finalista);
+  }
 }
+
+// async function cargarPredicciones() {
+//   console.log("predicciones cargadas")
+
+//   const user = auth.currentUser;
+//   if (!user) return;
+
+//   const ref = doc(db, "predicciones", user.uid);
+//   const snap = await getDoc(ref);
+
+//   if (!snap.exists()) return;
+
+//   const data = snap.data();
+
+//   // recorrer partidos cargados
+//   predicciones.forEach(p => {
+
+//     const pred = data[p.Numero];
+
+//     if (pred) {
+//       p.g1 = pred.g1;
+//       p.g2 = pred.g2;
+//     }
+
+//   });
+
+//   actualizarUIconPredicciones();
+// }
 
 function actualizarUIconPredicciones() {
 
@@ -203,6 +272,151 @@ function formatearFecha(p) {
 
   return `${parseInt(d)} ${meses[m - 1]} · ${p.Hora}`;
 }
+
+
+
+// async function cargarPrediccionesGenerales() {
+
+//   const user = auth.currentUser;
+//   if (!user) return;
+
+//   const ref = doc(db, "predicciones", user.uid, "general", "datos");
+//   const snap = await getDoc(ref);
+
+//   if (!snap.exists()) return;
+
+//   const data = snap.data();
+
+//   selGanador.setValor(data.ganador);
+//   selFinalista.setValor(data.finalista);
+// }
+
+
+function actualizarUIconPrediccionesGenerales(data) {
+
+  if (!data) return;
+
+  document.getElementById("inputGanador").value = data.ganador || "";
+  document.getElementById("inputFinalista").value = data.finalista || "";
+}
+
+
+function obtenerEquipos(grupos) {
+
+  const set = new Set();
+
+  Object.values(grupos).forEach(partidos => {
+    partidos.forEach(p => {
+      set.add(p.Pais1);
+      set.add(p.Pais2);
+    });
+  });
+
+  return Array.from(set).sort();
+}
+
+
+function aplicarEstadoEdicion() {
+
+  const estado = obtenerEstadoFase("grupos");
+  const editable = estado === "activa";
+
+  selGanador.setEditable(editable);
+  selFinalista.setEditable(editable);
+}
+
+function crearSelector(container, equipos) {
+
+
+  let seleccionado = null;
+
+  container.innerHTML = `
+    <div class="selector-input"></div>
+    <div class="dropdown"></div>
+  `;
+
+  const input = container.querySelector(".selector-input");
+  const dropdown = container.querySelector(".dropdown");
+
+  function renderOpciones(filtro = "") {
+
+    dropdown.innerHTML = "";
+
+    equipos
+      .filter(eq => eq.toLowerCase().includes(filtro.toLowerCase()))
+      .forEach(eq => {
+
+        const codigo = codigos_pais[eq];
+
+        const div = document.createElement("div");
+        div.className = "opcion";
+
+        div.innerHTML = `
+          <img src="https://flagcdn.com/w40/${codigo}.png">
+          ${eq}
+        `;
+
+        div.onclick = () => {
+          seleccionado = eq;
+          input.innerHTML = `
+            <img src="https://flagcdn.com/w40/${codigo}.png">
+            ${eq}
+          `;
+          container.classList.remove("open");
+        };
+
+        dropdown.appendChild(div);
+      });
+  }
+
+  input.onclick = () => {
+    container.classList.toggle("open");
+    renderOpciones();
+  };
+  // 🔥 búsqueda escribiendo
+  input.contentEditable = true;
+  input.oninput = () => {
+    renderOpciones(input.textContent);
+  };
+  // cerrar al hacer click fuera
+  document.addEventListener("click", e => {
+    if (!container.contains(e.target)) {
+      container.classList.remove("open");
+    }
+  });
+
+  return {
+    getValor: () => seleccionado,
+    setValor: (eq) => {
+      if (!eq) return;
+      const codigo = codigos_pais[eq];
+      seleccionado = eq;
+      input.innerHTML = `
+        <img src="https://flagcdn.com/w40/${codigo}.png">
+        ${eq}
+      `;
+    },
+    setEditable: (editable) => {
+      input.contentEditable = editable;
+      input.style.opacity = editable ? "1" : "0.6";
+    }
+  };
+}
+
+await cargarPartidosGrupos();
+const equipos = obtenerEquipos(gruposGlobal);
+
+const selGanador = crearSelector(
+  document.querySelector('[data-tipo="ganador"]'),
+  equipos
+);
+
+const selFinalista = crearSelector(
+  document.querySelector('[data-tipo="finalista"]'),
+  equipos
+);
+
+
 
 function mostrarGrupos(grupos) {
 
@@ -505,6 +719,30 @@ function crearTablaClasificacion(partidos, mejoresTerceros = []) {
   return table;
 }
 
+// guardarBtn.onclick = async () => {
+//   const user = auth.currentUser;
+//   if (!user) {
+//     alert("Debes iniciar sesión");
+//     return;
+//   }
+//   const data = {};
+//   predicciones.forEach(p => {
+//     if (p.g1 !== null && p.g2 !== null) {
+//       data[p.Numero] = {
+//         g1: p.g1,
+//         g2: p.g2
+//       };
+//     }
+//   });
+
+//   await setDoc(
+//     doc(db, "predicciones", user.uid),
+//     data
+//   );
+
+//   alert("Predicción guardada");
+// };
+
 guardarBtn.onclick = async () => {
 
   const user = auth.currentUser;
@@ -514,27 +752,51 @@ guardarBtn.onclick = async () => {
     return;
   }
 
-  const data = {};
+  const uid = user.uid;
+
+  // ========================
+  // 1) GUARDAR GRUPOS
+  // ========================
+
+  const dataGrupos = {};
 
   predicciones.forEach(p => {
-
     if (p.g1 !== null && p.g2 !== null) {
-
-      data[p.Numero] = {
+      dataGrupos[p.Numero] = {
         g1: p.g1,
         g2: p.g2
       };
-
     }
-
   });
 
-  await setDoc(
-    doc(db, "predicciones", user.uid),
-    data
-  );
+  // ========================
+  // 2) GUARDAR GENERALES
+  // ========================
 
-  alert("Predicción guardada");
+  const ganador = selGanador.getValor();
+  const finalista = selFinalista.getValor();
+
+  const dataGeneral = {
+    ganador: ganador || null,
+    finalista: finalista || null
+  };
+
+  // ========================
+  // 3) GUARDAR TODO
+  // ========================
+
+  await Promise.all([
+    setDoc(
+      doc(db, "predicciones", uid, "grupos", "datos"),
+      dataGrupos
+    ),
+    setDoc(
+      doc(db, "predicciones", uid, "general", "datos"),
+      dataGeneral
+    )
+  ]);
+
+  alert("Predicciones guardadas");
 };
 
 import { generarCuadroEliminatorias } from "../static/js/pipeline_eliminatorias.js";
@@ -566,12 +828,8 @@ const estructura = {
 };
 
 btn.onclick = () => {
-
   partidosGlobal = generarCuadroEliminatorias(grupos, combinaciones, emparejamientos);
-  console.log(partidosGlobal);
-
   contenedor_bracket.classList.remove("hidden");
-
   renderBracket(partidosGlobal);
 };
 
@@ -710,8 +968,9 @@ function avanzarGanador(num) {
   });
 }
 
-await cargarPartidosGrupos();
-await cargarPredicciones();
+cargarTodasLasPredicciones();
+aplicarEstadoEdicion();
+
 
 
 </script>

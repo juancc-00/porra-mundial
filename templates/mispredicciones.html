@@ -28,14 +28,6 @@
 
 <div id="listaPredicciones">
 
-  <div class="prediccion-card" data-fase="general" data-url="prediccion_general.html">
-    <div class="prediccion-nombre">General</div>
-    <div class="prediccion-container-derecha">
-      <div class="prediccion-estado"></div>
-      <div class="prediccion-icono"></div>
-    </div>
-  </div>
-
   <div class="prediccion-card" data-fase="grupos" data-url="prediccion_grupos.html">
     <div class="prediccion-nombre">Fase de grupos</div>
     <div class="prediccion-container-derecha">
@@ -150,17 +142,62 @@ onAuthStateChanged(auth, user => {
 
 async function prediccionCompleta(uid, fase) {
 
-  const snap = await getDoc(doc(db, "predicciones", uid));
+  // ========================
+  // CONFIGURACIÓN
+  // ========================
 
-  if (!snap.exists()) return false;
+  const totalPorFase = {
+    grupos: 72,
+    dieciseisavos: 16,
+    octavos: 8,
+    cuartos: 4,
+    semis: 2,
+    final: 2
+  };
 
-  const data = snap.data();
+  // ========================
+  // 1) CARGAR DATOS FASE
+  // ========================
 
-  // Simplificación MVP:
-  // si tiene al menos una predicción → incompleta
-  // si tiene todas → completa
+  const ref = doc(db, "predicciones", uid, fase, "datos");
+  const snap = await getDoc(ref);
 
-  return Object.keys(data).length > 0;
+  let total = 0;
+
+  if (snap.exists()) {
+    const data = snap.data();
+    total = Object.keys(data).length;
+  }
+
+  // ========================
+  // 2) CASO ESPECIAL: GRUPOS
+  // ========================
+
+  if (fase === "grupos") {
+
+    const refGen = doc(db, "predicciones", uid, "general", "datos");
+    const snapGen = await getDoc(refGen);
+
+    let totalGeneral = 0;
+
+    if (snapGen.exists()) {
+      const dataGen = snapGen.data();
+
+      if (dataGen.ganador) totalGeneral++;
+      if (dataGen.finalista) totalGeneral++;
+    }
+
+    return (
+      total === totalPorFase.grupos &&
+      totalGeneral === 2
+    );
+  }
+
+  // ========================
+  // 3) RESTO DE FASES
+  // ========================
+
+  return total === totalPorFase[fase];
 }
 
 async function actualizarTarjetas() {
@@ -185,13 +222,19 @@ async function actualizarTarjetas() {
         const f = fases[fase].activaDesde;
 
         info.textContent = `${tiempoRestante(f)}`;
-        icono_container.innerHTML = `<i class="fa-solid fa-hourglass-start" style="color: #130f2b;"></i>`
+        icono_container.innerHTML = `
+          <i class="fa-solid fa-hourglass-start" style="color: #130f2b;" 
+            title="La fase aún no ha comenzado"></i>
+        `;
         card.classList.add("inactiva");
 
       }
       else if (estado === "bloqueada") {
 
-        icono_container.innerHTML = `<i class="fa-solid fa-lock" style="color: white;"></i>`;
+        icono_container.innerHTML = `
+          <i class="fa-solid fa-lock" style="color: white;" 
+            title="Fase en curso: Predicciones bloqueadas"></i>
+        `;
         card.classList.add("bloqueada");
 
         card.onclick = () => window.location.href = url;
@@ -205,7 +248,11 @@ async function actualizarTarjetas() {
         const cierre = fases[fase].bloqueadaDesde;
 
         info.innerHTML = " Cierra en " + tiempoRestante(cierre);
-        icono_container.innerHTML = (completa ? `<i class="fa-solid fa-circle-check" style="color: #8cc86c"></i>` : `<i class="fa-solid fa-triangle-exclamation"></i>`)
+        icono_container.innerHTML = completa
+        ? `<i class="fa-solid fa-circle-check" style="color: #8cc86c" 
+            title="Tus predicciones están al día"></i>`
+        : `<i class="fa-solid fa-triangle-exclamation" style="color: yellow" 
+            title="Completa tus predicciones antes de que cierre"></i>`;
 
         card.onclick = () => window.location.href = url;
 

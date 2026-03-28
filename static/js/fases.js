@@ -1,10 +1,5 @@
 const fases = {
 
-  general: {
-    activaDesde: null,
-    bloqueadaDesde: new Date("2026-06-11T21:00")
-  },
-
   grupos: {
     activaDesde: null,
     bloqueadaDesde: new Date("2026-06-11T21:00")

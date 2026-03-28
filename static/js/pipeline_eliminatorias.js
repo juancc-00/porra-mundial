@@ -60,18 +60,17 @@ function calcularClasificacion(partidos) {
 }
 
 function calcularTodasLasClasificaciones(grupos) {
-
   const res = {};
 
   for (const nombre in grupos) {
     res[nombre] = calcularClasificacion(grupos[nombre]);
   }
 
+  
   return res;
 }
 
 function obtenerMejoresTerceros(clasifs) {
-
   const terceros = [];
 
   for (const grupo in clasifs) {
