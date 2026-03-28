@@ -6,7 +6,7 @@ const fases = {
   },
 
   dieciseisavos: {
-    activaDesde: new Date("2026-06-28T01:30"),
+    activaDesde: new Date("2026-02-28T01:30"),
     bloqueadaDesde: new Date("2026-06-28T21:00")
   },
 
