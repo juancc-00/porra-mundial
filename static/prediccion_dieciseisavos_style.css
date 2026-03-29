@@ -142,7 +142,7 @@ td{
 }
 
 
-@media (max-width: 900px) {
+@media (max-width: 700px) {
   .grupo-layout {
     grid-template-columns: 1fr;
   }

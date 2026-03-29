@@ -129,22 +129,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
 
   if (!user) return;
 
+  await cargarPrediccionesUsuario(user.uid);
   actualizarTarjetas();           
   setInterval(actualizarTarjetas, 60000);
 
 });
 
+let cachePredicciones = {};
 
+async function cargarPrediccionesUsuario(uid) {
 
-async function prediccionCompleta(uid, fase) {
+  const fases = ["grupos", "dieciseisavos", "octavos", "cuartos", "semis", "final"];
 
-  // ========================
-  // CONFIGURACIÓN
-  // ========================
+  for (const fase of fases) {
+    const ref = doc(db, "predicciones", uid, fase, "datos");
+    const snap = await getDoc(ref);
+
+    cachePredicciones[fase] = snap.exists() ? snap.data() : {};
+  }
+
+  const refGen = doc(db, "predicciones", uid, "general", "datos");
+  const snapGen = await getDoc(refGen);
+
+  cachePredicciones["general"] = snapGen.exists() ? snapGen.data() : {};
+}
+
+function prediccionCompletaLocal(fase) {
 
   const totalPorFase = {
     grupos: 72,
@@ -155,48 +169,18 @@ async function prediccionCompleta(uid, fase) {
     final: 2
   };
 
-  // ========================
-  // 1) CARGAR DATOS FASE
-  // ========================
-
-  const ref = doc(db, "predicciones", uid, fase, "datos");
-  const snap = await getDoc(ref);
-
-  let total = 0;
-
-  if (snap.exists()) {
-    const data = snap.data();
-    total = Object.keys(data).length;
-  }
-
-  // ========================
-  // 2) CASO ESPECIAL: GRUPOS
-  // ========================
+  const data = cachePredicciones[fase] || {};
+  const total = Object.keys(data).length;
 
   if (fase === "grupos") {
-
-    const refGen = doc(db, "predicciones", uid, "general", "datos");
-    const snapGen = await getDoc(refGen);
+    const dataGen = cachePredicciones["general"] || {};
 
     let totalGeneral = 0;
+    if (dataGen.ganador) totalGeneral++;
+    if (dataGen.finalista) totalGeneral++;
 
-    if (snapGen.exists()) {
-      const dataGen = snapGen.data();
-
-      if (dataGen.ganador) totalGeneral++;
-      if (dataGen.finalista) totalGeneral++;
-    }
-
-    return (
-      total === totalPorFase.grupos &&
-      totalGeneral === 2
-    );
+    return total === totalPorFase.grupos && totalGeneral === 2;
   }
-
-  // ========================
-  // 3) RESTO DE FASES
-  // ========================
-
   return total === totalPorFase[fase];
 }
 
@@ -242,8 +226,7 @@ async function actualizarTarjetas() {
       }
       else {
 
-        const completa =
-          await prediccionCompleta(user.uid, fase);
+        const completa = prediccionCompletaLocal(fase);
 
         const cierre = fases[fase].bloqueadaDesde;
 

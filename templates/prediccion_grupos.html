@@ -615,9 +615,13 @@ function obtenerMejoresTerceros(grupos) {
     .map(t => t.equipo);
 }
 
-function calcularClasificacion(partidos) {
 
+
+function calcularClasificacion(partidos) {
   const tabla = {};
+  // ========================
+  // 1) CLASIFICACIÓN GENERAL
+  // ========================
 
   partidos.forEach(p => {
 
@@ -659,17 +663,103 @@ function calcularClasificacion(partidos) {
 
   });
 
-  return Object.entries(tabla)
+  let clasif = Object.entries(tabla)
     .map(([equipo, t]) => ({
       equipo,
       ...t,
       dg: t.gf - t.gc
-    }))
-    .sort((a, b) =>
-      b.pts - a.pts ||
-      b.dg - a.dg ||
-      b.gf - a.gf
-    );
+    }));
+
+  // ========================
+  // 2) ORDEN PRINCIPAL
+  // ========================
+
+  clasif.sort((a, b) =>
+    b.pts - a.pts ||
+    b.dg - a.dg ||
+    b.gf - a.gf
+  );
+
+  // ========================
+  // 3) DESEMPATE DIRECTO
+  // ========================
+
+  function desempateDirecto(grupoEmpatado) {
+
+    const equipos = grupoEmpatado.map(e => e.equipo);
+
+    const miniTabla = {};
+
+    partidos.forEach(p => {
+
+      if (!equipos.includes(p.Pais1) || !equipos.includes(p.Pais2)) return;
+
+      const g1 = p.g1;
+      const g2 = p.g2;
+
+      if (g1 === null || g2 === null) return;
+
+      if (!miniTabla[p.Pais1]) miniTabla[p.Pais1] = { pts:0, gf:0, gc:0 };
+      if (!miniTabla[p.Pais2]) miniTabla[p.Pais2] = { pts:0, gf:0, gc:0 };
+
+      miniTabla[p.Pais1].gf += g1;
+      miniTabla[p.Pais1].gc += g2;
+
+      miniTabla[p.Pais2].gf += g2;
+      miniTabla[p.Pais2].gc += g1;
+
+      if (g1 > g2) miniTabla[p.Pais1].pts += 3;
+      else if (g2 > g1) miniTabla[p.Pais2].pts += 3;
+      else {
+        miniTabla[p.Pais1].pts++;
+        miniTabla[p.Pais2].pts++;
+      }
+
+    });
+
+    return grupoEmpatado.sort((a, b) => {
+
+      const A = miniTabla[a.equipo] || { pts:0, gf:0, gc:0 };
+      const B = miniTabla[b.equipo] || { pts:0, gf:0, gc:0 };
+
+      const dgA = A.gf - A.gc;
+      const dgB = B.gf - B.gc;
+
+      return (
+        B.pts - A.pts ||
+        dgB - dgA ||
+        B.gf - A.gf
+      );
+    });
+  }
+
+  // ========================
+  // 4) APLICAR DESEMPATES
+  // ========================
+  for (let i = 0; i < clasif.length; i++) {
+
+    let j = i;
+
+    // detectar bloque empatado
+    while (
+      j < clasif.length &&
+      clasif[i].pts === clasif[j].pts
+    ) {
+      j++;
+    }
+
+    if (j - i > 1) {
+      const subgrupo = clasif.slice(i, j);
+      const ordenado = desempateDirecto(subgrupo);
+      for (let k = 0; k < ordenado.length; k++) {
+        clasif[i + k] = ordenado[k];
+      }
+    }
+
+    i = j - 1;
+  }
+
+  return clasif;
 }
 
 
@@ -719,29 +809,6 @@ function crearTablaClasificacion(partidos, mejoresTerceros = []) {
   return table;
 }
 
-// guardarBtn.onclick = async () => {
-//   const user = auth.currentUser;
-//   if (!user) {
-//     alert("Debes iniciar sesión");
-//     return;
-//   }
-//   const data = {};
-//   predicciones.forEach(p => {
-//     if (p.g1 !== null && p.g2 !== null) {
-//       data[p.Numero] = {
-//         g1: p.g1,
-//         g2: p.g2
-//       };
-//     }
-//   });
-
-//   await setDoc(
-//     doc(db, "predicciones", user.uid),
-//     data
-//   );
-
-//   alert("Predicción guardada");
-// };
 
 guardarBtn.onclick = async () => {
 
