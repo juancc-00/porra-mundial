@@ -186,3 +186,24 @@ body {
   cursor: pointer;
 
 }
+
+.partido {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #2c3a5c;
+}
+
+.bandera {
+  width: 28px;
+}
+
+.equipo {
+  text-align: right;
+}
+
+.equipo.derecha {
+  text-align: left;
+}

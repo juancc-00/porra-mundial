@@ -50,6 +50,20 @@
 
 <main class="container">
 
+  <div>
+  <div class="partido">
+    
+      <div class="equipo">Suecia</div>
+      <img class="bandera" src="https://flagcdn.com/w40/se.png">
+
+      <div id="resultado"></div>
+
+      <img class="bandera" src="https://flagcdn.com/w40/pl.png">
+      <div class="equipo derecha">Polonia</div>
+    </div>
+    <div id="info-update"></div>
+  </div>
+
   <img class="logo" src="../static/media/logo2.png">
 
   <!-- Cuenta atrás -->
@@ -62,7 +76,7 @@
 </main>
 
 
-
+<script src="../static/js/codigos_paises.js"></script>
 <script type="module">
 
 import { initializeApp } from 
@@ -105,6 +119,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// provisional: testing api wiki
+async function cargarPartidoWiki() {
+  const ref = doc(db, "matches", "suecia-polonia");
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  const resultado = document.getElementById("resultado");
+  resultado.textContent = data.result;
+
+  document.getElementById("info-update").textContent = `Última actualización: ${new Date(data.updatedAt.seconds*1000).toLocaleString()}`;
+  console.log(data.updatedAt);
+  
+}
+
+cargarPartidoWiki();
+
 
 let currentUser = null;
 

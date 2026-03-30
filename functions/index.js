@@ -10,6 +10,7 @@
 const {setGlobalOptions} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/https");
 const logger = require("firebase-functions/logger");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -30,3 +31,62 @@ setGlobalOptions({ maxInstances: 10 });
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
+
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const fetch = require("node-fetch");
+const cheerio = require("cheerio");
+
+admin.initializeApp();
+const db = admin.firestore();
+
+exports.updateMatch = onSchedule("every 15 minutes", async (event) => {
+    try {
+      // 1. Llamada a Wikipedia API
+      const url =
+        "https://es.wikipedia.org/w/api.php?action=parse&page=Anexo:Segunda_ronda_de_la_clasificación_de_UEFA_para_la_Copa_Mundial_de_Fútbol_de_2026&format=json";
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const html = data.parse.text["*"];
+
+      // 2. Cargar HTML con cheerio
+      const $ = cheerio.load(html);
+
+      let result = null;
+
+      // 3. Buscar tabla del partido
+      $("table").each((i, table) => {
+        const text = $(table).text();
+
+        if (
+          text.includes("Suecia") &&
+          text.includes("Polonia") &&
+          text.includes("31 de marzo")
+        ) {
+          // 4. Buscar marcador o "vs."
+          const scoreMatch = text.match(/\b\d{1,2}:\d{1,2}\b/);
+
+          if (scoreMatch && !text.includes("vs.")) {
+            result = scoreMatch[0];
+            } else {
+            result = "vs.";
+          }
+        }
+      });
+
+      console.log("Resultado encontrado:", result);
+
+      // 5. Guardar en Firestore
+      await db.collection("matches").doc("suecia-polonia").set({
+        result: result,
+        updatedAt: new Date(),
+      });
+
+      return null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  });
