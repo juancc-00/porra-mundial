@@ -61,5 +61,6 @@ JUAN:
 
 copiar layout de [aquí](https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures?country=&wtw-filter=ALL)
 
-A partir de 16avos -> meter cuadro
+- [ ] Meter acrónimos en vista calendario
+- [ ] cuadro a partir de eliminatoria
 
