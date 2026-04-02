@@ -134,6 +134,7 @@ let codigos_pais = {
 "Perú": "pe",
 "Polonia": "pl",
 "Portugal": "pt",
+"RD Congo": "cd",
 "Reino Unido": "gb",
 "República Checa": "cz",
 "República Dominicana": "do",
