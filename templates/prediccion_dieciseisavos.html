@@ -389,6 +389,7 @@ guardarBtn.onclick = async () => {
 
       if (p.g1 > p.g2) ganador = p.Pais1;
       else if (p.g2 > p.g1) ganador = p.Pais2;
+      // Importante: cambiar para que sea w en vez de ganador, w=0 si gana pais1, w=1 si gana pais2
       else ganador = p.ganador; // 🔥 clave
 
       data16[p.Numero] = {
