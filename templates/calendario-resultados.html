@@ -194,23 +194,103 @@
         });
     }
 
-    // --- Configurar FullCalendar ---
-    function inicializarCalendarioPlugin() {
-        const calendarEl = document.getElementById('calendarioPlugin');
-        calendarioInstancia = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            initialDate: '2026-06-11',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
-            },
-            events: eventosCalendario,
-            eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false }
-        });
-        calendarioInstancia.render();
+    const paises_abreviaturas = {
+        "México": "MEX",
+        "Suecia": "SUE",
+        "Estados Unidos": "USA",
+        "Canadá": "CAN",
+        "Argentina": "ARG",
+        "Brasil": "BRA",
+        "Colombia": "COL",
+        "Uruguay": "URU",
+        "Ecuador": "ECU",
+        "Paraguay": "PAR",
+        "España": "ESP",
+        "Francia": "FRA",
+        "Inglaterra": "ENG",
+        "Portugal": "POR",
+        "Bélgica": "BEL",
+        "Países Bajos": "NED",
+        "Alemania": "GER",
+        "Italia": "ITA",
+        "Croacia": "CRO",
+        "Suiza": "SUI",
+        "Dinamarca": "DEN",
+        "Austria": "AUT",
+        "Noruega": "NOR",
+        "República Checa": "CZE",
+        "Bosnia y Herzegovina": "BIH",
+        "Escocia": "SCO",
+        "Turquía": "TUR",
+        "Marruecos": "MAR",
+        "Senegal": "SEN",
+        "Egipto": "EGY",
+        "Costa de Marfil": "CIV",
+        "Nigeria": "NGA",
+        "Túnez": "TUN",
+        "Argelia": "ALG",
+        "Sudáfrica": "RSA",
+        "Ghana": "GHA",
+        "Cabo Verde": "CPV",
+        "RD Congo": "COD",
+        "Japón": "JPN",
+        "Corea del Sur": "KOR",
+        "Irán": "IRN",
+        "Australia": "AUS",
+        "Arabia Saudita": "KSA",
+        "Catar": "QAT",
+        "Irak": "IRQ",
+        "Uzbekistán": "UZB",
+        "Jordania": "JOR",
+        "Panamá": "PAN",
+        "Haití": "HAI",
+        "Curazao": "CUW",
+        "Nueva Zelanda": "NZL"
     }
+
+function inicializarCalendarioPlugin() {
+    const calendarEl = document.getElementById('calendarioPlugin');
+    
+    calendarioInstancia = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        initialDate: '2026-06-11',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        events: eventosCalendario,
+        eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+
+        eventContent: function(arg) {
+            // 1. Obtener la hora formateada (usa el eventTimeFormat que definiste arriba)
+            let hora = arg.timeText; 
+            
+            // 2. Procesar el título para cambiar nombres por siglas
+            let nuevoTitulo = arg.event.title;
+            Object.keys(paises_abreviaturas).forEach(pais => {
+                if (nuevoTitulo.includes(pais)) {
+                    // Usamos una expresión regular simple para cambiar todas las ocurrencias
+                    nuevoTitulo = nuevoTitulo.split(pais).join(paises_abreviaturas[pais]);
+                }
+            });
+
+            // 3. Devolver el HTML combinando ambos
+            // Creamos una estructura similar a la original de FullCalendar
+            return { 
+                html: `
+                    <div class="fc-event-main-frame">
+                        ${hora ? `<span class="fc-event-time" style="font-weight: bold; margin-right: 3px;">${hora}</span>` : ''}
+                        <span class="fc-event-title">${nuevoTitulo}</span>
+                    </div>
+                ` 
+            };
+        }
+    });
+    
+    calendarioInstancia.render();
+}
 
     // --- Lógica del botón (Solo muestra/oculta el calendario superior) ---
     document.getElementById('btnToggleVista').addEventListener('click', () => {
