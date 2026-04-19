@@ -164,7 +164,7 @@ async function getAllMatches() {
   });
 
 
-  console.log("Partidos leidos en wiki: \n")
+  // console.log("Partidos leidos en wiki: \n")
   // ordenar por id
   matches
     .filter((m) => m.id !== undefined)
@@ -180,9 +180,9 @@ async function getAllMatches() {
         p2: m.p2,
         fase: getFaseFromId(m.id)
       });
-      console.log(
-        `Match ${m.id}: ${m.team1} vs ${m.team2} | g1:${m.g1} g2:${m.g2} p1:${m.p1} p2:${m.p2}`
-      );
+      // console.log(
+      //   `Match ${m.id}: ${m.team1} vs ${m.team2} | g1:${m.g1} g2:${m.g2} p1:${m.p1} p2:${m.p2}`
+      // );
     });
 
   matchesGlobal = matchesLeidos;
@@ -270,34 +270,16 @@ function calcularPuntos(real, pred, fase) {
   };
 }
 
-async function obtenerPartidosNuevos(){
-  //Llama a getAllMatches para leer todos los partidos, y compara con la variable "procesados" de firestore 
+async function obtenerPartidosNuevos(matches, procesados){
+  //Toma los partidos sacados de getAllMatches y compara con la variable "procesados" de firestore 
   // para obtener los partidos que deben procesarse en esta ejecución
-  const db = admin.firestore();
-  // 1. Obtener partidos
-  const matches = await getAllMatches();
 
-  // 2. Leer procesados
-  const procDoc = await db.collection("config").doc("procesados").get();
-
-  let procesados = [];
-  if (procDoc.exists) {
-    procesados = procDoc.data().ids || [];
-  }
-
-  console.log("Partidos ya procesados: ", procesados)
-
-  // 3. Filtrar partidos con resultado y no procesados
+  // Filtrar partidos con resultado y no procesados
   const partidosNuevos = matches.filter(m =>
     m.g1 !== null &&
     m.g2 !== null &&
     !procesados.includes(m.id)
   );
-
-  if (partidosNuevos.length === 0) {
-    console.log("No hay partidos nuevos");
-    return;
-  }
 
   console.log("Partidos nuevos: ", partidosNuevos)
   return partidosNuevos;
@@ -306,7 +288,7 @@ async function obtenerPartidosNuevos(){
 
 async function actualizarActividad(partidosNuevos) {
   const db = admin.firestore();
-  const now = new Date().toISOString();
+    
 
   const porrasSnap = await db.collection("porras").get();
 
@@ -369,9 +351,18 @@ async function actualizarActividad(partidosNuevos) {
   // Para evitar duplicar por partido
   let controlUsuarioPartido = new Set();
 
+  const fechaFormateada = new Date().toLocaleString("es-ES", {
+    timeZone: "Europe/Madrid",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
   // Procesar porras
   for (let porra of porras) {
-    let texto = `## 🕒 ${now}\n\n`;
+    
+    let texto = `## 🕒 ${fechaFormateada}\n\n`;
 
     for (let match of partidosNuevos) {
       const { id, fase, g1, g2, p1, p2, team1, team2 } = match;
@@ -382,6 +373,12 @@ async function actualizarActividad(partidosNuevos) {
       if (p2 !== null) texto += `(${p2}) `;
       texto += `${g2} ${team2}\n\n`;
 
+      // 🔥 Leer desglose existente de la porra (una sola vez por porra)
+      const refPorra = db.collection("porras").doc(porra.id);
+      const porraDoc = await refPorra.get();
+      const dataPorra = porraDoc.data() || {};
+
+      let desglose = dataPorra.desglose_puntos || {};
       for (let uid of porra.miembros) {
         const user = usersMap[uid];
         const pred = predicciones[uid]?.[fase]?.[id];
@@ -402,6 +399,7 @@ async function actualizarActividad(partidosNuevos) {
         } else {
           texto += `${user.nombre}: No ha obtenido ningún punto. \n`;
         }
+
         // 🔥 CLAVE: evitar duplicar por usuario+partido
         const key = `${uid}_${id}`;
         if (!controlUsuarioPartido.has(key)) {
@@ -412,10 +410,23 @@ async function actualizarActividad(partidosNuevos) {
           }
 
           puntosPorUsuario[uid] += res.puntos;
-        
+
+          // 🔥 NUEVO: actualizar desglose
+          if (!desglose[uid]) {
+            desglose[uid] = {};
+          }
+
+          desglose[uid][id] = res.puntos; // id = partido
         }
       }
 
+      // 🔥 Guardar desglose actualizado (una sola escritura)
+      await refPorra.set(
+        {
+          desglose_puntos: desglose
+        },
+        { merge: true }
+      );
       texto += `\n`;
       console.log("Porra: ", porra.nombre, texto);
     }
@@ -444,18 +455,165 @@ async function actualizarActividad(partidosNuevos) {
   await batch.commit();
 }
 
+const mapaCruces = {
+  73: { nextMatchId: 90, slot: "Pais1" },
+  74: { nextMatchId: 89, slot: "Pais1" },
+  75: { nextMatchId: 90, slot: "Pais2" },
+  76: { nextMatchId: 91, slot: "Pais1" },
+  77: { nextMatchId: 89, slot: "Pais2" },
+  78: { nextMatchId: 91, slot: "Pais2" },
+  79: { nextMatchId: 92, slot: "Pais1" },
+  80: { nextMatchId: 92, slot: "Pais2" },
+  81: { nextMatchId: 94, slot: "Pais1" },
+  82: { nextMatchId: 94, slot: "Pais2" },
+  83: { nextMatchId: 93, slot: "Pais1" },
+  84: { nextMatchId: 93, slot: "Pais2" },
+  85: { nextMatchId: 96, slot: "Pais1" },
+  86: { nextMatchId: 95, slot: "Pais1" },
+  87: { nextMatchId: 96, slot: "Pais2" },
+  88: { nextMatchId: 95, slot: "Pais2" },
+
+  89: { nextMatchId: 97, slot: "Pais1" },
+  90: { nextMatchId: 97, slot: "Pais2" },
+  91: { nextMatchId: 99, slot: "Pais1" },
+  92: { nextMatchId: 99, slot: "Pais2" },
+  93: { nextMatchId: 98, slot: "Pais1" },
+  94: { nextMatchId: 98, slot: "Pais2" },
+  95: { nextMatchId: 100, slot: "Pais1" },
+  96: { nextMatchId: 100, slot: "Pais2" },
+
+  97: { nextMatchId: 101, slot: "Pais1" },
+  98: { nextMatchId: 101, slot: "Pais2" },
+  99: { nextMatchId: 102, slot: "Pais1" },
+  100: { nextMatchId: 102, slot: "Pais2" },
+
+  // semifinales
+  101: {
+    final: { matchId: 104, slot: "Pais1" },
+    tercer: { matchId: 103, slot: "Pais1" }
+  },
+  102: {
+    final: { matchId: 104, slot: "Pais2" },
+    tercer: { matchId: 103, slot: "Pais2" }
+  }
+};
+
+
+function getGanadorPerdedor(match) {
+  const { team1, team2, g1, g2, p1, p2 } = match;
+  let ganador, perdedor;
+  if (g1 > g2) {
+    ganador = team1;
+    perdedor = team2;
+  } else if (g2 > g1) {
+    ganador = team2;
+    perdedor = team1;
+  } else {
+    // empate → penaltis
+    if (p1 > p2) {
+      ganador = team1;
+      perdedor = team2;
+    } else {
+      ganador = team2;
+      perdedor = team1;
+    }
+  }
+  return { ganador, perdedor };
+}
+
+
+async function actualizarPartidosReales(partidosNuevos) {
+  const db = admin.firestore();
+  const batch = db.batch();
+
+  for (let match of partidosNuevos) {
+    const { id, g1, g2, p1, p2, fase } = match;
+
+    const ref = db.collection("partidos").doc(String(id));
+
+    // 1️⃣ Actualizar resultado
+    batch.update(ref, {
+      g1,
+      g2,
+      p1,
+      p2
+    });
+
+    // 2️⃣ Si NO es eliminatoria → skip
+    if (fase === "grupos" || fase === "tercer" || fase === "final") {
+      continue;
+    }
+
+    // 3️⃣ Calcular ganador/perdedor
+    const { ganador, perdedor } = getGanadorPerdedor(match);
+
+    const config = mapaCruces[id];
+    if (!config) continue;
+
+    // 🔥 CASO NORMAL (octavos, cuartos, etc)
+    if (config.nextMatchId) {
+      const nextRef = db.collection("partidos").doc(String(config.nextMatchId));
+
+      batch.update(nextRef, {
+        [config.slot]: ganador
+      });
+    }
+
+    // 🔥 CASO SEMIFINALES
+    if (config.final && config.tercer) {
+      const finalRef = db.collection("partidos").doc(String(config.final.matchId));
+      const tercerRef = db.collection("partidos").doc(String(config.tercer.matchId));
+
+      // ganador → final
+      batch.update(finalRef, {
+        [config.final.slot]: ganador
+      });
+
+      // perdedor → tercer puesto
+      batch.update(tercerRef, {
+        [config.tercer.slot]: perdedor
+      });
+    }
+  }
+
+  await batch.commit();
+}
+
 
 async function main(){
-  const partidosNuevos = await obtenerPartidosNuevos();
+
+  const db = admin.firestore();
+  // 1. Obtener partidos
+  const matches = await getAllMatches();
+
+  // 2. Leer procesados
+  const procDoc = await db.collection("config").doc("procesados").get();
+
+  let procesados = [];
+  if (procDoc.exists) {
+    procesados = procDoc.data().ids || [];
+  }
+
+  console.log("Partidos ya procesados: ", procesados);
+
+  const partidosNuevos = await obtenerPartidosNuevos(matches, procesados);
+  console.log(partidosNuevos);
+
+  if (partidosNuevos.length === 0) {
+    console.log("No hay partidos nuevos");
+    return;
+  }
+
+  actualizarPartidosReales(partidosNuevos);
   actualizarActividad(partidosNuevos);
 
-  // const nuevosIds = partidosNuevos.map(p => p.id);
-  // // Evitar duplicados
-  // const actualizados = [...new Set([...procesados, ...nuevosIds])];
+  // Añadir partidos procesados a la variable de firestore
+  const nuevosIds = partidosNuevos.map(p => p.id);
+  const actualizados = [...new Set([...procesados, ...nuevosIds])];
 
-  // await db.collection("config").doc("procesados").set({
-  //   ids: actualizados
-  // });
+  await db.collection("config").doc("procesados").set({
+    ids: actualizados
+  });
 }
 
 main();
