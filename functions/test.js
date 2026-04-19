@@ -75,6 +75,19 @@ function parseFecha(fechaStr) {
 //         return `${date.getDate()} de ${meses[date.getMonth()]} de ${date.getFullYear()}`;
 //     }
 
+function getFaseFromId(id) {
+  if (id >= 1 && id <= 72) return "grupos";
+  if (id >= 73 && id <= 88) return "dieciseisavos";
+  if (id >= 89 && id <= 96) return "octavos";
+  if (id >= 97 && id <= 100) return "cuartos";
+  if (id === 101 || id === 102) return "semifinales";
+  if (id === 103) return "tercer";
+  if (id === 104) return "final";
+  return null;
+}
+
+let matchesGlobal = [];
+
 async function getAllMatches() {
   // Esta función lee de la página de Wikipedia, detecta todos los partidos y extrae los resultados
   // Además, asigna a cada partido su ID, y devuelve todos los partidos con ID y resultado según Wikipedia
@@ -95,6 +108,7 @@ async function getAllMatches() {
   const $ = cheerio.load(html);
 
   let matches = [];
+  let matchesLeidos = [];
 
   $("table.vevent").each((i, table) => {
     const tds = $(table).find("td");
@@ -149,15 +163,30 @@ async function getAllMatches() {
     });
   });
 
+
+  console.log("Partidos leidos en wiki: \n")
   // ordenar por id
   matches
     .filter((m) => m.id !== undefined)
     .sort((a, b) => a.id - b.id)
     .forEach((m) => {
+      matchesLeidos.push({
+        id: m.id,
+        team1: m.team1,
+        team2: m.team2,
+        g1: m.g1,
+        g2: m.g2,
+        p1: m.p1,
+        p2: m.p2,
+        fase: getFaseFromId(m.id)
+      });
       console.log(
         `Match ${m.id}: ${m.team1} vs ${m.team2} | g1:${m.g1} g2:${m.g2} p1:${m.p1} p2:${m.p2}`
       );
     });
+
+  matchesGlobal = matchesLeidos;
+  return matchesLeidos;
 }
 
 const POINTS = {
@@ -241,13 +270,44 @@ function calcularPuntos(real, pred, fase) {
   };
 }
 
+async function obtenerPartidosNuevos(){
+  //Llama a getAllMatches para leer todos los partidos, y compara con la variable "procesados" de firestore 
+  // para obtener los partidos que deben procesarse en esta ejecución
+  const db = admin.firestore();
+  // 1. Obtener partidos
+  const matches = await getAllMatches();
+
+  // 2. Leer procesados
+  const procDoc = await db.collection("config").doc("procesados").get();
+
+  let procesados = [];
+  if (procDoc.exists) {
+    procesados = procDoc.data().ids || [];
+  }
+
+  console.log("Partidos ya procesados: ", procesados)
+
+  // 3. Filtrar partidos con resultado y no procesados
+  const partidosNuevos = matches.filter(m =>
+    m.g1 !== null &&
+    m.g2 !== null &&
+    !procesados.includes(m.id)
+  );
+
+  if (partidosNuevos.length === 0) {
+    console.log("No hay partidos nuevos");
+    return;
+  }
+
+  console.log("Partidos nuevos: ", partidosNuevos)
+  return partidosNuevos;
+}
+
 
 async function actualizarActividad(partidosNuevos) {
   const db = admin.firestore();
-
   const now = new Date().toISOString();
 
-  // 1. Leer todas las porras
   const porrasSnap = await db.collection("porras").get();
 
   let porras = [];
@@ -256,13 +316,12 @@ async function actualizarActividad(partidosNuevos) {
   porrasSnap.forEach(doc => {
     const data = doc.data();
     porras.push({ id: doc.id, ...data });
-
     data.miembros.forEach(uid => userSet.add(uid));
   });
 
   const userIds = Array.from(userSet);
 
-  // 2. Leer usuarios UNA VEZ
+  // Leer usuarios
   const usersSnap = await db.getAll(
     ...userIds.map(uid => db.collection("usuarios").doc(uid))
   );
@@ -272,11 +331,8 @@ async function actualizarActividad(partidosNuevos) {
     usersMap[doc.id] = doc.data();
   });
 
-  console.log(usersMap);
-
-  // 3. Leer predicciones UNA VEZ por usuario + fase
-  let predicciones = {}; // { uid: { fase: { matchId: pred } } }
-
+  // Predicciones
+  let predicciones = {};
   const fases = [...new Set(partidosNuevos.map(p => p.fase))];
 
   for (let uid of userIds) {
@@ -294,15 +350,12 @@ async function actualizarActividad(partidosNuevos) {
       predicciones[uid][fase] = {};
 
       if (snap.exists) {
-        const data = snap.data(); // { "57": {g1, g2, w}, ... }
+        const data = snap.data();
 
-        // ⚡ SOLO nos quedamos con los partidos necesarios
         for (let match of partidosNuevos) {
           if (match.fase !== fase) continue;
 
           const pred = data[match.id];
-          console.log(pred);
-
           if (pred) {
             predicciones[uid][fase][match.id] = pred;
           }
@@ -311,27 +364,27 @@ async function actualizarActividad(partidosNuevos) {
     }
   }
 
-  console.log(predicciones);
+  // Acumulador de puntos por usuario
+  let puntosPorUsuario = {}; 
+  // Para evitar duplicar por partido
+  let controlUsuarioPartido = new Set();
 
-  // 4. Procesar porras
+  // Procesar porras
   for (let porra of porras) {
     let texto = `## 🕒 ${now}\n\n`;
 
     for (let match of partidosNuevos) {
       const { id, fase, g1, g2, p1, p2, team1, team2 } = match;
 
-      // Cabecera partido
       texto += `**Final del partido:** ${team1} ${g1}`;
       if (p1 !== null) texto += ` (${p1})`;
       texto += ` - `;
       if (p2 !== null) texto += `(${p2}) `;
       texto += `${g2} ${team2}\n\n`;
 
-      // Jugadores
       for (let uid of porra.miembros) {
         const user = usersMap[uid];
-        const pred =
-          predicciones[uid]?.[fase]?.[id];
+        const pred = predicciones[uid]?.[fase]?.[id];
 
         if (!pred) continue;
 
@@ -341,16 +394,32 @@ async function actualizarActividad(partidosNuevos) {
           fase
         );
 
+        console.log("Puntos sumados: ")
+        console.log(uid, res);
+
         if (res.puntos > 0) {
           texto += `${user.nombre}: +${res.puntos} puntos por ${res.aciertos.join(", ")}\n`;
+        } else {
+          texto += `${user.nombre}: No ha obtenido ningún punto. \n`;
+        }
+        // 🔥 CLAVE: evitar duplicar por usuario+partido
+        const key = `${uid}_${id}`;
+        if (!controlUsuarioPartido.has(key)) {
+          controlUsuarioPartido.add(key);
+
+          if (!puntosPorUsuario[uid]) {
+            puntosPorUsuario[uid] = 0;
+          }
+
+          puntosPorUsuario[uid] += res.puntos;
+        
         }
       }
 
       texto += `\n`;
-      console.log(texto);
+      console.log("Porra: ", porra.nombre, texto);
     }
 
-    // 5. Guardar log (subcolección)
     await db
       .collection("actividad")
       .doc(porra.id)
@@ -360,20 +429,48 @@ async function actualizarActividad(partidosNuevos) {
         texto
       });
   }
+
+  // 🔥 ESCRITURA OPTIMIZADA (una vez por usuario)
+  const batch = db.batch();
+
+  for (let uid in puntosPorUsuario) {
+    const ref = db.collection("usuarios").doc(uid);
+
+    batch.update(ref, {
+      puntos: admin.firestore.FieldValue.increment(puntosPorUsuario[uid])
+    });
+  }
+
+  await batch.commit();
 }
 
-actualizarActividad([
-  {
-    id: "1",
-    fase: "grupos",
-    g1: 2,
-    g2: 1,
-    p1: null,
-    p2: null,
-    team1: "México",
-    team2: "Sudáfrica"
-  }
-]);
+
+async function main(){
+  const partidosNuevos = await obtenerPartidosNuevos();
+  actualizarActividad(partidosNuevos);
+
+  // const nuevosIds = partidosNuevos.map(p => p.id);
+  // // Evitar duplicados
+  // const actualizados = [...new Set([...procesados, ...nuevosIds])];
+
+  // await db.collection("config").doc("procesados").set({
+  //   ids: actualizados
+  // });
+}
+
+main();
+// actualizarActividad([
+//   {
+//     id: "1",
+//     fase: "grupos",
+//     g1: 2,
+//     g2: 1,
+//     p1: null,
+//     p2: null,
+//     team1: "México",
+//     team2: "Sudáfrica"
+//   }
+// ]);
 
 // const real = { g1: 3, g2: 3, p1: 1, p2: 0 };
 // const pred = { g1: 2, g2: 2, w: 0 };
