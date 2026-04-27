@@ -68,17 +68,18 @@ TODO:
 ## Porra
 
 (Juan)
+- [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [ ] Crear diccionario IDs -> orden cronologico
 - [ ] Quitar brute force a todo
 - [ ] Leer desglose_puntos, con ello actualizar: 
     - [X] Clasificación
     - [X] Grafica progreso
-    - [ ] Sección partidos con "+ n" al lado de prediccion 
+    - [X] Sección partidos con "+ n" al lado de prediccion 
 - [ ] Leer logs + logica (5 ultimos) para actualizar actividad
-- [ ] Sección partidos: 
-    - [ ] Cambiar nombres de paises por abreviaturas
-    - [ ] Hacer logica de procesados + 3 partidos (diccionario IDs -> orden cronologico)
-    - [ ] Leer predicciones + leer partidos y displayear en las tarjetas
+- [X] Sección partidos: 
+    - [X] Cambiar nombres de paises por abreviaturas
+    - [X] Hacer logica de procesados + 3 partidos (diccionario IDs -> orden cronologico)
+    - [X] Leer predicciones + leer partidos y displayear en las tarjetas
     - [ ] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
 - [ ] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
 
