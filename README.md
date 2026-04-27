@@ -36,32 +36,11 @@ Colecciones:
 
 TODO:
 
-- Decidir: 
-	- Qué se predice
-	- Cuántos puntos se suma por cada cosa
-	- Criterio prorrogas y penalties
-
-ALBERTO: 
-- Terminar paginas de predicciones
-- Lógica de activar/bloquear predicciones
-- Versión de paginas empezó/no empezó el mundial
-- Lógica API futbol
-- Meter 'Jugados' en la tabla de clasificación de las predicciones
-- Separador por jornadas en predicciones (2+2+2 partidos)
-
-JUAN: 
-- Info no loggeado (clasificación, cuadro, resultados y calendario + vista de calendario): verificar reglas desempates y clasificación. 
-- Página de porra: 
-	- Leaderboard con función que actualiza
-	- Pantalla de logs
-	- Gráfica progresión clasi
-	- Jugadores clickables -> pagina de sus predicciones/puntos sumados
-
 ## GENERAL
 
 - [ ] Trabajar en seguridad del backend (firebase bloqueado?)
 - [ ] Estética
-- [ ] Eliminar clasificación
+- [X] Eliminar clasificación
 - [ ] Nombres y distribución de botones, etc
 - [ ] Optimizar para movil
 
@@ -92,8 +71,8 @@ JUAN:
 - [ ] Crear diccionario IDs -> orden cronologico
 - [ ] Quitar brute force a todo
 - [ ] Leer desglose_puntos, con ello actualizar: 
-    - [ ] Clasificación
-    - [ ] Grafica progreso
+    - [X] Clasificación
+    - [X] Grafica progreso
     - [ ] Sección partidos con "+ n" al lado de prediccion 
 - [ ] Leer logs + logica (5 ultimos) para actualizar actividad
 - [ ] Sección partidos: 
