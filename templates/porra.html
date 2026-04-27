@@ -65,7 +65,7 @@
       </section>
 
       <section class="panel-box chart-section">
-        <h2>Progresión del Grupo</h2>
+        <h2>Progresión de la porra</h2>
         <div class="chart-container">
           <canvas id="graficoProgresion"></canvas>
         </div>
@@ -79,7 +79,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script type="module">
-
   import {
     getFirestore,
     doc,
@@ -94,6 +93,60 @@
     getAuth,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const paises_abreviaturas = {
+        "México": "MEX",
+        "Suecia": "SUE",
+        "Estados Unidos": "USA",
+        "Canadá": "CAN",
+        "Argentina": "ARG",
+        "Brasil": "BRA",
+        "Colombia": "COL",
+        "Uruguay": "URU",
+        "Ecuador": "ECU",
+        "Paraguay": "PAR",
+        "España": "ESP",
+        "Francia": "FRA",
+        "Inglaterra": "ENG",
+        "Portugal": "POR",
+        "Bélgica": "BEL",
+        "Países Bajos": "NED",
+        "Alemania": "GER",
+        "Italia": "ITA",
+        "Croacia": "CRO",
+        "Suiza": "SUI",
+        "Dinamarca": "DEN",
+        "Austria": "AUT",
+        "Noruega": "NOR",
+        "República Checa": "CZE",
+        "Bosnia y Herzegovina": "BIH",
+        "Escocia": "SCO",
+        "Turquía": "TUR",
+        "Marruecos": "MAR",
+        "Senegal": "SEN",
+        "Egipto": "EGY",
+        "Costa de Marfil": "CIV",
+        "Nigeria": "NGA",
+        "Túnez": "TUN",
+        "Argelia": "ALG",
+        "Sudáfrica": "RSA",
+        "Ghana": "GHA",
+        "Cabo Verde": "CPV",
+        "RD Congo": "COD",
+        "Japón": "JPN",
+        "Corea del Sur": "KOR",
+        "Irán": "IRN",
+        "Australia": "AUS",
+        "Arabia Saudita": "KSA",
+        "Catar": "QAT",
+        "Irak": "IRQ",
+        "Uzbekistán": "UZB",
+        "Jordania": "JOR",
+        "Panamá": "PAN",
+        "Haití": "HAI",
+        "Curazao": "CUW",
+        "Nueva Zelanda": "NZL"
+    }
 
   const firebaseConfig = {
     apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
@@ -112,7 +165,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Variable global para destruir el gráfico anterior si se recarga
   let chartProgresion = null;
 
   onAuthStateChanged(auth, async (user) => {
@@ -137,48 +189,122 @@
     document.getElementById("nombrePorra").textContent = dataPorra.nombre;
     document.getElementById("idPorra").textContent = dataPorra.ID;
 
-    // Obtenemos el desglose de puntos (si no existe, creamos un objeto vacío)
     const desglose_puntos = dataPorra.desglose_puntos || {};
 
-    // 1. Cargar la información y predicciones de TODOS los miembros del grupo
+    const configRef = doc(db, "config", "procesados");
+    const configSnap = await getDoc(configRef);
+    const idsProcesados = configSnap.exists() ? configSnap.data().ids : [];
+
     const miembrosData = [];
-    for (const uid of dataPorra.miembros) {
-      const userRef = doc(db, "usuarios", uid);
-      const userSnap = await getDoc(userRef);
-      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
+      for (const uid of dataPorra.miembros) {
+        const userRef = doc(db, "usuarios", uid);
+        const userSnap = await getDoc(userRef);
+        const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
 
-      const predRef = doc(db, "predicciones", uid);
-      const predSnap = await getDoc(predRef);
-      const predicciones = predSnap.exists() ? predSnap.data() : {};
+        // CAMBIO CLAVE: Buscamos la ruta Colección -> Documento -> Subcolección -> Documento
+        const predRef = doc(db, "predicciones", uid, "grupos", "datos");
+        const predSnap = await getDoc(predRef);
+        
+        // Si el documento existe, tomamos directamente sus datos (que contendrán "1", "2", etc.)
+        const predicciones = predSnap.exists() ? predSnap.data() : {};
 
-      miembrosData.push({ uid, nombre, predicciones });
+        miembrosData.push({ 
+          uid, 
+          nombre, 
+          predicciones, 
+          ptsPorPartido: desglose_puntos[uid] || {} 
+        });
     }
 
-    // 2. Calcular los puntos totales y acumulados
     const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
-
-    // 3. Renderizar Clasificación y Gráfico
     renderizarClasificacion(miembrosData);
     renderizarGrafico(miembrosData, partidosJugados);
 
-    // 4. Cargar todos los partidos (Galería)
     const partidosSnap = await getDocs(collection(db, "partidos"));
-    let partidos = [];
-    partidosSnap.forEach(doc => partidos.push({ idDoc: doc.id, ...doc.data() }));
+    let todosLosPartidos = [];
+    partidosSnap.forEach(doc => todosLosPartidos.push({ idDoc: doc.id, ...doc.data() }));
 
-    partidos.sort((a, b) => {
+    todosLosPartidos.sort((a, b) => {
       const fechaA = a.Fecha.split("/").reverse().join("");
       const fechaB = b.Fecha.split("/").reverse().join("");
       if (fechaA === fechaB) return a.Hora.localeCompare(b.Hora);
       return fechaA.localeCompare(fechaB);
     });
 
-    renderizarGaleria(partidos, miembrosData);
+    const partidosPasados = todosLosPartidos.filter(p => idsProcesados.includes(p.Numero.toString()));
+    const partidosFuturos = todosLosPartidos.filter(p => !idsProcesados.includes(p.Numero.toString()));
+    const proximos3 = partidosFuturos.slice(0, 3);
+    
+    const partidosAMostrar = [...partidosPasados, ...proximos3];
+
+    renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
   }
 
-  // --- NUEVA FUNCIÓN: Procesar Puntos ---
+  function renderizarGaleria(partidos, miembros, idsProcesados) {
+    const contenedor = document.getElementById("contenedorGaleria");
+    contenedor.innerHTML = "";
+
+    partidos.forEach(p => {
+      const pIdStr = p.Numero.toString();
+      const esPasado = idsProcesados.includes(pIdStr);
+      
+      const abr1 = paises_abreviaturas[p.Pais1] || p.Pais1;
+      const abr2 = paises_abreviaturas[p.Pais2] || p.Pais2;
+
+      const codPais1 = codigos_pais && codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+      const codPais2 = codigos_pais && codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
+
+      const cabeceraPartido = `${p.Fecha} - ${p.Hora} | ${p.Fase}`;
+      
+      const separadorEquipos = esPasado ? `${p.g1} : ${p.g2}` : "vs";
+
+      const card = document.createElement("div");
+      card.className = "partido-card";
+
+      let htmlContent = `
+      <div class="partido-info-top">
+        ${cabeceraPartido}
+      </div>
+      <div class="partido-equipos">
+        <span><img src="${codPais1}" class="bandera-card"> ${abr1}</span>
+        <span style="font-weight:bold; margin: 0 8px;">${separadorEquipos}</span>
+        <span>${abr2} <img src="${codPais2}" class="bandera-card"></span>
+      </div>
+      <div class="predicciones-grupo">
+        <h4 style="margin: 5px 0; color:#444; font-size: 0.85em;">Predicciones:</h4>
+    `;
+
+      miembros.forEach(miembro => {
+        const pred = miembro.predicciones[pIdStr] ?? miembro.predicciones[p.Numero];
+        console.log(pred)
+        let textoPred = "-";
+        
+        if (pred && pred.g1 !== undefined && pred.g2 !== undefined) {
+          textoPred = `${pred.g1} - ${pred.g2}`;
+        }
+
+        let badgePuntos = "";
+        if (esPasado) {
+          const pts = miembro.ptsPorPartido[pIdStr] ?? miembro.ptsPorPartido[p.Numero] ?? 0;
+          const color = pts > 0 ? 'green' : '#999';
+          badgePuntos = `<span style="color:${color}; font-weight:bold; font-size:0.8em; margin-left:5px;">(+${pts})</span>`;
+        }
+
+        htmlContent += `
+        <div class="prediccion-fila">
+          <span style="font-size:0.85em;">${miembro.nombre}</span>
+          <span class="resultado-pred">${textoPred} ${badgePuntos}</span>
+        </div>
+      `;
+      });
+
+      htmlContent += `</div>`;
+      card.innerHTML = htmlContent;
+      contenedor.appendChild(card);
+    });
+  }
+
   function procesarPuntos(miembrosData, desglose_puntos) {
-    // a. Obtener una lista única y ordenada de los IDs de los partidos jugados
     let partidosSet = new Set();
     for (const uid in desglose_puntos) {
       for (const partidoId in desglose_puntos[uid]) {
@@ -187,40 +313,28 @@
     }
     const partidosOrdenados = Array.from(partidosSet).sort((a, b) => a - b);
 
-    // b. Calcular totales y el histórico acumulado para el gráfico
     miembrosData.forEach(miembro => {
       const ptsUsuario = desglose_puntos[miembro.uid] || {};
       let total = 0;
-      let acumulado = [0]; // Todos empiezan en 0 puntos en el gráfico
-
+      let acumulado = [0];
       partidosOrdenados.forEach(pId => {
-        // Sumamos los puntos de ese partido (si no jugó o falló, es 0)
-        total += (ptsUsuario[pId] || 0);
+        total += (ptsUsuario[pId.toString()] ?? ptsUsuario[pId] ?? 0);
         acumulado.push(total);
       });
-
-      // Guardamos estos datos dentro del objeto del miembro
       miembro.totalPuntos = total;
       miembro.datosGrafico = acumulado;
     });
-
     return partidosOrdenados;
   }
 
-  // --- NUEVA FUNCIÓN: Renderizar Clasificación ---
   function renderizarClasificacion(miembrosData) {
     const lista = document.getElementById("listaClasificacion");
-    lista.innerHTML = ""; // Limpiamos el HTML hardcodeado
-
-    // Ordenamos a los miembros por puntos de mayor a menor
+    lista.innerHTML = "";
     const clasificacion = [...miembrosData].sort((a, b) => b.totalPuntos - a.totalPuntos);
-
     clasificacion.forEach((miembro, index) => {
       const pos = index + 1;
       const li = document.createElement("li");
-      // Mantenemos tus clases top-1, top-2, etc.
-      li.className = `ranking-item top-${pos}`;
-      
+      li.className = `ranking-item top-${pos > 3 ? 'extra' : pos}`;
       li.innerHTML = `
         <div class="ranking-user"><span class="pos">${pos}</span> ${miembro.nombre}</div>
         <span class="pts">${miembro.totalPuntos} pts</span>
@@ -229,116 +343,37 @@
     });
   }
 
-  // --- ACTUALIZADA: Renderizar Gráfico ---
   function renderizarGrafico(miembrosData, partidosJugados) {
     const ctx = document.getElementById('graficoProgresion').getContext('2d');
-
-    // Eje X: Inicio + Partido 1, Partido 2... (según los que se hayan puntuado)
     const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P ${p}`));
+    const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40'];
+    const datasets = miembrosData.map((miembro, index) => ({
+      label: miembro.nombre,
+      data: miembro.datosGrafico,
+      borderColor: colores[index % colores.length],
+      backgroundColor: colores[index % colores.length],
+      tension: 0.3,
+      borderWidth: 2
+    }));
 
-    // Paleta de colores predefinida por si hay muchos usuarios
-    const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40', '#c9cbcf'];
-
-    // Mapeamos los datos de los miembros para que Chart.js los entienda
-    const datasets = miembrosData.map((miembro, index) => {
-      return {
-        label: miembro.nombre,
-        data: miembro.datosGrafico,
-        borderColor: colores[index % colores.length],
-        backgroundColor: colores[index % colores.length],
-        tension: 0.3,
-        borderWidth: index === 0 ? 3 : 2 // El primer usuario en la lista tiene línea más gruesa
-      };
-    });
-
-    const data = {
-      labels: labelsPartidos,
-      datasets: datasets
-    };
-
-    // Si ya existe un gráfico, lo destruimos para evitar solapamientos visuales de Canvas
-    if (chartProgresion) {
-      chartProgresion.destroy();
-    }
-
+    if (chartProgresion) chartProgresion.destroy();
     chartProgresion = new Chart(ctx, {
       type: 'line',
-      data: data,
-      options: {
-        responsive: true,
+      data: { labels: labelsPartidos, datasets: datasets },
+      options: { 
+        responsive: true, 
         maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Puntos Acumulados' }
-          },
-          x: {
-            title: { display: true, text: 'Partidos' }
-          }
-        },
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        interaction: { mode: 'nearest', axis: 'x', intersect: false }
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
       }
     });
   }
 
-  // --- La función renderizarGaleria y los eventos de scroll se mantienen igual ---
-  function renderizarGaleria(partidos, miembros) {
-    const contenedor = document.getElementById("contenedorGaleria");
-    contenedor.innerHTML = "";
-
-    partidos.forEach(p => {
-      const codPais1 = codigos_pais && codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
-      const codPais2 = codigos_pais && codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
-
-      const card = document.createElement("div");
-      card.className = "partido-card";
-
-      let htmlContent = `
-      <div class="partido-info-top">
-        ${p.Fecha} - ${p.Hora} | ${p.Fase}
-      </div>
-      <div class="partido-equipos">
-        <span><img src="${codPais1}" class="bandera-card"> ${p.Pais1}</span>
-        <span>vs</span>
-        <span>${p.Pais2} <img src="${codPais2}" class="bandera-card"></span>
-      </div>
-      <div class="predicciones-grupo">
-        <h4 style="margin-top:0; color:#444; font-size: 0.9em;">Predicciones del grupo:</h4>
-    `;
-
-      miembros.forEach(miembro => {
-        const predPartido = miembro.predicciones[p.Numero];
-        let textoPred = "-";
-        if (predPartido && predPartido.g1 !== undefined && predPartido.g2 !== undefined) {
-          textoPred = `${predPartido.g1} - ${predPartido.g2}`;
-        }
-
-        htmlContent += `
-        <div class="prediccion-fila">
-          <span>${miembro.nombre}</span>
-          <span class="resultado-pred">${textoPred}</span>
-        </div>
-      `;
-      });
-
-      htmlContent += `</div>`; 
-      card.innerHTML = htmlContent;
-      contenedor.appendChild(card);
-    });
-  }
-
   document.getElementById("btnScrollIzq").addEventListener("click", () => {
-    document.getElementById("contenedorGaleria").scrollBy({ left: -340, behavior: 'smooth' });
+    document.getElementById("contenedorGaleria").scrollBy({ left: -300, behavior: 'smooth' });
   });
-
   document.getElementById("btnScrollDer").addEventListener("click", () => {
-    document.getElementById("contenedorGaleria").scrollBy({ left: 340, behavior: 'smooth' });
+    document.getElementById("contenedorGaleria").scrollBy({ left: 300, behavior: 'smooth' });
   });
-
 </script>
 
 
