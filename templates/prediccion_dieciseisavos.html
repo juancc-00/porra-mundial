@@ -36,9 +36,6 @@
 
 </main>
 
-<button id="btnSimular">Simular fase eliminatoria</button>
-
-<div id="bracket" class="bracket hidden"></div>
 
 </body>
 
@@ -160,7 +157,7 @@ async function cargarPartidos16() {
   const partidos = [];
   snapshot.forEach(doc => {
     const p = doc.data();
-    if (p.Fase !== "Diesciesisavos de final") return;    //CAMBIAR POR "Diesciseisavos" cuando este correcto!!!
+    if (p.Fase !== "Dieciseisavos de final") return;    //CAMBIAR POR "Diesciseisavos" cuando este correcto!!!
     partidos.push(p);
   });
   partidos.sort((a, b) => parseFechaHora(a) - parseFechaHora(b));

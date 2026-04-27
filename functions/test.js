@@ -15,7 +15,13 @@ const fs = require("fs");
 //   projectId: "porra-mundial-91819",
 // });
 
-admin.initializeApp();
+// admin.initializeApp();
+const serviceAccount = require("./serviceAccount.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  projectId: "porra-mundial-91819"
+});
 const db = admin.firestore();
 
 // cargar JSON local
@@ -289,7 +295,6 @@ async function obtenerPartidosNuevos(matches, procesados){
 async function actualizarActividad(partidosNuevos) {
   const db = admin.firestore();
     
-
   const porrasSnap = await db.collection("porras").get();
 
   let porras = [];
