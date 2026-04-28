@@ -82,6 +82,9 @@ TODO:
     - [X] Leer predicciones + leer partidos y displayear en las tarjetas
     - [ ] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
 - [ ] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
+- [ ] Gestionar empate en clasificacion
+- [ ] Procesados no tienen por que estar en orden cronologico
+- [X] Tarjetas mas estrechas
 
 ## Calendario y resultados
 

@@ -30,7 +30,7 @@
 
       <div class="dashboard-grid">
         <section class="panel-box">
-          <h2>🏆 Clasificación</h2>
+          <h2>Clasificación</h2>
           <ul class="ranking-list" id="listaClasificacion">
             <li class="ranking-item top-1">
               <div class="ranking-user"><span class="pos">1</span> Juan</div><span class="pts">120 pts</span>
@@ -47,8 +47,8 @@
         <section class="panel-box">
           <h2>Actividad reciente</h2>
           <div class="logs-container" id="listaLogs">
-            <div class="log-item"><span class="log-time">Hace 2 horas</span>
-              <p>Comienza la fase de grupos</p>
+            <!-- <div class="log-item"><span class="log-time">Hace 2 horas</span>
+              <p>Comienza la fase de grupos</p> -->
             </div>
           </div>
         </section>
@@ -84,7 +84,10 @@
     doc,
     getDoc,
     collection,
-    getDocs
+    getDocs,
+    query,
+    orderBy,
+    limit
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -94,61 +97,29 @@
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const paises_abreviaturas = {
-        "México": "MEX",
-        "Suecia": "SUE",
-        "Estados Unidos": "USA",
-        "Canadá": "CAN",
-        "Argentina": "ARG",
-        "Brasil": "BRA",
-        "Colombia": "COL",
-        "Uruguay": "URU",
-        "Ecuador": "ECU",
-        "Paraguay": "PAR",
-        "España": "ESP",
-        "Francia": "FRA",
-        "Inglaterra": "ENG",
-        "Portugal": "POR",
-        "Bélgica": "BEL",
-        "Países Bajos": "NED",
-        "Alemania": "GER",
-        "Italia": "ITA",
-        "Croacia": "CRO",
-        "Suiza": "SUI",
-        "Dinamarca": "DEN",
-        "Austria": "AUT",
-        "Noruega": "NOR",
-        "República Checa": "CZE",
-        "Bosnia y Herzegovina": "BIH",
-        "Escocia": "SCO",
-        "Turquía": "TUR",
-        "Marruecos": "MAR",
-        "Senegal": "SEN",
-        "Egipto": "EGY",
-        "Costa de Marfil": "CIV",
-        "Nigeria": "NGA",
-        "Túnez": "TUN",
-        "Argelia": "ALG",
-        "Sudáfrica": "RSA",
-        "Ghana": "GHA",
-        "Cabo Verde": "CPV",
-        "RD Congo": "COD",
-        "Japón": "JPN",
-        "Corea del Sur": "KOR",
-        "Irán": "IRN",
-        "Australia": "AUS",
-        "Arabia Saudita": "KSA",
-        "Catar": "QAT",
-        "Irak": "IRQ",
-        "Uzbekistán": "UZB",
-        "Jordania": "JOR",
-        "Panamá": "PAN",
-        "Haití": "HAI",
-        "Curazao": "CUW",
-        "Nueva Zelanda": "NZL"
-    }
+  const paises_abreviaturas = {
+    "México": "MEX", "Suecia": "SUE", "Estados Unidos": "USA", "Canadá": "CAN",
+    "Argentina": "ARG", "Brasil": "BRA", "Colombia": "COL", "Uruguay": "URU",
+    "Ecuador": "ECU", "Paraguay": "PAR", "España": "ESP", "Francia": "FRA",
+    "Inglaterra": "ENG", "Portugal": "POR", "Bélgica": "BEL", "Países Bajos": "NED",
+    "Alemania": "GER", "Italia": "ITA", "Croacia": "CRO", "Suiza": "SUI",
+    "Dinamarca": "DEN", "Austria": "AUT", "Noruega": "NOR", "República Checa": "CZE",
+    "Bosnia y Herzegovina": "BIH", "Escocia": "SCO", "Turquía": "TUR", "Marruecos": "MAR",
+    "Senegal": "SEN", "Egipto": "EGY", "Costa de Marfil": "CIV", "Nigeria": "NGA",
+    "Túnez": "TUN", "Argelia": "ALG", "Sudáfrica": "RSA", "Ghana": "GHA", "Cabo Verde": "CPV",
+    "RD Congo": "COD", "Japón": "JPN", "Corea del Sur": "KOR", "Irán": "IRN",
+    "Australia": "AUS", "Arabia Saudita": "KSA", "Catar": "QAT", "Irak": "IRQ",
+    "Uzbekistán": "UZB", "Jordania": "JOR", "Panamá": "PAN", "Haití": "HAI",
+    "Curazao": "CUW", "Nueva Zelanda": "NZL"
+  };
 
-  const partidos_ordenados = {1: 1, 2: 2, 3: 3, 4: 4, 5: 8, 6: 7, 7: 5, 8: 6, 9: 10, 10: 11, 11: 9, 12: 12, 13: 14, 14: 16, 15: 13, 16: 15, 17: 17, 18: 18, 19: 19, 20: 20, 21: 23, 22: 22, 23: 21, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 32, 30: 30, 31: 29, 32: 31, 33: 35, 34: 33, 35: 34, 36: 36, 37: 38, 38: 39, 39: 37, 40: 40, 41: 43, 42: 42, 43: 41, 44: 44, 45: 47, 46: 45, 47: 46, 48: 48, 49: 51, 50: 52, 51: 49, 52: 50, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59, 60: 60, 61: 61, 62: 62, 63: 66, 64: 65, 65: 63, 66: 64, 67: 67, 68: 68, 69: 71, 70: 72, 71: 69, 72: 70, 73: 73, 74: 76, 75: 74, 76: 75, 77: 78, 78: 77, 79: 79, 80: 80, 81: 82, 82: 81, 83: 84, 84: 83, 85: 85, 86: 88, 87: 86, 88: 87, 89: 90, 90: 89, 91: 91, 92: 92, 93: 93, 94: 94, 95: 95, 96: 96, 97: 97, 98: 98, 99: 99, 100: 100, 101: 101, 102: 102, 103: 103, 104: 104}
+  const partidos_ordenados = {1: 1, 2: 2, 3: 3, 4: 4, 5: 8, 6: 7, 7: 5, 8: 6, 9: 10, 10: 11, 11: 9, 12: 12, 13: 14, 14: 16, 15: 13, 16: 15, 17: 17, 18: 18, 19: 19, 20: 20, 21: 23, 22: 22, 23: 21, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 32, 30: 30, 31: 29, 32: 31, 33: 35, 34: 33, 35: 34, 36: 36, 37: 38, 38: 39, 39: 37, 40: 40, 41: 43, 42: 42, 43: 41, 44: 44, 45: 47, 46: 45, 47: 46, 48: 48, 49: 51, 50: 52, 51: 49, 52: 50, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59, 60: 60, 61: 61, 62: 62, 63: 66, 64: 65, 65: 63, 66: 64, 67: 67, 68: 68, 69: 71, 70: 72, 71: 69, 72: 70, 73: 73, 74: 76, 75: 74, 76: 75, 77: 78, 78: 77, 79: 79, 80: 80, 81: 82, 82: 81, 83: 84, 84: 83, 85: 85, 86: 88, 87: 86, 88: 87, 89: 90, 90: 89, 91: 91, 92: 92, 93: 93, 94: 94, 95: 95, 96: 96, 97: 97, 98: 98, 99: 99, 100: 100, 101: 101, 102: 102, 103: 103, 104: 104};
+
+  // Mapa inverso para buscar eficientemente qué posición cronológica tiene cada ID de Firebase
+  const mapa_cronologico = {};
+  for (const [orden, idF] of Object.entries(partidos_ordenados)) {
+    mapa_cronologico[idF] = parseInt(orden);
+  }
 
   const firebaseConfig = {
     apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
@@ -191,6 +162,9 @@
     document.getElementById("nombrePorra").textContent = dataPorra.nombre;
     document.getElementById("idPorra").textContent = dataPorra.ID;
 
+    // --- CARGAR LOGS DE ACTIVIDAD RECIENTE ---
+    cargarLogsActividad(id);
+
     const desglose_puntos = dataPorra.desglose_puntos || {};
 
     const configRef = doc(db, "config", "procesados");
@@ -198,24 +172,21 @@
     const idsProcesados = configSnap.exists() ? configSnap.data().ids : [];
 
     const miembrosData = [];
-      for (const uid of dataPorra.miembros) {
-        const userRef = doc(db, "usuarios", uid);
-        const userSnap = await getDoc(userRef);
-        const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
+    for (const uid of dataPorra.miembros) {
+      const userRef = doc(db, "usuarios", uid);
+      const userSnap = await getDoc(userRef);
+      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
 
-        // CAMBIO CLAVE: Buscamos la ruta Colección -> Documento -> Subcolección -> Documento
-        const predRef = doc(db, "predicciones", uid, "grupos", "datos");
-        const predSnap = await getDoc(predRef);
-        
-        // Si el documento existe, tomamos directamente sus datos (que contendrán "1", "2", etc.)
-        const predicciones = predSnap.exists() ? predSnap.data() : {};
+      const predRef = doc(db, "predicciones", uid, "grupos", "datos");
+      const predSnap = await getDoc(predRef);
+      const predicciones = predSnap.exists() ? predSnap.data() : {};
 
-        miembrosData.push({ 
-          uid, 
-          nombre, 
-          predicciones, 
-          ptsPorPartido: desglose_puntos[uid] || {} 
-        });
+      miembrosData.push({ 
+        uid, 
+        nombre, 
+        predicciones, 
+        ptsPorPartido: desglose_puntos[uid] || {} 
+      });
     }
 
     const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
@@ -226,20 +197,65 @@
     let todosLosPartidos = [];
     partidosSnap.forEach(doc => todosLosPartidos.push({ idDoc: doc.id, ...doc.data() }));
 
+    // --- NUEVA LÓGICA DE ORDENACIÓN CRONOLÓGICA ---
     todosLosPartidos.sort((a, b) => {
-      const fechaA = a.Fecha.split("/").reverse().join("");
-      const fechaB = b.Fecha.split("/").reverse().join("");
-      if (fechaA === fechaB) return a.Hora.localeCompare(b.Hora);
-      return fechaA.localeCompare(fechaB);
+      // Ordenamos en base a nuestro mapa inverso. 
+      // Si por error un partido no está en el mapa, lo mandamos al final (999)
+      const ordenA = mapa_cronologico[a.Numero] || 999;
+      const ordenB = mapa_cronologico[b.Numero] || 999;
+      return ordenA - ordenB;
     });
 
+    // Como todosLosPartidos ya está ordenado, los filtrados mantienen el orden perfecto
     const partidosPasados = todosLosPartidos.filter(p => idsProcesados.includes(p.Numero.toString()));
     const partidosFuturos = todosLosPartidos.filter(p => !idsProcesados.includes(p.Numero.toString()));
     const proximos3 = partidosFuturos.slice(0, 3);
     
+    // Al unirlos, quedan: [Pasados en orden] + [3 Próximos en orden]
     const partidosAMostrar = [...partidosPasados, ...proximos3];
 
     renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
+  }
+
+  // --- NUEVA FUNCIÓN: LOGS DE ACTIVIDAD ---
+  async function cargarLogsActividad(id) {
+    const listaLogs = document.getElementById("listaLogs");
+    listaLogs.innerHTML = "<em>Cargando...</em>";
+
+    try {
+      // Pedimos todos los logs de la colección
+      const logsSnap = await getDocs(collection(db, "actividad", id, "logs"));
+      let logsArr = [];
+      logsSnap.forEach(doc => logsArr.push({ idDoc: doc.id, ...doc.data() }));
+
+      // Si usas IDs autogenerados de Firebase (que incluyen orden por fecha), 
+      // ordenarlos lexicográficamente a la inversa te da del más nuevo al más viejo.
+      // Si en los logs estás guardando una variable "timestamp" o "fecha", puedes cambiar idDoc por esa variable.
+      logsArr.sort((a, b) => b.idDoc.localeCompare(a.idDoc));
+
+      const tresRecientes = logsArr.slice(0, 3);
+
+      listaLogs.innerHTML = "";
+      if (tresRecientes.length === 0) {
+        listaLogs.innerHTML = "<p>No hay actividad reciente</p>";
+      }
+
+      tresRecientes.forEach(log => {
+        const div = document.createElement("div");
+        div.className = "log-item";
+        // Si no tienes una variable de hora guardada en tu documento, mostramos "Novedad"
+        const horaTexto = log.hora ? log.hora : "Actualización"; 
+        div.innerHTML = `
+          <span class="log-time">${horaTexto}</span>
+          <p>${log.texto}</p>
+        `;
+        listaLogs.appendChild(div);
+      });
+
+    } catch (e) {
+      console.error("Error al cargar actividad: ", e);
+      listaLogs.innerHTML = "<p>Error al cargar la actividad</p>";
+    }
   }
 
   function renderizarGaleria(partidos, miembros, idsProcesados) {
@@ -257,7 +273,6 @@
       const codPais2 = codigos_pais && codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
 
       const cabeceraPartido = `${p.Fecha} - ${p.Hora} | ${p.Fase}`;
-      
       const separadorEquipos = esPasado ? `${p.g1} : ${p.g2}` : "vs";
 
       const card = document.createElement("div");
@@ -278,7 +293,6 @@
 
       miembros.forEach(miembro => {
         const pred = miembro.predicciones[pIdStr] ?? miembro.predicciones[p.Numero];
-        console.log(pred)
         let textoPred = "-";
         
         if (pred && pred.g1 !== undefined && pred.g2 !== undefined) {
