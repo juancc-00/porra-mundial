@@ -55,7 +55,7 @@
       </div>
 
       <section class="panel-box partidos-section">
-        <h2>Próximos Partidos</h2>
+        <h2>Partidos</h2>
         <div class="galeria-wrapper">
           <button id="btnScrollIzq" class="btn-scroll">❮</button>
           <div id="contenedorGaleria" class="galeria-partidos">
@@ -217,20 +217,15 @@
     renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
   }
 
-  // --- NUEVA FUNCIÓN: LOGS DE ACTIVIDAD ---
-  async function cargarLogsActividad(id) {
+async function cargarLogsActividad(id) {
     const listaLogs = document.getElementById("listaLogs");
     listaLogs.innerHTML = "<em>Cargando...</em>";
 
     try {
-      // Pedimos todos los logs de la colección
       const logsSnap = await getDocs(collection(db, "actividad", id, "logs"));
       let logsArr = [];
       logsSnap.forEach(doc => logsArr.push({ idDoc: doc.id, ...doc.data() }));
 
-      // Si usas IDs autogenerados de Firebase (que incluyen orden por fecha), 
-      // ordenarlos lexicográficamente a la inversa te da del más nuevo al más viejo.
-      // Si en los logs estás guardando una variable "timestamp" o "fecha", puedes cambiar idDoc por esa variable.
       logsArr.sort((a, b) => b.idDoc.localeCompare(a.idDoc));
 
       const tresRecientes = logsArr.slice(0, 3);
@@ -243,11 +238,23 @@
       tresRecientes.forEach(log => {
         const div = document.createElement("div");
         div.className = "log-item";
-        // Si no tienes una variable de hora guardada en tu documento, mostramos "Novedad"
-        const horaTexto = log.hora ? log.hora : "Actualización"; 
+        
+        // Transformar Markdown básico a HTML
+        let textoFormateado = log.texto || "";
+        textoFormateado = textoFormateado
+          // Convierte '## Titulo' en un texto destacado
+          .replace(/##\s?(.*)/g, '<span style="display:block; font-size:1.1em; font-weight:bold; margin-bottom:4px;">$1</span>')
+          // Convierte '**texto**' en negrita
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          // Convierte saltos de línea (\n) en saltos de HTML (<br>)
+          .replace(/\n/g, '<br>');
+
+        // Si el propio texto ya trae la fecha/hora en el '##', ocultamos la etiqueta hora predeterminada
+        const horaTag = log.hora ? `<span class="log-time">${log.hora}</span>` : ""; 
+
         div.innerHTML = `
-          <span class="log-time">${horaTexto}</span>
-          <p>${log.texto}</p>
+          ${horaTag}
+          <div style="font-size: 0.9em; line-height: 1.4;">${textoFormateado}</div>
         `;
         listaLogs.appendChild(div);
       });
@@ -343,13 +350,27 @@
     return partidosOrdenados;
   }
 
-  function renderizarClasificacion(miembrosData) {
+function renderizarClasificacion(miembrosData) {
     const lista = document.getElementById("listaClasificacion");
     lista.innerHTML = "";
+    
+    // Ordenar por puntos de mayor a menor
     const clasificacion = [...miembrosData].sort((a, b) => b.totalPuntos - a.totalPuntos);
+    
+    let rankActual = 1;
+    let puntosAnteriores = -1;
+
     clasificacion.forEach((miembro, index) => {
-      const pos = index + 1;
+      // Si los puntos son distintos a los del anterior, actualizamos la posición a su índice real + 1
+      if (miembro.totalPuntos !== puntosAnteriores) {
+        rankActual = index + 1;
+      }
+      puntosAnteriores = miembro.totalPuntos;
+
+      const pos = rankActual;
       const li = document.createElement("li");
+      
+      // Mantenemos la clase visual top-1, top-2, top-3 (si empatan en 1, ambos tendrán estilo top-1)
       li.className = `ranking-item top-${pos > 3 ? 'extra' : pos}`;
       li.innerHTML = `
         <div class="ranking-user"><span class="pos">${pos}</span> ${miembro.nombre}</div>

@@ -48,6 +48,7 @@ TODO:
 
 - [ ] Al acabar fase de grupos, ejecutar funcion vez unica para crear enfrentamientos dieciseisavos
 - [ ] Comprobar en tiempo real que funciona correctamente
+- [ ] Limpiar logs -> quitar o agrupar los sin puntos 
 
 - [ ] En la final, sumar también puntos por predicciones generales (campeon y sub)
 
@@ -69,21 +70,21 @@ TODO:
 
 (Juan)
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
-- [ ] Crear diccionario IDs -> orden cronologico
-- [ ] Quitar brute force a todo
-- [ ] Leer desglose_puntos, con ello actualizar: 
+- [X] Crear diccionario IDs -> orden cronologico
+- [X] Quitar brute force a todo
+- [X] Leer desglose_puntos, con ello actualizar: 
     - [X] Clasificación
     - [X] Grafica progreso
     - [X] Sección partidos con "+ n" al lado de prediccion 
-- [ ] Leer logs + logica (5 ultimos) para actualizar actividad
+- [X] Leer logs + logica (5 ultimos) para actualizar actividad
 - [X] Sección partidos: 
     - [X] Cambiar nombres de paises por abreviaturas
     - [X] Hacer logica de procesados + 3 partidos (diccionario IDs -> orden cronologico)
     - [X] Leer predicciones + leer partidos y displayear en las tarjetas
     - [ ] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
 - [ ] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
-- [ ] Gestionar empate en clasificacion
-- [ ] Procesados no tienen por que estar en orden cronologico
+- [X] Gestionar empate en clasificacion
+- [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
 
 ## Calendario y resultados
