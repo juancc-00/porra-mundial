@@ -244,17 +244,23 @@ async function actualizarTarjetas() {
 }
 
 function tiempoRestante(fecha) {
-
-  const diff = fecha - new Date();
+  const objetivo = new Date(fecha);
+  const diff = objetivo - new Date();
 
   if (diff <= 0) return "0h";
 
-  const horas = Math.floor(diff / 3600000);
-  const dias = Math.floor(horas / 24);
+  const minutosTotales = Math.floor(diff / 60000);
+  const horasTotales = Math.floor(minutosTotales / 60);
+  const dias = Math.floor(horasTotales / 24);
 
-  return dias > 0
-    ? `${dias}d ${horas % 24}h`
-    : `${horas}h`;
+  if (dias > 0) {
+    return `${dias}d ${horasTotales % 24}h`;
+  }
+
+  const horas = horasTotales;
+  const minutos = minutosTotales % 60;
+
+  return `${horas}h ${minutos}m`;
 }
 
 

@@ -299,11 +299,15 @@ async function unirsePorID() {
   const data = snap.data();
 
   if (data.miembros.includes(currentUser.uid)) {
-
     info.textContent =
       "Ya participas en esta porra";
     return;
+  }
 
+  if (data.miembros.length > 11) {
+    info.textContent =
+      "Esta porra ha alcanzado el límite de 12 participantes";
+    return;
   }
 
   await updateDoc(ref, {

@@ -38,6 +38,7 @@ TODO:
 
 ## GENERAL
 
+- [ ] Excel con estimacion de consumo lecturas/escrituras
 - [ ] Trabajar en seguridad del backend (firebase bloqueado?)
 - [ ] Estética
 - [X] Eliminar clasificación
@@ -64,7 +65,7 @@ TODO:
 ## Mis porras
 
 (Alberto)
-- [ ] Poner limite 12 participantes
+- [X] Poner limite 12 participantes
 
 ## Porra
 
@@ -97,16 +98,16 @@ TODO:
 ## Mis predicciones
 
 (Alberto)
-- [ ] Prediccion general: llamar "Iniciales" o algo asi, cambiar Campeon y subcampeon. 
-- [ ] Granularidad en tiempo faltante (horas, minutos al final)
+- [X] Prediccion general: llamar "Iniciales" o algo asi, cambiar Campeon y subcampeon. 
+- [X] Granularidad en tiempo faltante (horas, minutos al final)
 - [ ] Extender bloqueo de predicciones no solo no poder acceder a la pagina, sino bloqueo write de firebase
 
 ## Prediccion Inicial
 
 (Alberto)
-- [ ] Quitar hover ilumina paises
-- [ ] Boton guardar prediccion: posicion absoluta en pantalla
-- [ ] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
+- [X] Quitar hover ilumina paises
+- [X] Boton guardar prediccion: posicion absoluta en pantalla
+- [X] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
 - [ ] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
 
 ## Prediccion Siguientes fases

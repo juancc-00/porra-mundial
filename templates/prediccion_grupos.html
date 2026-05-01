@@ -25,13 +25,15 @@
 
 <main>
 
+<div id="estado-usuario"></div>
+
 <div id="predicciones-generales">
 
-  <h2>Predicciones generales</h2>
+  <h2>Predicciones iniciales</h2>
   <div style="display: flex; align-items: center;width: 100%">
     <i class="fa-solid fa-trophy" style="font-size:2em; color: rgb(236, 203, 70)"></i>
     <div class="campo">
-      <label>Ganador</label>
+      <label>Campeón</label>
       <div class="selector" data-tipo="ganador"></div>
     </div>
   </div>
@@ -39,19 +41,19 @@
   <div style="display: flex; align-items: center;width: 100%">
     <i class="fa-solid fa-medal" style="font-size:2em; color: rgb(174, 169, 148)"></i>
     <div class="campo">
-      <label>Finalista</label>
+      <label>Subcampeón</label>
       <div class="selector" data-tipo="finalista"></div>
     </div>
   </div>
 
 </div>
 
-<h1>Fase de grupos</h1>
-
 <button id="btnSimular">Simular fase eliminatoria</button>
 
 <div id="bracket" class="bracket hidden"></div>
 
+
+<h1>Fase de grupos</h1>
 
 <div id="contenedorGrupos"></div>
 
@@ -109,7 +111,58 @@ const db = getFirestore(app);
 const estado = obtenerEstadoFase("grupos");
 const editable = estado === "activa";
 
+function tiempoRestante(fecha) {
+  const objetivo = new Date(fecha);
+  const diff = objetivo - new Date();
 
+  if (diff <= 0) return "0h";
+
+  const minutosTotales = Math.floor(diff / 60000);
+  const horasTotales = Math.floor(minutosTotales / 60);
+  const dias = Math.floor(horasTotales / 24);
+
+  if (dias > 0) {
+    return `${dias} días, ${horasTotales % 24} horas`;
+  }
+
+  const horas = horasTotales;
+  const minutos = minutosTotales % 60;
+
+  return `${horas} horas, ${minutos} minutos`;
+}
+
+function actualizar_estado_usuario(n_grupos, n_general) {
+  const contenedor_usuario = document.getElementById("estado-usuario");
+
+  if (!contenedor_usuario) return;
+
+  // Mostrar / ocultar contenedor
+  contenedor_usuario.style.display = editable ? "block" : "none";
+
+  // Limpiar clases previas para evitar acumulación
+  contenedor_usuario.classList.remove(
+    "prediccion-completa",
+    "prediccion-incompleta"
+  );
+
+  // Fecha límite
+  const tiempo = tiempoRestante("2026-06-11T21:00");
+
+  console.log("ngrupos, ngeneral", n_grupos, n_general);
+
+  // Comparación correcta (&& en lugar de &)
+  if (n_grupos === 72 && n_general === 2) {
+    contenedor_usuario.classList.add("prediccion-completa");
+    contenedor_usuario.innerHTML = `
+      <i class="fa-solid fa-circle-check"></i> Tus predicciones están al día, tienes ${tiempo} para modificarlas si lo deseas.
+    `;
+  } else {
+    contenedor_usuario.classList.add("prediccion-incompleta");
+    contenedor_usuario.innerHTML = `
+      <i class="fa-solid fa-triangle-exclamation"></i> Predicciones incompletas. Completa tus predicciones antes de que cierre el plazo en ${tiempo}
+    `;
+  }
+};
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -132,9 +185,13 @@ async function cargarTodasLasPredicciones() {
   const refGrupos = doc(db, "predicciones", uid, "grupos", "datos");
   const snapGrupos = await getDoc(refGrupos);
 
+  var num_pred_grupos = 0;
+
   if (snapGrupos.exists()) {
 
     const data = snapGrupos.data();
+
+    num_pred_grupos = Object.keys(data).length;
 
     predicciones.forEach(p => {
 
@@ -157,13 +214,17 @@ async function cargarTodasLasPredicciones() {
   const refGeneral = doc(db, "predicciones", uid, "general", "datos");
   const snapGeneral = await getDoc(refGeneral);
 
+  var num_pred_general = 0;
   if (snapGeneral.exists()) {
 
     const data = snapGeneral.data();
+    num_pred_general = Object.keys(data).length;
 
     selGanador.setValor(data.ganador);
     selFinalista.setValor(data.finalista);
   }
+
+  actualizar_estado_usuario(num_pred_grupos,num_pred_general);
 }
 
 // async function cargarPredicciones() {

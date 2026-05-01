@@ -305,3 +305,7 @@ main{
   background: #777;
   cursor: not-allowed;
 }
+
+#popupInfo {
+  color: rgb(255, 198, 11);
+}
