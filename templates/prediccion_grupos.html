@@ -48,7 +48,11 @@
 
 </div>
 
-<button id="btnSimular">Simular fase eliminatoria</button>
+<div id="cabecera-simular">
+  <button id="btnSimular"> <i class="fa-solid fa-gear"></i> Simular fase eliminatoria </button>
+  <button id="info-simular"> <i class="fa-solid fa-circle-question" title="¿Qué es?"></i> </button>
+</div>
+
 
 <div id="bracket" class="bracket hidden"></div>
 
@@ -69,8 +73,8 @@
 <script src="../static/js/fases.js"></script>
 <script src="../static/js/combis_16.js"></script>
 <script src="../static/js/emparejamientos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="module">
-
 
 import { initializeApp } from
   "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -331,6 +335,32 @@ function formatearFecha(p) {
   const [d, m] = p.Fecha.split("/");
 
   return `${parseInt(d)} ${meses[m - 1]} · ${p.Hora}`;
+}
+
+
+const btnInfoSimular = document.getElementById('info-simular');
+btnInfoSimular.addEventListener('click', infoSimular);
+
+function infoSimular() {
+  Swal.fire({
+  	title: "<strong>Simular fase eliminatoria</strong>",
+ 	 icon: "info",
+ 	 html: `
+  	  <p> Si quieres que tus predicciones de campeón y subcampeón sean consistentes con tus predicciones de fase de grupos, puedes simular los hipotéticos cruces de la fase eliminatoria que tendrían lugar. </p>
+
+      <p> Para simular un cruce, selecciona un país para que pase de ronda. </p>
+
+      <p> <i>Los emparejamientos están generados siguiendo las normas oficiales de la FIFA</i> </p>
+	
+ 	 `,
+ 	 showCloseButton: true,
+ 	 showCancelButton: false,
+  	focusConfirm: false,
+  	confirmButtonText: `
+  	  <i></i> Entendido
+ 	 `,
+ 	//  confirmButtonAriaLabel: "Nueva partida",
+	});
 }
 
 
@@ -954,10 +984,29 @@ const estructura = {
   }
 };
 
+// btn.onclick = () => {
+//   partidosGlobal = generarCuadroEliminatorias(grupos, combinaciones, emparejamientos);
+//   contenedor_bracket.classList.remove("hidden");
+//   renderBracket(partidosGlobal);
+// };
+
 btn.onclick = () => {
+  const abierto = !contenedor_bracket.classList.contains("hidden");
+
+  // Si ya está abierto → cerrar simulación
+  if (abierto) {
+    contenedor_bracket.classList.add("hidden");
+    btn.innerHTML = `<i class="fa-solid fa-gear"></i> Simular fase eliminatoria`;
+    return;
+  }
+
+  // Si está cerrado → abrir simulación
   partidosGlobal = generarCuadroEliminatorias(grupos, combinaciones, emparejamientos);
+
   contenedor_bracket.classList.remove("hidden");
   renderBracket(partidosGlobal);
+
+  btn.textContent = "Cerrar simulación";
 };
 
 
@@ -1094,6 +1143,7 @@ function avanzarGanador(num) {
 
   });
 }
+
 
 cargarTodasLasPredicciones();
 aplicarEstadoEdicion();

@@ -214,6 +214,8 @@ td{
 }
 
 .bracket {
+  background-color: #4cc9f0;
+  padding: 15px;
   display: flex;
   justify-content: center;
   gap: 40px;
@@ -236,6 +238,7 @@ td{
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  gap: 10px;
 }
 
 .partido-bracket {
@@ -434,5 +437,29 @@ button:hover {
 /* Icono */
 #estado-usuario i {
   font-size: 1.4rem;
+  cursor: pointer;
+}
+
+#btnSimular{
+  font-size: 1em;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+#cabecera-simular{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#info-simular{
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: white;
+  font-size: 1.8em;
+  text-align: end;
   cursor: pointer;
 }

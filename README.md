@@ -108,7 +108,7 @@ TODO:
 - [X] Quitar hover ilumina paises
 - [X] Boton guardar prediccion: posicion absoluta en pantalla
 - [X] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
-- [ ] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
+- [X] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
 
 ## Prediccion Siguientes fases
 
