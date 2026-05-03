@@ -59,8 +59,8 @@
     </div>
   </div>
 
-  <div class="prediccion-card" data-fase="semis" data-url="prediccion_semis.html">
-    <div class="prediccion-nombre">Semifinal</div>
+  <div class="prediccion-card" data-fase="semifinales" data-url="prediccion_semis.html">
+    <div class="prediccion-nombre">Semifinales</div>
     <div class="prediccion-container-derecha">
       <div class="prediccion-estado"></div>
       <div class="prediccion-icono"></div>
@@ -142,7 +142,7 @@ let cachePredicciones = {};
 
 async function cargarPrediccionesUsuario(uid) {
 
-  const fases = ["grupos", "dieciseisavos", "octavos", "cuartos", "semis", "final"];
+  const fases = ["grupos", "dieciseisavos", "octavos", "cuartos", "semifinales", "final", "tercer"];
 
   for (const fase of fases) {
     const ref = doc(db, "predicciones", uid, fase, "datos");
@@ -164,8 +164,9 @@ function prediccionCompletaLocal(fase) {
     dieciseisavos: 16,
     octavos: 8,
     cuartos: 4,
-    semis: 2,
-    final: 2
+    semifinales: 2,
+    final: 1, 
+    tercer: 1
   };
 
   const data = cachePredicciones[fase] || {};
@@ -179,6 +180,11 @@ function prediccionCompletaLocal(fase) {
     if (dataGen.finalista) totalGeneral++;
 
     return total === totalPorFase.grupos && totalGeneral === 2;
+  }
+
+  if (fase === "final") {
+    const totalTercer = Object.keys(cachePredicciones["tercer"] || {}).length;
+    return total === totalPorFase.final && totalTercer === totalPorFase.tercer;
   }
   return total === totalPorFase[fase];
 }
@@ -202,6 +208,7 @@ async function actualizarTarjetas() {
 
       if (estado === "inactiva") {
 
+        console.log(fases);
         const f = fases[fase].activaDesde;
 
         info.textContent = `${tiempoRestante(f)}`;

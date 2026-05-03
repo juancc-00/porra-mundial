@@ -70,6 +70,7 @@ TODO:
 ## Porra
 
 (Juan)
+- [ ] Quitar hardcodeo: antes de cargar por un segundo aparece Juan, Alberto, Lalo
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [X] Crear diccionario IDs -> orden cronologico
 - [X] Quitar brute force a todo
@@ -113,7 +114,7 @@ TODO:
 ## Prediccion Siguientes fases
 
 (Alberto)
-- [ ] Hacer
-- [ ] Gestionar dislexia: partidos aparecen como Diesciseisafsdfaos 
+- [X] Hacer
+- [X] Gestionar dislexia: partidos aparecen como Diesciseisafsdfaos 
 - [ ] Funcionalidad penaltis: cambiar estetica y distribucion; explicar
-- [ ] Logica penalties: en vez de equipo ganador, escribir 0/1 en Partidos
+- [X] Logica penalties: en vez de equipo ganador, escribir 0/1 en Partidos

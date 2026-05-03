@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Predicción dieciseisavos de final</title>
+  <title>Predicción final</title>
   <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="../static/prediccion_eliminatorias_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
@@ -27,9 +27,11 @@
 
 <div id="estado-usuario"></div>
 
-<h1>Predicción dieciseisavos de final</h1>
+<h2>🏆 Final</h2>
+<div id="contenedorFinal"></div>
 
-<div id="contenedorGrupos"></div>
+<h2>🥉 Tercer y Cuarto Puesto</h2>
+<div id="contenedorTercer"></div>
 
 <!-- Picker flotante -->
 <div id="picker" class="picker" style="display:none;"></div>
@@ -84,7 +86,7 @@ const db = getFirestore(app);
 
 // Si ya empezó la fase de grupos, se bloquea y no permite cambiar predicciones
 
-const estado = obtenerEstadoFase("dieciseisavos");
+const estado = obtenerEstadoFase("final");
 const editable = estado === "activa";
 
 
@@ -123,12 +125,12 @@ function actualizar_estado_usuario(n_pred) {
   );
 
   // Fecha límite
-  const tiempo = tiempoRestante("2026-06-28T21:00");
+  const tiempo = tiempoRestante("2026-07-18T23:00");
 
   console.log("n_predicciones", n_pred);
 
   // Comparación correcta (&& en lugar de &)
-  if (n_pred === 16) {
+  if (n_pred === 2) {
     contenedor_usuario.classList.add("prediccion-completa");
     contenedor_usuario.innerHTML = `
       <i class="fa-solid fa-circle-check"></i> Tus predicciones están al día, tienes ${tiempo} para modificarlas si lo deseas.
@@ -151,54 +153,66 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 var num_pred = 0;
+let prediccionFinal = { g1: null, g2: null, ganador: null };
+let prediccionTercer = { g1: null, g2: null, ganador: null };
 
-async function cargarPredicciones16() {
-
+async function cargarPredicciones() {
   const user = auth.currentUser;
   if (!user) return;
-
   const uid = user.uid;
 
-  const ref = doc(db, "predicciones", uid, "dieciseisavos", "datos");
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) return;
-
-  const data = snap.data();
-  num_pred = Object.keys(data).length;
-
-  predicciones.forEach(p => {
-
-    const pred = data[p.Numero];
-
+  // Final
+  const refFinal = doc(db, "predicciones", uid, "final", "datos");
+  const snapFinal = await getDoc(refFinal);
+  if (snapFinal.exists()) {
+    const data = snapFinal.data();
+    const pred = data[104];
     if (pred) {
-      p.g1 = pred.g1;
-      p.g2 = pred.g2;
-      p.ganador = pred.ganador;
+      prediccionFinal.g1 = pred.g1;
+      prediccionFinal.g2 = pred.g2;
+      prediccionFinal.ganador = pred.ganador;
     }
+  }
 
-  });
+  // Tercer puesto
+  const refTercer = doc(db, "predicciones", uid, "tercer", "datos");
+  const snapTercer = await getDoc(refTercer);
+  if (snapTercer.exists()) {
+    const data = snapTercer.data();
+    const pred = data[103];
+    if (pred) {
+      prediccionTercer.g1 = pred.g1;
+      prediccionTercer.g2 = pred.g2;
+      prediccionTercer.ganador = pred.ganador;
+    }
+  }
 
+  num_pred = (snapFinal.exists() ? 1 : 0) + (snapTercer.exists() ? 1 : 0);
   actualizarUIeliminatorias();
   actualizar_estado_usuario(num_pred);
 }
 
-function actualizarUIeliminatorias() {
 
-  document.querySelectorAll(".partido-container").forEach(container => {
+function actualizarUIeliminatorias() {
+  // Mapeamos cada partido a su contenedor específico
+  const partidos = [
+    { partido: prediccionFinal, contenedorId: "contenedorFinal" },
+    { partido: prediccionTercer, contenedorId: "contenedorTercer" }
+  ];
+
+  partidos.forEach(({ partido, contenedorId }) => {
+    const contenedor = document.getElementById(contenedorId);
+    if (!contenedor) return;
+
+    const container = contenedor.querySelector(".partido-container");
+    if (!container) return;
 
     const div = container.querySelector(".partido");
-    const id = div.dataset.id;
-
-    const p = predicciones.find(x => x.Numero == id);
-    if (!p) return;
-
     const goles = div.querySelectorAll(".gol");
 
-    if (p.g1 !== null) goles[0].textContent = p.g1;
-    if (p.g2 !== null) goles[1].textContent = p.g2;
+    if (partido.g1 !== null) goles[0].textContent = partido.g1;
+    if (partido.g2 !== null) goles[1].textContent = partido.g2;
 
-    // 🔥 LLAMAR A LA FUNCIÓN REAL
     if (container._actualizarSelector) {
       container._actualizarSelector();
     }
@@ -206,38 +220,23 @@ function actualizarUIeliminatorias() {
 }
 
 
-let predicciones = [];
 
-const contenedor = document.getElementById("contenedorGrupos");
-
-
-// async function cargarPartidos16() {
-//   const snapshot = await getDocs(collection(db, "partidos"));
-//   const partidos = [];
-//   snapshot.forEach(doc => {
-//     const p = doc.data();
-//     if (p.Fase !== "Dieciseisavos de final") return;    //CAMBIAR POR "Diesciseisavos" cuando este correcto!!!
-//     partidos.push(p);
-//   });
-//   partidos.sort((a, b) => parseFechaHora(a) - parseFechaHora(b));
-//   predicciones = partidos;
-//   console.log(partidos);
-//   mostrarPartidos16(partidos);
-// }
-
-async function cargarPartidos16() {
+async function cargarPartidos() {
+  // Leer solo los 2 documentos necesarios directamente por Numero
   const q = query(
     collection(db, "partidos"),
-    where("Fase", "==", "Dieciseisavos de final")
+    where("Numero", "in", ["103", "104"])
   );
   const snapshot = await getDocs(q);
-  const partidos = [];
+  console.log(snapshot);
   snapshot.forEach(doc => {
-    partidos.push(doc.data());
+    const p = doc.data();
+    console.log(p);
+    if (p.Numero === "104") prediccionFinal = { ...p, g1: null, g2: null, ganador: null };
+    if (p.Numero === "103") prediccionTercer = { ...p, g1: null, g2: null, ganador: null };
   });
-  partidos.sort((a, b) => parseFechaHora(a) - parseFechaHora(b));
-  predicciones = partidos;
-  mostrarPartidos16(partidos);
+  // console.log(prediccionFinal);
+  mostrarPartidos();
 }
 
 
@@ -266,26 +265,17 @@ function formatearFecha(p) {
 
 
 
+await cargarPartidos();
 
+function mostrarPartidos() {
+  const contenedorFinal = document.getElementById("contenedorFinal");
+  const contenedorTercer = document.getElementById("contenedorTercer");
 
-await cargarPartidos16();
+  contenedorFinal.innerHTML = "";
+  contenedorTercer.innerHTML = "";
 
-function mostrarPartidos16(partidos) {
-
-  contenedor.innerHTML = "";
-
-  const lista = document.createElement("div");
-
-  partidos.forEach(p => {
-
-    p.g1 = null;
-    p.g2 = null;
-    p.ganador = null;
-
-    lista.appendChild(crearPartidoEliminatoria(p));
-  });
-
-  contenedor.appendChild(lista);
+  contenedorFinal.appendChild(crearPartidoEliminatoria(prediccionFinal));
+  contenedorTercer.appendChild(crearPartidoEliminatoria(prediccionTercer));
 }
 
 function crearPartidoEliminatoria(p) {
@@ -387,7 +377,6 @@ function crearPartidoEliminatoria(p) {
 
 
 
-
 const picker = document.getElementById("picker");
 let callbackActual = null;
 
@@ -434,47 +423,46 @@ document.addEventListener("click", e => {
 
 
 guardarBtn.onclick = async () => {
-
   const user = auth.currentUser;
-
   if (!user) {
     alert("Debes iniciar sesión");
     return;
   }
 
   const uid = user.uid;
-  const data16 = {};
 
-  predicciones.forEach(p => {
+  // Helper para calcular ganador y construir el objeto a guardar
+  function buildData(p) {
+    if (p.g1 === null || p.g2 === null) return null;
+    let ganador = null;
+    if (p.g1 > p.g2) ganador = 0;
+    else if (p.g2 > p.g1) ganador = 1;
+    else ganador = p.ganador;
+    return { g1: p.g1, g2: p.g2, ganador };
+  }
 
-    if (p.g1 !== null && p.g2 !== null) {
+  // Guardar final
+  const dataFinal = buildData(prediccionFinal);
+  if (dataFinal) {
+    await setDoc(
+      doc(db, "predicciones", uid, "final", "datos"),
+      { [prediccionFinal.Numero]: dataFinal }
+    );
+  }
 
-      let ganador = null;
-
-      if (p.g1 > p.g2) ganador = 0;
-      else if (p.g2 > p.g1) ganador = 1;
-      else ganador = p.ganador; // 🔥 clave
-
-      console.log(ganador);
-
-      data16[p.Numero] = {
-        g1: p.g1,
-        g2: p.g2,
-        ganador
-      };
-    }
-
-  });
-
-  await setDoc(
-    doc(db, "predicciones", uid, "dieciseisavos", "datos"),
-    data16
-  );
+  // Guardar tercer puesto
+  const dataTercer = buildData(prediccionTercer);
+  if (dataTercer) {
+    await setDoc(
+      doc(db, "predicciones", uid, "tercer", "datos"),
+      { [prediccionTercer.Numero]: dataTercer }
+    );
+  }
 
   alert("Predicciones guardadas");
 };
 
-cargarPredicciones16();
+cargarPredicciones();
 
 
 

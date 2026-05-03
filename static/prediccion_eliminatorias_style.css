@@ -55,7 +55,7 @@ td{
 
 .partido {
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto auto 1fr;
+  grid-template-columns: auto 1fr auto auto auto auto 1fr auto;
   align-items: center;
   gap: 8px;
   padding: 10px;
@@ -205,9 +205,6 @@ td{
   border-radius: 4px;
 }
 
-.equipo:hover {
-  background: #e9ecef;
-}
 
 .ganador {
   background: #cfe2ff;
@@ -259,6 +256,7 @@ td{
 
 .opcion.activo {
   background: #cfe2ff;
+  color: #01172e;
   font-weight: bold;
 }
 
@@ -266,6 +264,48 @@ td{
   margin-bottom: 10px;
 }
 
-.selector-ganador {
-  margin-left: 120px; /* ajusta a tu layout */
+/* .selector-ganador {
+  margin-left: 120px;
+}    */
+
+#guardarBtn{
+  max-width: 12%;
+  position: fixed;
+  right: 4%;
+  font-size: 1.1em;
+  font-family: Arial, sans-serif; 
+  padding: 5px 10px;
+}
+
+/* Contenedor base */
+#estado-usuario {
+  display: none; /* oculto por defecto */
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin: 20px 20px;
+}
+
+/* Estado completo */
+.prediccion-completa {
+  background-color: #8cc86c;
+  color: #004607;
+  border: 1px solid #6da84f;
+}
+
+/* Estado incompleto */
+.prediccion-incompleta {
+  background-color: #f4d35e;
+  color: #333333;
+  border: 1px solid #d4b13f;
+}
+
+/* Icono */
+#estado-usuario i {
+  font-size: 1.4rem;
+  cursor: pointer;
 }

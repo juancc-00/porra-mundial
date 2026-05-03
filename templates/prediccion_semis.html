@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Predicción dieciseisavos de final</title>
+  <title>Predicción semifinales</title>
   <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="../static/prediccion_eliminatorias_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
 
 <div id="estado-usuario"></div>
 
-<h1>Predicción dieciseisavos de final</h1>
+<h1>Predicción semifinales</h1>
 
 <div id="contenedorGrupos"></div>
 
@@ -58,7 +58,8 @@ import {
   collection,
   getDocs, 
   query, 
-  where
+  where, 
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -84,7 +85,7 @@ const db = getFirestore(app);
 
 // Si ya empezó la fase de grupos, se bloquea y no permite cambiar predicciones
 
-const estado = obtenerEstadoFase("dieciseisavos");
+const estado = obtenerEstadoFase("semifinales");
 const editable = estado === "activa";
 
 
@@ -123,12 +124,12 @@ function actualizar_estado_usuario(n_pred) {
   );
 
   // Fecha límite
-  const tiempo = tiempoRestante("2026-06-28T21:00");
+  const tiempo = tiempoRestante("2026-07-14T21:00");
 
   console.log("n_predicciones", n_pred);
 
   // Comparación correcta (&& en lugar de &)
-  if (n_pred === 16) {
+  if (n_pred === 2) {
     contenedor_usuario.classList.add("prediccion-completa");
     contenedor_usuario.innerHTML = `
       <i class="fa-solid fa-circle-check"></i> Tus predicciones están al día, tienes ${tiempo} para modificarlas si lo deseas.
@@ -152,14 +153,14 @@ onAuthStateChanged(auth, async (user) => {
 
 var num_pred = 0;
 
-async function cargarPredicciones16() {
+async function cargarPredicciones() {
 
   const user = auth.currentUser;
   if (!user) return;
 
   const uid = user.uid;
 
-  const ref = doc(db, "predicciones", uid, "dieciseisavos", "datos");
+  const ref = doc(db, "predicciones", uid, "semifinales", "datos");
   const snap = await getDoc(ref);
 
   if (!snap.exists()) return;
@@ -211,24 +212,25 @@ let predicciones = [];
 const contenedor = document.getElementById("contenedorGrupos");
 
 
-// async function cargarPartidos16() {
+// async function cargarPartidos() {
 //   const snapshot = await getDocs(collection(db, "partidos"));
 //   const partidos = [];
 //   snapshot.forEach(doc => {
 //     const p = doc.data();
-//     if (p.Fase !== "Dieciseisavos de final") return;    //CAMBIAR POR "Diesciseisavos" cuando este correcto!!!
+//     if (p.Fase !== "Semifinales") return;   
 //     partidos.push(p);
 //   });
 //   partidos.sort((a, b) => parseFechaHora(a) - parseFechaHora(b));
 //   predicciones = partidos;
 //   console.log(partidos);
-//   mostrarPartidos16(partidos);
+//   mostrarPartidos(partidos);
 // }
 
-async function cargarPartidos16() {
+
+async function cargarPartidos() {
   const q = query(
     collection(db, "partidos"),
-    where("Fase", "==", "Dieciseisavos de final")
+    where("Fase", "==", "Semifinales")
   );
   const snapshot = await getDocs(q);
   const partidos = [];
@@ -237,7 +239,7 @@ async function cargarPartidos16() {
   });
   partidos.sort((a, b) => parseFechaHora(a) - parseFechaHora(b));
   predicciones = partidos;
-  mostrarPartidos16(partidos);
+  mostrarPartidos(partidos);
 }
 
 
@@ -268,9 +270,9 @@ function formatearFecha(p) {
 
 
 
-await cargarPartidos16();
+await cargarPartidos();
 
-function mostrarPartidos16(partidos) {
+function mostrarPartidos(partidos) {
 
   contenedor.innerHTML = "";
 
@@ -443,7 +445,7 @@ guardarBtn.onclick = async () => {
   }
 
   const uid = user.uid;
-  const data16 = {};
+  const data = {};
 
   predicciones.forEach(p => {
 
@@ -457,7 +459,7 @@ guardarBtn.onclick = async () => {
 
       console.log(ganador);
 
-      data16[p.Numero] = {
+      data[p.Numero] = {
         g1: p.g1,
         g2: p.g2,
         ganador
@@ -467,14 +469,14 @@ guardarBtn.onclick = async () => {
   });
 
   await setDoc(
-    doc(db, "predicciones", uid, "dieciseisavos", "datos"),
-    data16
+    doc(db, "predicciones", uid, "semifinales", "datos"),
+    data
   );
 
   alert("Predicciones guardadas");
 };
 
-cargarPredicciones16();
+cargarPredicciones();
 
 
 

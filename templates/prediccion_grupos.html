@@ -72,6 +72,7 @@
 <script src="../static/js/codigos_paises.js"></script>
 <script src="../static/js/fases.js"></script>
 <script src="../static/js/combis_16.js"></script>
+<script src="../static/js/partidos_grupos.js"></script>
 <script src="../static/js/emparejamientos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="module">
@@ -173,14 +174,20 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "home.html";
     return;
   }
+  cargarTodasLasPredicciones();
+  aplicarEstadoEdicion();
 });
 
 async function cargarTodasLasPredicciones() {
 
+  console.log("predicciones cargadas");
+
   const user = auth.currentUser;
+  console.log(user);
   if (!user) return;
 
   const uid = user.uid;
+  
 
   // ========================
   // 1) CARGAR GRUPOS
@@ -192,7 +199,7 @@ async function cargarTodasLasPredicciones() {
   var num_pred_grupos = 0;
 
   if (snapGrupos.exists()) {
-
+    console.log("check");
     const data = snapGrupos.data();
 
     num_pred_grupos = Object.keys(data).length;
@@ -231,33 +238,6 @@ async function cargarTodasLasPredicciones() {
   actualizar_estado_usuario(num_pred_grupos,num_pred_general);
 }
 
-// async function cargarPredicciones() {
-//   console.log("predicciones cargadas")
-
-//   const user = auth.currentUser;
-//   if (!user) return;
-
-//   const ref = doc(db, "predicciones", user.uid);
-//   const snap = await getDoc(ref);
-
-//   if (!snap.exists()) return;
-
-//   const data = snap.data();
-
-//   // recorrer partidos cargados
-//   predicciones.forEach(p => {
-
-//     const pred = data[p.Numero];
-
-//     if (pred) {
-//       p.g1 = pred.g1;
-//       p.g2 = pred.g2;
-//     }
-
-//   });
-
-//   actualizarUIconPredicciones();
-// }
 
 function actualizarUIconPredicciones() {
 
@@ -288,29 +268,14 @@ let grupos = {};
 const contenedor = document.getElementById("contenedorGrupos");
 let mejoresTerceros = [];
 
+
 async function cargarPartidosGrupos() {
-
-  const snapshot = await getDocs(collection(db, "partidos"));
-
-  // const grupos = {};
-
-  snapshot.forEach(doc => {
-
-    const p = doc.data();
-
-    if (!p.Fase.startsWith("Grupo")) return;
-
-    // console.log(p.Pais1);
-
+  partidos_grupos.forEach(p => {
     if (!grupos[p.Fase]) grupos[p.Fase] = [];
-
     grupos[p.Fase].push(p);
-
   });
-
   predicciones = [];
   gruposGlobal = grupos;
-  console.log(grupos);
   mostrarGrupos(grupos);
 }
 
@@ -1144,9 +1109,6 @@ function avanzarGanador(num) {
   });
 }
 
-
-cargarTodasLasPredicciones();
-aplicarEstadoEdicion();
 
 
 
