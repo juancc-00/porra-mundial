@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porra Mundial</title>
+
+</head>
+<body>
+
+<!-- ===== SIDEBAR MÓVIL ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕</button>
+  <button class="nav-btn active">Inicio</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+  <span id="sb-porras-locked" class="nav-locked">🔒 Mis porras</span>
+  <button id="sb-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'">Mis porras</button>
+  <span id="sb-pred-locked" class="nav-locked">🔒 Mis predicciones</span>
+  <button id="sb-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
+</div>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <span class="topbar-logo">⚽ PorrasMundial</span>
+
+  <nav class="nav-links">
+    <button class="nav-btn active">Inicio</button>
+    <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+    <span id="nav-porras-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis porras</span>
+    <button id="nav-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'">Mis porras</button>
+    <span id="nav-pred-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis predicciones</span>
+    <button id="nav-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
+  </nav>
+
+  <div class="nav-right" id="login-section">
+    <button id="loginBtn" class="nav-btn">Identifícate 👤</button>
+    <div id="userdiv" class="dropdown">
+      <button id="userBtn" class="dropdown-btn"></button>
+      <div id="menu" class="dropdown-menu">
+        <div class="alias-box">
+          <span>Alias:</span>
+          <span id="aliasTexto">Cargando...</span>
+          <input id="aliasInput" type="text" maxlength="20" style="display:none">
+          <button id="editAliasBtn" class="alias-btn">✏️</button>
+          <button id="saveAliasBtn" class="alias-btn" style="display:none">✔️</button>
+        </div>
+        <button onclick="location.href='misporras.html'">Mis porras</button>
+        <button onclick="location.href='mispredicciones.html'">Mis predicciones</button>
+        <button id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="logo" src="../static/media/logo2.png" alt="Porra Mundial logo">
+    <p class="hero-tagline">Compite con tus amigos prediciendo el Mundial 2026</p>
+
+    <div class="countdown-card">
+      <h2>Quedan</h2>
+      <span id="countdowon" class="countdown">–</span>
+    </div>
+  </section>
+
+  <!-- ONDA SEPARADORA -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,30 C360,70 1080,-10 1440,30 L1440,60 L0,60 Z" fill="#f5f0e8"/>
+    </svg>
+  </div>
+
+  <!-- CONTENIDO CREMA -->
+  <div class="content-area">
+    <div class="content-inner">
+
+      <!-- ¿QUÉ ES? -->
+      <section class="que-es">
+        <p class="section-eyebrow">¿Qué es esto?</p>
+        <h2 class="section-heading">Una porra del Mundial con tus amigos</h2>
+        <p class="section-sub">Predice partidos, acumula puntos y compite en grupos privados. Cuanto antes hagas tus apuestas, más chances tienes — los plazos cierran cuando empieza cada fase.</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:#e8f5de;">🗓️</div>
+            <h3>Calendario y resultados</h3>
+            <p>Todos los partidos del mundial con resultados reales en tiempo real.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:#fff3e0;">👥</div>
+            <h3>Mis porras</h3>
+            <p>Grupos privados con tus amigos. Cada porra tiene su propio scoreboard.</p>
+            <span class="badge-lock">🔒 Requiere login</span>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon" style="background:#fde8f0;">📊</div>
+            <h3>Mis predicciones</h3>
+            <p>Rellena tus apuestas para cada partido antes de que empiece la fase.</p>
+            <span class="badge-lock">🔒 Requiere login</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CÓMO FUNCIONA -->
+      <section class="como-funciona">
+        <p class="section-eyebrow">¿Cómo funciona?</p>
+        <h2 class="section-heading">En cuatro pasos</h2>
+
+        <div class="steps-list">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <h4>Entra con Google y elige tu alias</h4>
+              <p>Solo necesitas una cuenta de Google. Ponle el nombre que quieras en tu perfil.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <h4>Únete o crea una porra con tus amigos</h4>
+              <p>Crea un grupo o pide que te inviten. Puedes estar en varias porras a la vez; tus predicciones son las mismas para todas.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <h4>Haz tus predicciones antes de cada fase</h4>
+              <p>Para grupos, predices el resultado de cada partido. Para eliminatorias, también quién pasa de ronda. Los plazos se cierran al inicio de cada fase — sin modificaciones después.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <h4>Sigue el marcador en tiempo real</h4>
+              <p>El sistema puntúa automáticamente según los resultados reales. Consulta el scoreboard de tu porra en cualquier momento.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PUNTUACIÓN -->
+      <section class="puntos-section">
+        <p class="section-eyebrow">Sistema de puntuación</p>
+        <h2 class="section-heading">Cuánto vale cada acierto</h2>
+        <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la fase, más puntos en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda — independientemente de si lo hace en prórroga o penaltis.</p>
+
+        <div class="puntos-table-wrap">
+          <table class="puntos">
+            <thead>
+              <tr>
+                <th rowspan="2" style="text-align:left;padding-left:16px;vertical-align:bottom;border-right:2px solid rgba(255,255,255,0.2);">Tipo de acierto</th>
+                <th>Grupos</th>
+                <th class="th-elim">1/16</th>
+                <th class="th-elim">1/8</th>
+                <th class="th-elim">Cuartos</th>
+                <th class="th-elim">Semis</th>
+                <th class="th-elim">3.º puesto</th>
+                <th class="th-elim">Final</th>
+              </tr>
+              <tr>
+                <th style="font-size:10px;opacity:0.7;font-weight:400;padding-top:0;"></th>
+                <th colspan="6" style="font-size:10px;opacity:0.7;font-weight:400;padding-top:0;letter-spacing:0.08em;background:rgba(0,0,0,0.12);">ELIMINATORIAS — puntos por 90'</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Gana eliminatoria
+                  <span class="tipo-label">Acertar qué equipo pasa de ronda (puede ser en prórroga o penaltis)</span>
+                </td>
+                <td>—</td>
+                <td class="elim-separator"><span class="pts-badge">1</span></td>
+                <td><span class="pts-badge">2</span></td>
+                <td><span class="pts-badge">3</span></td>
+                <td><span class="pts-badge">3</span></td>
+                <td><span class="pts-badge">3</span></td>
+                <td><span class="pts-badge">4</span></td>
+              </tr>
+              <tr>
+                <td>
+                  1×2
+                  <span class="tipo-label">Acertar si gana el equipo A, empate, o gana el B — solo los 90 minutos</span>
+                </td>
+                <td><span class="pts-badge">1</span></td>
+                <td class="elim-separator"><span class="pts-badge">2</span></td>
+                <td><span class="pts-badge">3</span></td>
+                <td><span class="pts-badge">5</span></td>
+                <td><span class="pts-badge">6</span></td>
+                <td><span class="pts-badge">6</span></td>
+                <td><span class="pts-badge alto">8</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Diferencia de goles (DG)
+                  <span class="tipo-label">Acertar la diferencia exacta entre los dos equipos — solo los 90 minutos</span>
+                </td>
+                <td><span class="pts-badge">1</span></td>
+                <td class="elim-separator"><span class="pts-badge">2</span></td>
+                <td><span class="pts-badge">3</span></td>
+                <td><span class="pts-badge">5</span></td>
+                <td><span class="pts-badge">6</span></td>
+                <td><span class="pts-badge">6</span></td>
+                <td><span class="pts-badge alto">8</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Marcador exacto
+                  <span class="tipo-label">Acertar el resultado exacto (goles de cada equipo) — solo los 90 minutos</span>
+                </td>
+                <td><span class="pts-badge">2</span></td>
+                <td class="elim-separator"><span class="pts-badge">5</span></td>
+                <td><span class="pts-badge">6</span></td>
+                <td><span class="pts-badge">10</span></td>
+                <td><span class="pts-badge alto">15</span></td>
+                <td><span class="pts-badge alto">15</span></td>
+                <td><span class="pts-badge muy-alto">20</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="nota-elim">
+          <strong>Eliminatorias:</strong> los puntos de 1×2, DG y marcador exacto se calculan siempre sobre el resultado a los <strong>90 minutos</strong>, sin contar prórroga ni penaltis. El punto adicional de <em>«gana eliminatoria»</em> se otorga si aciertas el equipo que pasa, independientemente de cómo lo haga (prórroga, penaltis, etc.).
+        </div>
+
+        <!-- EJEMPLO INTERACTIVO -->
+        <div class="ejemplo-section">
+          <div class="ejemplo-header">📋 EJEMPLO — partido de cuartos de final</div>
+          <div class="ejemplo-body">
+
+            <div class="ejemplo-partido">
+              <span class="equipo-e">🇪🇸 España</span>
+              <span class="result-e">1 – 1</span>
+              <span class="equipo-e">🇩🇪 Alemania</span>
+              <br>
+              <span class="nota-90" style="width:100%;text-align:center;">Resultado final: 2-1. España marcó <b>en la prórroga</b></span>
+            </div>
+
+            <div class="apuestas-grid">
+              <div class="apuesta-card">
+                <div class="nombre">🙋 Tú apostaste:</div>
+                <div class="prediccion">2 – 1</div>
+                <div class="check-row">
+                  <div class="check-item">
+                    <span class="dot-ok">✓</span> Gana eliminatoria (España)
+                    <span class="pts-inline">+3</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-no">✓</span> 1×2 (gana España)
+                    <span class="pts-inline cero">+0</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-no">✓</span> DG (+1 a favor España)
+                    <span class="pts-inline cero">+0</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-no">✓</span> Marcador exacto (2–1)
+                    <span class="pts-inline cero">+0</span>
+                  </div>
+                </div>
+                <div class="total-pts">Total: <strong>3 pts</strong> 🏆</div>
+              </div>
+
+              <div class="apuesta-card">
+                <div class="nombre">🙋 Tu amigo apostó:</div>
+                <div class="prediccion">2 – 2</div>
+                <div class="check-row">
+                  <div class="check-item">
+                    <span class="dot-ok">✓</span> Gana eliminatoria (España)
+                    <span class="pts-inline">+3</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-no">✗</span> 1×2 (apostó empate)
+                    <span class="pts-inline cero">+0</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-ok">✓</span> DG (diferencia 0)
+                    <span class="pts-inline">+5</span>
+                  </div>
+                  <div class="check-item">
+                    <span class="dot-no">✗</span> Marcador exacto (no era 2–2)
+                    <span class="pts-inline cero">+0</span>
+                  </div>
+                </div>
+                <div class="total-pts">Total: <strong>8 pts</strong></div>
+              </div>
+            </div>
+
+            <div class="ejemplo-nota">
+              💡 <strong>Fíjate:</strong> tu amigo apostó 2–2 y el partido terminó 2–1 a los 90', aunque España pasó en prórroga. Acertó la DG (0 de diferencia en el empate) y quién pasa, pero falló el 1×2 y el marcador exacto. Tú acertaste todo porque tu apuesta era el resultado a 90 minutos, que sí fue 2–1.
+            </div>
+
+          </div>
+        </div>
+
+        <button class="btn-reglas" id="openReglasBtn">📄 Ver reglas completas</button>
+      </section>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== MODAL REGLAS ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close-btn" id="closeModalBtn">✕</button>
+    <h2>Reglas completas</h2>
+
+    <div class="rule-item">
+      <h4>Predicciones de fase de grupos</h4>
+      <p>Predices el resultado exacto de cada partido. Puedes ganar puntos por 1×2, DG y marcador exacto de forma acumulativa.</p>
+    </div>
+    <div class="rule-item">
+      <h4>Predicciones de eliminatorias</h4>
+      <p>Para cada partido de eliminatoria predices el resultado a 90' (1×2, DG, marcador) y también qué equipo pasa de ronda. Estos son independientes: el marcador se refiere solo a los 90 minutos; quién pasa puede hacerlo en 90', prórroga o penaltis.</p>
+    </div>
+    <div class="rule-item">
+      <h4>Plazo para predecir</h4>
+      <p>Las predicciones se cierran en el momento en que da comienzo cada fase (o cada ronda en eliminatorias). No se pueden modificar una vez cerradas.</p>
+    </div>
+    <div class="rule-item">
+      <h4>Porras (grupos)</h4>
+      <p>Puedes estar en varias porras a la vez. Tus predicciones son las mismas para todas; solo cambia el ranking de cada grupo.</p>
+    </div>
+    <div class="rule-item">
+      <h4>Empates en el scoreboard</h4>
+      <p>En caso de empate al final del torneo, gana quien haya acertado más partidos en la fase final (semifinales en adelante).</p>
+    </div>
+    <button class="btn-reglas" id="closeModalBtn2" style="margin-top:4px;">Cerrar</button>
+  </div>
+</div>
+
+
+<script src="../static/js/codigos_paises.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
+  };
+  
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+// ===== HELPERS AUTENTICACIÓN =====
+function mostrarNavAutenticado(mostrar) {
+  const ids = [
+    ['nav-porras-locked', 'nav-porras-btn'],
+    ['nav-pred-locked',   'nav-pred-btn'],
+    ['sb-porras-locked',  'sb-porras-btn'],
+    ['sb-pred-locked',    'sb-pred-btn'],
+  ];
+  ids.forEach(([lockId, btnId]) => {
+    const lock = document.getElementById(lockId);
+    const btn  = document.getElementById(btnId);
+    if (lock) lock.style.display = mostrar ? 'none' : '';
+    if (btn)  btn.style.display  = mostrar ? '' : 'none';
+  });
+}
+
+
+
+
+// ===== FIREBASE USUARIO =====
+async function asegurarUsuario(user) {
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    const nombreGoogle = user.displayName?.split(" ")[0] || "Jugador";
+    await setDoc(ref, { nombre: nombreGoogle, email: user.email, creado: serverTimestamp() });
+  }
+}
+
+async function cargarAlias(user) {
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+  document.getElementById("aliasTexto").textContent = snap.data().nombre;
+}
+
+// ===== LOGIN / LOGOUT =====
+document.getElementById("loginBtn").onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  await signInWithPopup(auth, provider);
+};
+
+document.getElementById("logoutBtn").onclick = () => signOut(auth);
+
+// ===== AUTH STATE =====
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await asegurarUsuario(user);
+    await cargarAlias(user);
+    currentUser = user;
+    document.getElementById("loginBtn").style.display = "none";
+    document.getElementById("userdiv").style.display = "block";
+    document.getElementById("userBtn").textContent = `Hola, ${user.displayName.split(' ')[0]}`;
+    mostrarNavAutenticado(true);
+  } else {
+    document.getElementById("loginBtn").style.display = "";
+    document.getElementById("userdiv").style.display = "none";
+    mostrarNavAutenticado(false);
+  }
+});
+
+// ===== ALIAS EDIT =====
+const aliasTexto = document.getElementById("aliasTexto");
+const aliasInput = document.getElementById("aliasInput");
+const editBtn = document.getElementById("editAliasBtn");
+const saveBtn = document.getElementById("saveAliasBtn");
+
+editBtn.onclick = () => {
+  aliasInput.value = aliasTexto.textContent;
+  aliasTexto.style.display = "none";
+  aliasInput.style.display = "inline-block";
+  editBtn.style.display = "none";
+  saveBtn.style.display = "inline-block";
+  aliasInput.focus();
+};
+
+saveBtn.onclick = async () => {
+  const nuevo = aliasInput.value.trim();
+  if (!nuevo) return;
+  const ref = doc(db, "usuarios", currentUser.uid);
+  await updateDoc(ref, { nombre: nuevo });
+  aliasTexto.textContent = nuevo;
+  aliasTexto.style.display = "inline";
+  aliasInput.style.display = "none";
+  editBtn.style.display = "inline-block";
+  saveBtn.style.display = "none";
+};
+
+// ===== DROPDOWN USUARIO =====
+const btn = document.getElementById("userBtn");
+const menu = document.getElementById("menu");
+
+menu.addEventListener("click", (e) => e.stopPropagation());
+btn.onclick = () => { menu.style.display = menu.style.display === "block" ? "none" : "block"; };
+window.onclick = (e) => { if (!e.target.matches('.dropdown-btn')) menu.style.display = "none"; };
+
+// ===== HAMBURGER / SIDEBAR =====
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
+
+hamburgerBtn.onclick = () => {
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+};
+sidebarClose.onclick = closeSidebar;
+sidebarOverlay.onclick = closeSidebar;
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
+// ===== MODAL REGLAS =====
+const modalOverlay = document.getElementById("modalOverlay");
+document.getElementById("openReglasBtn").onclick = () => modalOverlay.classList.add("open");
+document.getElementById("closeModalBtn").onclick = () => modalOverlay.classList.remove("open");
+document.getElementById("closeModalBtn2").onclick = () => modalOverlay.classList.remove("open");
+modalOverlay.onclick = (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove("open"); };
+
+// ===== COUNTDOWN =====
+const countDownDate = new Date("Jun 11, 2026 21:00:00").getTime();
+const countEl = document.getElementById("countdowon");
+const x = setInterval(() => {
+  const now = new Date().getTime();
+  const distance = countDownDate - now;
+  if (distance < 0) { clearInterval(x); countEl.innerHTML = "¡Arrancó!"; return; }
+  const d = Math.floor(distance / 86400000);
+  const h = Math.floor((distance % 86400000) / 3600000);
+  const m = Math.floor((distance % 3600000) / 60000);
+  const s = Math.floor((distance % 60000) / 1000);
+  countEl.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+</script>
+</body>
+</html>

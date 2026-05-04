@@ -14,7 +14,7 @@
 
     <header class="topbar">
 
-        <button class="nav-btn" onclick="location.href='home.html'">Inicio</button>
+        <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
         <button class="nav-btn">Información</button>
         <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
 
@@ -86,7 +86,7 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            window.location.href = "home.html";
+            window.location.href = "inicio.html";
             return;
         }
         // await cargarPrediccion(idPorra, user);
