@@ -22,11 +22,11 @@
   <span id="sb-pred-locked" class="nav-locked">🔒 Mis predicciones</span>
   <button id="sb-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
 </div>
-
+ 
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
   <span class="topbar-logo">⚽ PorrasMundial</span>
-
+ 
   <nav class="nav-links">
     <button class="nav-btn active">Inicio</button>
     <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
@@ -35,7 +35,7 @@
     <span id="nav-pred-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis predicciones</span>
     <button id="nav-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
   </nav>
-
+ 
   <div class="nav-right" id="login-section">
     <button id="loginBtn" class="nav-btn">Identifícate 👤</button>
     <div id="userdiv" class="dropdown">
@@ -54,41 +54,41 @@
       </div>
     </div>
   </div>
-
+ 
   <button class="hamburger" id="hamburgerBtn">☰</button>
 </header>
-
+ 
 <!-- ===== MAIN ===== -->
 <main class="container">
-
+ 
   <!-- HERO -->
   <section class="hero">
     <img class="logo" src="../static/media/logo2.png" alt="Porra Mundial logo">
     <p class="hero-tagline">Compite con tus amigos prediciendo el Mundial 2026</p>
-
+ 
     <div class="countdown-card">
       <h2>Quedan</h2>
       <span id="countdowon" class="countdown">–</span>
     </div>
   </section>
-
+ 
   <!-- ONDA SEPARADORA -->
   <div class="wave-divider">
     <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path d="M0,30 C360,70 1080,-10 1440,30 L1440,60 L0,60 Z" fill="#f5f0e8"/>
     </svg>
   </div>
-
+ 
   <!-- CONTENIDO CREMA -->
   <div class="content-area">
     <div class="content-inner">
-
+ 
       <!-- ¿QUÉ ES? -->
       <section class="que-es">
         <p class="section-eyebrow">¿Qué es esto?</p>
         <h2 class="section-heading">Una porra del Mundial con tus amigos</h2>
         <p class="section-sub">Predice partidos, acumula puntos y compite en grupos privados. Cuanto antes hagas tus apuestas, más chances tienes — los plazos cierran cuando empieza cada fase.</p>
-
+ 
         <div class="features-grid">
           <div class="feature-card">
             <div class="feature-icon" style="background:#e8f5de;">🗓️</div>
@@ -109,12 +109,12 @@
           </div>
         </div>
       </section>
-
+ 
       <!-- CÓMO FUNCIONA -->
       <section class="como-funciona">
         <p class="section-eyebrow">¿Cómo funciona?</p>
         <h2 class="section-heading">En cuatro pasos</h2>
-
+ 
         <div class="steps-list">
           <div class="step">
             <div class="step-num">1</div>
@@ -147,12 +147,106 @@
         </div>
       </section>
 
+      <!-- CUÁNDO PREDECIR -->
+      <section class="predicciones-section">
+        <p class="section-eyebrow">Cuándo predecir</p>
+        <h2 class="section-heading">Cada fase, una ventana de tiempo</h2>
+        <p class="pred-intro">Las predicciones <strong>no se hacen todas a la vez</strong>. Para cada fase solo puedes apostar una vez que sabes qué equipos la van a jugar — es decir, cuando la fase anterior ha terminado. La ventana cierra en cuanto arranca el primer partido. <strong>¡Ojo!</strong> En algunos casos el margen es muy estrecho.</p>
+ 
+        <div class="pred-alerta">
+          <span class="alerta-icon">⚠️</span>
+          <span><strong>¡Atención!</strong> Para las fases de Dieciseisavos y Octavos tienes menos de 24 horas de margen. Si se te pasa la fecha límite ya no puedes hacer tus predicciones para esa fase, y pierdes todos esos puntos. Anota las fechas o activa las notificaciones de la app.</span>
+        </div>
+ 
+        <!-- <div class="pred-fases-cards">
+          <div class="pred-fase-card">
+            <div class="pfc-num">1</div>
+            <div><span class="pfc-dot" style="background:#5a9a3a;"></span></div>
+            <h4>Fase de Grupos</h4>
+            <p>Cierra el <strong>11 jun a las 21:00</strong>. Tienes desde que te registras hasta que arranca el primer partido del Mundial.</p>
+          </div>
+          <div class="pred-fase-card">
+            <div class="pfc-num">2</div>
+            <div><span class="pfc-dot" style="background:#c8a84b;"></span></div>
+            <h4>Dieciseisavos</h4>
+            <p>Abre el <strong>28 jun a las 6:00</strong>, cierra a las <strong>21:00</strong>. Solo <strong>15 h</strong> de margen. 🚨</p>
+          </div>
+          <div class="pred-fase-card">
+            <div class="pfc-num">3</div>
+            <div><span class="pfc-dot" style="background:#7a9ac8;"></span></div>
+            <h4>Octavos</h4>
+            <p>Abre el <strong>4 jul a las 06:00</strong>, cierra a las <strong>19:00</strong>. Solo <strong>13 h</strong>. 🚨</p>
+          </div>
+          <div class="pred-fase-card">
+            <div class="pfc-num">4</div>
+            <div><span class="pfc-dot" style="background:#c87a5a;"></span></div>
+            <h4>Cuartos</h4>
+            <p>Abre el <strong>8 jul 0:00</strong>, cierra el <strong>9 jul 22:00</strong>. <strong>2 días</strong>. ✅</p>
+          </div>
+          <div class="pred-fase-card">
+            <div class="pfc-num">5</div>
+            <div><span class="pfc-dot" style="background:#8a5ac8;"></span></div>
+            <h4>Semifinales</h4>
+            <p>Abre el <strong>12 jul 06:00</strong>, cierra el <strong>14 jul 21:00</strong>. <strong>3 días</strong>. ✅</p>
+          </div>
+          <div class="pred-fase-card">
+            <div class="pfc-num">6</div>
+            <div><span class="pfc-dot" style="background:#c84a4a;"></span></div>
+            <h4>Final</h4>
+            <p>Abre el <strong>15 jul 23:00</strong>, cierra el <strong>18 jul 23:00</strong>. <strong>3 días</strong>. ✅</p>
+          </div>
+        </div>
+  -->
+
+ 
+        <!-- TABLA MÁRGENES -->
+        <div class="timeline-wrap" style="margin-bottom:0;">
+          <div class="timeline-header">⏱ MARGEN DISPONIBLE POR FASE</div>
+          <div class="timeline-body" style="padding:16px;">
+            <div class="tl-urgencia">
+              <div class="urg-item">
+                <span class="urg-fase"> Grupos</span>
+                <span class="urg-margen">Desde la apertura de la app → 11 jun 21:00</span>
+                <span class="urg-badge holgado">Amplio</span>
+              </div>
+              <div class="urg-item">
+                <span class="urg-fase"> Dieciseisavos</span>
+                <span class="urg-margen">28 jun 01:30 → 21:00 — <strong>15 horas</strong></span>
+                <span class="urg-badge critico">🚨 Crítico</span>
+              </div>
+              <div class="urg-item">
+                <span class="urg-fase"> Octavos</span>
+                <span class="urg-margen">4 jul 03:30 → 19:00 — <strong>13 horas</strong></span>
+                <span class="urg-badge critico">🚨 Crítico</span>
+              </div>
+              <div class="urg-item">
+                <span class="urg-fase"> Cuartos</span>
+                <span class="urg-margen">7 jul 22:00 → 9 jul 22:00 — <strong>2 días</strong></span>
+                <span class="urg-badge corto">Razonable</span>
+              </div>
+              <div class="urg-item">
+                <span class="urg-fase"> Semifinales</span>
+                <span class="urg-margen">12 jul 03:00 → 14 jul 21:00 — <strong>3 días</strong></span>
+                <span class="urg-badge holgado">Amplio</span>
+              </div>
+              <div class="urg-item">
+                <span class="urg-fase"> Final</span>
+                <span class="urg-margen">15 jul 21:00 → 18 jul 23:00 — <strong>3 días</strong></span>
+                <span class="urg-badge holgado">Amplio</span>
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+      </section>
+ 
+ 
       <!-- PUNTUACIÓN -->
       <section class="puntos-section">
-        <p class="section-eyebrow"> Cuánto vale cada acierto</p>
-        <h2 class="section-heading"> Sistema de puntuación</h2>
+        <p class="section-eyebrow">Sistema de puntuación</p>
+        <h2 class="section-heading">Cuánto vale cada acierto</h2>
         <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la fase, más puntos en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda — independientemente de si lo hace en prórroga o penaltis.</p>
-
+ 
         <div class="puntos-table-wrap">
           <table class="puntos">
             <thead>
@@ -227,16 +321,16 @@
             </tbody>
           </table>
         </div>
-
+ 
         <div class="nota-elim">
           <strong>Eliminatorias:</strong> los puntos de 1×2, DG y marcador exacto se calculan siempre sobre el resultado a los <strong>90 minutos</strong>, sin contar prórroga ni penaltis. El punto adicional de <em>«gana eliminatoria»</em> se otorga si aciertas el equipo que pasa, independientemente de cómo lo haga (prórroga, penaltis, etc.).
         </div>
-
+ 
         <!-- EJEMPLO INTERACTIVO -->
         <div class="ejemplo-section">
-          <div class="ejemplo-header">📋 EJEMPLO POLÉMICO — partido de cuartos de final</div>
+          <div class="ejemplo-header">📋 EJEMPLO CONFLICTIVO — partido de cuartos de final</div>
           <div class="ejemplo-body">
-
+ 
             <div class="ejemplo-partido">
               <span class="equipo-e">  <img src="https://flagcdn.com/w40/es.png" style="height: 1em;"> España</span>
               <span class="result-e">1 – 1</span>
@@ -244,7 +338,7 @@
               <br>
               <span class="nota-90" style="width:100%;text-align:center;">Resultado final: 2-1. España marca <b>en la prórroga</b></span>
             </div>
-
+ 
             <div class="apuestas-grid">
               <div class="apuesta-card">
                 <div class="nombre">🙋 Tú apostaste:</div>
@@ -267,9 +361,9 @@
                     <span class="pts-inline cero">+0</span>
                   </div>
                 </div>
-                <div class="total-pts">Total: <strong>3 pts</strong> </div>
+                <div class="total-pts">Total: <strong>3 pts</strong></div>
               </div>
-
+ 
               <div class="apuesta-card">
                 <div class="nombre">🙋 Tu amigo apostó:</div>
                 <div class="prediccion">2 – 2 <span style="font-size:0.8em"> (Pasa España)</span></div>
@@ -294,28 +388,66 @@
                 <div class="total-pts">Total: <strong>13 pts</strong></div>
               </div>
             </div>
-
+ 
             <!-- <div class="ejemplo-nota">
               💡 <strong>Fíjate:</strong> tu amigo apostó 2–2 y el partido terminó 2–1 a los 90', aunque España pasó en prórroga. Acertó la DG (0 de diferencia en el empate) y quién pasa, pero falló el 1×2 y el marcador exacto. Tú acertaste todo porque tu apuesta era el resultado a 90 minutos, que sí fue 2–1.
             </div> -->
-
+ 
           </div>
         </div>
-
+ 
+        <!-- CAMPEÓN Y SUBCAMPEÓN -->
+        <div class="campeon-section">
+          <p class="section-eyebrow" style="margin-bottom:6px;">Predicción inicial</p>
+          <h3 style="font-size:19px;color:var(--marron);margin-bottom:10px;">Campeón y Subcampeón del Mundial</h3>
+          <p class="campeon-intro">Antes de que empiece el torneo haces una predicción única: qué selección ganará el Mundial y cuál llegará a la final. Esta apuesta se puntúa al margen de todo lo demás, y los puntos dependen de cómo queden en realidad las dos selecciones que elegiste.</p>
+ 
+          <div class="campeon-grid">
+            <div class="campeon-card campeona">
+              <div class="cc-eyebrow">Campeón</div>
+              <h4>Tu selección queda...</h4>
+              <div class="cc-row match">
+                <span>🏆 Campeón (aciertas)</span>
+                <span class="cc-pts">25 pts</span>
+              </div>
+              <div class="cc-row partial">
+                <span>🥈 Subcampeón (cerca)</span>
+                <span class="cc-pts">10 pts</span>
+              </div>
+            </div>
+            <div class="campeon-card subcampeon">
+              <div class="cc-eyebrow">Subcampeón</div>
+              <h4>Tu selección queda...</h4>
+              <div class="cc-row partial">
+                <span>🏆 Campeón (te pasaste)</span>
+                <span class="cc-pts">5 pts</span>
+              </div>
+              <div class="cc-row match">
+                <span>🥈 Subcampeón (aciertas)</span>
+                <span class="cc-pts">15 pts</span>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="campeon-nota">
+            💡 <strong>Ejemplo:</strong> apuestas a España como <em>Campeón</em> y a Francia como <em>Subcampeón</em>. Al final, España llega a la final pero la pierde — queda Subcampeón. Por tu apuesta a España obtienes <strong>10 pts</strong> (apostaste a campeón, quedó subcampeón). Por Francia no obtienes nada (apostaste a subcampeón pero no llegó a la final). Si la final hubiera sido al revés (Francia campeón, España subcampeón), habrías sumado <strong>5 + 15 = 20 pts</strong>.
+          </div>
+        </div>
+ 
         <button class="btn-reglas" id="openReglasBtn">📄 Ver reglas completas</button>
       </section>
-
-    </div>
-  </div>
-
+ 
+     </div>
+  </div>   
+ 
 </main>
-
+ 
 <!-- ===== MODAL REGLAS ===== -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <button class="modal-close-btn" id="closeModalBtn">✕</button>
     <h2>Reglas completas</h2>
-
+ 
     <div class="rule-item">
       <h4>Predicciones de fase de grupos</h4>
       <p>Predices el resultado exacto de cada partido. Puedes ganar puntos por 1×2, DG y marcador exacto de forma acumulativa.</p>

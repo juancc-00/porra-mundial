@@ -40,10 +40,13 @@ TODO:
 
 - [ ] Excel con estimacion de consumo lecturas/escrituras
 - [ ] Trabajar en seguridad del backend (firebase bloqueado?)
-- [ ] Estética
+- [ ] Generalizar Estética
+- [ ] Cambiar panel desplegable user
 - [X] Eliminar clasificación
 - [ ] Nombres y distribución de botones, etc
 - [ ] Optimizar para movil
+- [ ] Quitar boton info
+- [ ] Desplegar web
 
 ## Cloud functions
 
@@ -54,13 +57,18 @@ TODO:
 - [ ] En la final, sumar también puntos por predicciones generales (campeon y sub)
 
 ## Home
+- [ ] Quitar Zoom
+- [ ] Poner logo arriba izda
+- [ ] Cambiar slogan y texto cringe en general
+- [ ] Countdown personalizado por fase
+- [ ] Añadir explicacion "te parece injusto?" en puntuacion
 
 
 ## Información
 
 (Alberto)
-- [ ] Info general de la página
-- [ ] Bases, instrucciones, puntuaciones, fechas, etc
+- [X] Info general de la página
+- [X] Bases, instrucciones, puntuaciones, fechas, etc
 
 ## Mis porras
 
@@ -70,7 +78,7 @@ TODO:
 ## Porra
 
 (Juan)
-- [ ] Quitar hardcodeo: antes de cargar por un segundo aparece Juan, Alberto, Lalo
+- [ ] Scoreboard: muestra solo 3 o es dinamico?
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [X] Crear diccionario IDs -> orden cronologico
 - [X] Quitar brute force a todo
@@ -88,6 +96,10 @@ TODO:
 - [X] Gestionar empate en clasificacion
 - [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
+- [ ] optimizar para movil
+- [ ] gestionar margenes containers
+- [ ] Eje X grafico quitar espacios "P 1" a "P1" 
+- [ ] Añadir identificador "PX" a tarjetas de partidos en la esquina
 
 ## Calendario y resultados
 
@@ -102,6 +114,8 @@ TODO:
 - [X] Prediccion general: llamar "Iniciales" o algo asi, cambiar Campeon y subcampeon. 
 - [X] Granularidad en tiempo faltante (horas, minutos al final)
 - [ ] Extender bloqueo de predicciones no solo no poder acceder a la pagina, sino bloqueo write de firebase
+- [ ] Poner boton Volver
+- [ ] Cambiar botones por desplegable
 
 ## Prediccion Inicial
 
@@ -110,6 +124,7 @@ TODO:
 - [X] Boton guardar prediccion: posicion absoluta en pantalla
 - [X] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
 - [X] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
+- [ ] No leer de partidos: hacer html estatico
 
 ## Prediccion Siguientes fases
 

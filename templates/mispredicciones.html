@@ -211,7 +211,7 @@ async function actualizarTarjetas() {
         console.log(fases);
         const f = fases[fase].activaDesde;
 
-        info.textContent = `${tiempoRestante(f)}`;
+        info.textContent = " Abre en " +`${tiempoRestante(f)}`;
         icono_container.innerHTML = `
           <i class="fa-solid fa-hourglass-start" style="color: #130f2b;" 
             title="La fase aún no ha comenzado"></i>
