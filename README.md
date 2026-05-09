@@ -106,7 +106,7 @@ TODO:
 (Juan)
 - [X] Meter acrónimos en vista calendario
 - [ ] Cambiar el bruteforce por leer procesados+partidos para resultados reales
-- [ ] Quitar "ver grupos"
+- [X] Quitar "ver grupos"
 
 ## Mis predicciones
 
