@@ -44,15 +44,27 @@ main {
 
 .container {
   width: 90%;
-  max-width: 1200px; /* Un tope máximo para que en pantallas gigantes no se estire demasiado */
-  margin: 60px auto 40px auto; /* El "auto" a los lados es la forma correcta de centrarlo */
-  /* Quitamos el align-items: left; porque 'left' no es un valor válido de flexbox */
+  max-width: 1200px;
+  margin: 60px auto 40px auto;
+  display: flex;         /* Añadimos flex vertical para asegurar orden */
+  flex-direction: column;
+  gap: 20px;            /* Espacio uniforme entre todas las secciones */
 }
 
-.partidos-section {
-  width: 100%;
+
+.partidos-section, 
+.chart-section {
+  width: 100%;           /* 100% del 90% del contenedor padre */
+  max-width: 100%;       /* Evita desbordamientos */
   box-sizing: border-box;
-  min-width: 0;
+  margin-left: 0;        /* Eliminamos márgenes manuales */
+  margin-right: 0;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
 }
 
 .cabecera-container{
@@ -288,17 +300,4 @@ main {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* --- GRÁFICO DE PROGRESIÓN --- */
-.chart-section {
-  width: 100%;
-  box-sizing: border-box; /* Obliga a que el padding no engorde la caja */
-  margin-bottom: 20px;
-}
-
-.chart-container {
-  position: relative;
-  height: 300px; /* Altura fija para que no se descontrole */
-  width: 100%;
 }
