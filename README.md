@@ -96,7 +96,7 @@ TODO:
 - [X] Gestionar empate en clasificacion
 - [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
-- [ ] optimizar para movil
+- [X] optimizar para movil
 - [X] gestionar margenes containers
 - [X] Eje X grafico quitar espacios "P 1" a "P1" 
 - [X] Añadir identificador "PX" a tarjetas de partidos en la esquina
