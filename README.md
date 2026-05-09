@@ -78,7 +78,7 @@ TODO:
 ## Porra
 
 (Juan)
-- [ ] Scoreboard: muestra solo 3 o es dinamico?
+- [X] Scoreboard: muestra solo 3 o es dinamico?
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [X] Crear diccionario IDs -> orden cronologico
 - [X] Quitar brute force a todo
@@ -97,9 +97,9 @@ TODO:
 - [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
 - [ ] optimizar para movil
-- [ ] gestionar margenes containers
-- [ ] Eje X grafico quitar espacios "P 1" a "P1" 
-- [ ] Añadir identificador "PX" a tarjetas de partidos en la esquina
+- [X] gestionar margenes containers
+- [X] Eje X grafico quitar espacios "P 1" a "P1" 
+- [X] Añadir identificador "PX" a tarjetas de partidos en la esquina
 
 ## Calendario y resultados
 

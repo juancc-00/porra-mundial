@@ -7,18 +7,30 @@
   <link rel="stylesheet" href="../static/porra_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
-  <header class="topbar">
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕</button>
+  <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
+</div>
 
+<header class="topbar">
+  <span class="topbar-logo">⚽ PorrasMundial</span>
+  
+  <nav class="nav-links">
     <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
-    <button class="nav-btn">Información</button>
     <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
     <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
+  </nav>
 
-  </header>
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+</header>
 
   <main>
     <div class="container">
@@ -69,6 +81,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script type="module">
+
+  
   import {
     getFirestore,
     doc,
@@ -86,6 +100,27 @@
     getAuth,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  // Elementos del DOM
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const sidebar = document.getElementById("sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+  const sidebarClose = document.getElementById("sidebarClose");
+
+  // Función para abrir
+  hamburgerBtn.onclick = () => {
+    sidebar.classList.add("open");
+    sidebarOverlay.classList.add("open");
+  };
+
+  // Funciones para cerrar
+  const closeSidebar = () => {
+    sidebar.classList.remove("open");
+    sidebarOverlay.classList.remove("open");
+  };
+
+  sidebarClose.onclick = closeSidebar;
+  sidebarOverlay.onclick = closeSidebar;
 
   const paises_abreviaturas = {
     "México": "MEX", "Suecia": "SUE", "Estados Unidos": "USA", "Canadá": "CAN",
@@ -259,9 +294,11 @@ async function cargarLogsActividad(id) {
     const contenedor = document.getElementById("contenedorGaleria");
     contenedor.innerHTML = "";
 
-    partidos.forEach(p => {
+    partidos.forEach((p, index) => {
       const pIdStr = p.Numero.toString();
       const esPasado = idsProcesados.includes(pIdStr);
+
+      const numeroCronologico = index + 1;
       
       const abr1 = paises_abreviaturas[p.Pais1] || p.Pais1;
       const abr2 = paises_abreviaturas[p.Pais2] || p.Pais2;
@@ -276,6 +313,7 @@ async function cargarLogsActividad(id) {
       card.className = "partido-card";
 
       let htmlContent = `
+      <div class="partido-label">P${numeroCronologico}</div>
       <div class="partido-info-top">
         ${cabeceraPartido}
       </div>
@@ -372,7 +410,7 @@ function renderizarClasificacion(miembrosData) {
 
   function renderizarGrafico(miembrosData, partidosJugados) {
     const ctx = document.getElementById('graficoProgresion').getContext('2d');
-    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P ${p}`));
+    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${p}`));
     const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40'];
     const datasets = miembrosData.map((miembro, index) => ({
       label: miembro.nombre,
@@ -401,6 +439,14 @@ function renderizarClasificacion(miembrosData) {
   document.getElementById("btnScrollDer").addEventListener("click", () => {
     document.getElementById("contenedorGaleria").scrollBy({ left: 300, behavior: 'smooth' });
   });
+
+
+  function toggleMenu() {
+  document.getElementById('navMenu').classList.toggle('active');
+  document.getElementById('menuOverlay').classList.toggle('active');
+}
+
+
 </script>
 
 
