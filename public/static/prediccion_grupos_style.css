@@ -49,13 +49,26 @@ body {
 td{
   align-items: center;
 }
+/* BLOQUES DE GRUPO */
 
+.grupo {
+  background: #151e33;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px auto;
+  max-width: 900px;
+}
+
+.grupo h2 {
+  margin-top: 0;
+  color: #4cc9f0;
+}
 
 /* PARTIDO */
 
 .partido {
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto auto auto 1fr;
   align-items: center;
   gap: 8px;
   padding: 10px;
@@ -165,8 +178,44 @@ td{
   min-width: 70px;
 }
 
+.tabla-clasif {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla-clasif th,
+.tabla-clasif td {
+  padding: 6px;
+  text-align: center;
+  border-bottom: 1px solid #2c3a5c;
+}
+
+.tabla-clasif th:first-child,
+.tabla-clasif td:first-child {
+  text-align: left;
+  font-size: 1.1em;
+}
+
+.tabla-clasif td:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clasificado {
+  background-color: #cfe9ff; /* azul claro */
+  color: #2c3a5c;
+}
+
+.mejor-tercero {
+  background-color: #fff3cd; /* amarillo claro */
+  color: #2c3a5c;
+}
 
 .bracket {
+  background-color: #4cc9f0;
+  padding: 15px;
   display: flex;
   justify-content: center;
   gap: 40px;
@@ -189,6 +238,7 @@ td{
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  gap: 10px;
 }
 
 .partido-bracket {
@@ -230,43 +280,123 @@ td{
 }
 
 
-.selector-ganador {
-  margin-top: 5px;
+.input-con-info {
   display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.hidden {
+.info {
+  position: relative;
+  cursor: pointer;
+  background: #ddd;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.tooltip {
   display: none;
+  position: absolute;
+  top: 22px;
+  left: 0;
+  background: #333;
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
-.toggle {
-  display: flex;
-  justify-content: space-between;
+.info:hover .tooltip {
+  display: block;
+}
+
+#predicciones-generales {
+  max-width: 520px;
+}
+
+#predicciones-generales h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.campo {
+  margin-bottom: 20px;
+}
+
+.selector {
+  position: relative;
+}
+
+.selector-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  color: #01172e;
+}
+
+.selector-input img {
+  width: 24px;
+}
+
+.dropdown {
+  position: absolute;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  color: #01172e;
+  border-radius: 12px;
+  margin-top: 5px;
+  display: none;
+  z-index: 10;
 }
 
 .opcion {
-  flex: 1;
-  text-align: center;
-  padding: 5px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
 }
 
-.opcion.activo {
-  background: #cfe2ff;
-  color: #01172e;
-  font-weight: bold;
+.opcion:hover {
+  background: #f1f3f5;
 }
 
-.partido-container {
-  margin-bottom: 10px;
+.opcion img {
+  width: 22px;
 }
 
-/* .selector-ganador {
-  margin-left: 120px;
-}    */
+.selector.open .dropdown {
+  display: block;
+}
+
+/* button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  background: #0d6efd;
+  color: white;
+  cursor: pointer;
+} */
+
+button:hover {
+  background: #0b5ed7;
+} 
 
 #guardarBtn{
   max-width: 12%;
@@ -309,3 +439,44 @@ td{
   font-size: 1.4rem;
   cursor: pointer;
 }
+
+#btnSimular{
+  font-size: 1em;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+#cabecera-simular{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#info-simular{
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: white;
+  font-size: 1.8em;
+  text-align: end;
+  cursor: pointer;
+}
+
+/* ===== RESPONSIVO ===== */
+    @media (max-width: 1000px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; margin-left: 0; }
+      .topbar { flex-wrap: wrap; }
+      .nav-right { display: none; }
+ 
+      .apuestas-grid { grid-template-columns: 1fr; }
+      table.puntos { font-size: 12px; }
+    }
+ 
+    /* Animaciones entrada */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
