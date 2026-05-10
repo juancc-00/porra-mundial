@@ -12,23 +12,27 @@
 
 <body>
 
+<!-- ===== SIDEBAR MÓVIL ===== -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" id="sidebarClose">✕</button>
   <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
-  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
-  <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
 </div>
 
+<!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo">⚽ PorrasMundial</span>
-  
+  <span class="topbar-logo"><img style="height:2.5em" src="../static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
+ 
   <nav class="nav-links">
     <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
-    <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
-    <button class="nav-btn" onclick="location.href='misporras.html'">Mis Porras</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
   </nav>
-
+  
   <button class="hamburger" id="hamburgerBtn">☰</button>
 </header>
 
@@ -78,6 +82,7 @@
 
 </body>
 
+<script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script type="module">
@@ -101,26 +106,62 @@
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // Elementos del DOM
-  const hamburgerBtn = document.getElementById("hamburgerBtn");
-  const sidebar = document.getElementById("sidebar");
-  const sidebarOverlay = document.getElementById("sidebarOverlay");
-  const sidebarClose = document.getElementById("sidebarClose");
-
-  // Función para abrir
-  hamburgerBtn.onclick = () => {
-    sidebar.classList.add("open");
-    sidebarOverlay.classList.add("open");
+  const firebaseConfig = {
+    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
+    authDomain: "porra-mundial-91819.firebaseapp.com",
+    projectId: "porra-mundial-91819",
+    storageBucket: "porra-mundial-91819.firebasestorage.app",
+    messagingSenderId: "281151008271",
+    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
+    measurementId: "G-G37R8RYVXQ"
   };
 
-  // Funciones para cerrar
-  const closeSidebar = () => {
-    sidebar.classList.remove("open");
-    sidebarOverlay.classList.remove("open");
-  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  sidebarClose.onclick = closeSidebar;
-  sidebarOverlay.onclick = closeSidebar;
+  // ===== HAMBURGER / SIDEBAR =====
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
+
+hamburgerBtn.onclick = () => {
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+};
+sidebarClose.onclick = closeSidebar;
+sidebarOverlay.onclick = closeSidebar;
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+  } else {
+  }
+});
+
+
+
+  // // Función para abrir
+  // hamburgerBtn.onclick = () => {
+  //   sidebar.classList.add("open");
+  //   sidebarOverlay.classList.add("open");
+  // };
+
+  // // Funciones para cerrar
+  // const closeSidebar = () => {
+  //   sidebar.classList.remove("open");
+  //   sidebarOverlay.classList.remove("open");
+  // };
+
+  // sidebarClose.onclick = closeSidebar;
+  // sidebarOverlay.onclick = closeSidebar;
 
   const paises_abreviaturas = {
     "México": "MEX", "Suecia": "SUE", "Estados Unidos": "USA", "Canadá": "CAN",
@@ -146,22 +187,9 @@
     mapa_cronologico[idF] = parseInt(orden);
   }
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB-ckFMY4qIC05I3LZj4nv3BJx6TtfEKt8",
-    authDomain: "porra-mundial-91819.firebaseapp.com",
-    projectId: "porra-mundial-91819",
-    storageBucket: "porra-mundial-91819.firebasestorage.app",
-    messagingSenderId: "281151008271",
-    appId: "1:281151008271:web:1e1da3163adb4f2b493d7a",
-    measurementId: "G-G37R8RYVXQ"
-  };
 
   const params = new URLSearchParams(window.location.search);
   const idPorra = params.get("id");
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
 
   let chartProgresion = null;
 

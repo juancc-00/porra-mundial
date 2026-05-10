@@ -15,6 +15,10 @@
     /* ===== Reset ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
  
+    /* html {
+      zoom: 1.1;
+    } */
+
     body {
       font-family: "ADLaM Display", sans-serif;
       background: #6aaa4a;

@@ -78,7 +78,7 @@ TODO:
 ## Porra
 
 (Juan)
-- [X] Scoreboard: muestra solo 3 o es dinamico?
+- [ ] Scoreboard: muestra solo 3 o es dinamico?
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [X] Crear diccionario IDs -> orden cronologico
 - [X] Quitar brute force a todo
@@ -96,17 +96,19 @@ TODO:
 - [X] Gestionar empate en clasificacion
 - [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
-- [X] optimizar para movil
-- [X] gestionar margenes containers
-- [X] Eje X grafico quitar espacios "P 1" a "P1" 
-- [X] Añadir identificador "PX" a tarjetas de partidos en la esquina
+- [ ] optimizar para movil
+- [ ] gestionar margenes containers
+- [ ] Eje X grafico quitar espacios "P 1" a "P1" 
+- [ ] Añadir identificador "PX" a tarjetas de partidos en la esquina
 
 ## Calendario y resultados
 
 (Juan)
 - [X] Meter acrónimos en vista calendario
 - [ ] Cambiar el bruteforce por leer procesados+partidos para resultados reales
-- [X] Quitar "ver grupos"
+- [ ] Quitar "ver grupos"
+- [ ] optimizar para movil
+- [ ] Quitar "primera fase", cambiar por fase real
 
 ## Mis predicciones
 
@@ -131,5 +133,5 @@ TODO:
 (Alberto)
 - [X] Hacer
 - [X] Gestionar dislexia: partidos aparecen como Diesciseisafsdfaos 
-- [ ] Funcionalidad penaltis: cambiar estetica y distribucion; explicar
+- [X] Funcionalidad penaltis: cambiar estetica y distribucion; explicar
 - [X] Logica penalties: en vez de equipo ganador, escribir 0/1 en Partidos
