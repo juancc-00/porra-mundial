@@ -16,41 +16,73 @@
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" id="sidebarClose">✕</button>
   <button class="nav-btn active">Inicio</button>
-  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
   <span id="sb-porras-locked" class="nav-locked">🔒 Mis porras</span>
-  <button id="sb-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'">Mis porras</button>
+  <button id="sb-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
   <span id="sb-pred-locked" class="nav-locked">🔒 Mis predicciones</span>
-  <button id="sb-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
+  <button id="sb-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
+
+  <div class="login-section">
+    <button class="loginBtn nav-btn">
+      Identifícate 👤
+    </button>
+    <div class="dropdown userdiv">
+      <button class="userBtn dropdown-btn"></button>
+      <div class="menu dropdown-menu">
+        <div class="alias-box">
+          <span>Alias:</span>
+          <span class="aliasTexto">Cargando...</span>
+          <input class="aliasInput"
+                type="text"
+                maxlength="20"
+                style="display:none">
+          <button class="editAliasBtn alias-btn">✏️</button>
+          <button class="saveAliasBtn alias-btn" style="display:none">✔️</button>
+        </div>
+        <button class="logoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
- 
+
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo">⚽ PorrasMundial</span>
+  <span class="topbar-logo"><img style="height:2.5em" src="../static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
   <nav class="nav-links">
     <button class="nav-btn active">Inicio</button>
     <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
     <span id="nav-porras-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis porras</span>
-    <button id="nav-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'">Mis porras</button>
+    <button id="nav-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" style="color: #ffffff;"></i> Mis porras</button>
     <span id="nav-pred-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis predicciones</span>
-    <button id="nav-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'">Mis predicciones</button>
+    <button id="nav-pred-btn" class="nav-btn" style="display:none" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i> Mis predicciones</button>
   </nav>
  
-  <div class="nav-right" id="login-section">
-    <button id="loginBtn" class="nav-btn">Identifícate 👤</button>
-    <div id="userdiv" class="dropdown">
-      <button id="userBtn" class="dropdown-btn"></button>
-      <div id="menu" class="dropdown-menu">
+  <div class="nav-right login-section">
+    <button class="loginBtn nav-btn">
+      Identifícate 👤
+    </button>
+    <div class="dropdown userdiv">
+      <button class="userBtn dropdown-btn"></button>
+      <div class="menu dropdown-menu">
         <div class="alias-box">
           <span>Alias:</span>
-          <span id="aliasTexto">Cargando...</span>
-          <input id="aliasInput" type="text" maxlength="20" style="display:none">
-          <button id="editAliasBtn" class="alias-btn">✏️</button>
-          <button id="saveAliasBtn" class="alias-btn" style="display:none">✔️</button>
+          <span class="aliasTexto">Cargando...</span>
+          <input class="aliasInput"
+                type="text"
+                maxlength="20"
+                style="display:none">
+          <button class="editAliasBtn alias-btn">✏️</button>
+          <button class="saveAliasBtn alias-btn" style="display:none">✔️</button>
         </div>
-        <button onclick="location.href='misporras.html'">Mis porras</button>
-        <button onclick="location.href='mispredicciones.html'">Mis predicciones</button>
-        <button id="logoutBtn">Cerrar sesión</button>
+        <button class="logoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Cerrar sesión
+        </button>
       </div>
     </div>
   </div>
@@ -64,7 +96,7 @@
   <!-- HERO -->
   <section class="hero">
     <img class="logo" src="../static/media/logo2.png" alt="Porra Mundial logo">
-    <p class="hero-tagline">Compite con tus amigos prediciendo el Mundial 2026</p>
+    <p class="hero-tagline">Adivina los resultados del Mundial de fútbol 2026 para ser el jugardor con más puntos</p>
  
     <div class="countdown-card">
       <h2>Quedan</h2>
@@ -86,26 +118,26 @@
       <!-- ¿QUÉ ES? -->
       <section class="que-es">
         <p class="section-eyebrow">¿Qué es esto?</p>
-        <h2 class="section-heading">Una porra del Mundial con tus amigos</h2>
-        <p class="section-sub">Predice partidos, acumula puntos y compite en grupos privados. Cuanto antes hagas tus apuestas, más chances tienes — los plazos cierran cuando empieza cada fase.</p>
+        <h2 class="section-heading">Una página de porras para el Mundial 2026</h2>
+        <p class="section-sub">Predice partidos, acumula puntos y compite en grupos privados. </p>
  
         <div class="features-grid">
           <div class="feature-card">
             <div class="feature-icon" style="background:#e8f5de;">🗓️</div>
             <h3>Calendario y resultados</h3>
-            <p>Todos los partidos del mundial con resultados reales en tiempo real.</p>
+            <p>Todos los partidos del mundial con resultados reales.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon" style="background:#fff3e0;">👥</div>
             <h3>Mis porras</h3>
-            <p>Grupos privados con tus amigos. Cada porra tiene su propio scoreboard.</p>
-            <span class="badge-lock">🔒 Requiere login</span>
+            <p>Participa en grupos privados con tus amigos, familia, etc.</p>
+            <span class="badge-lock">🔒 Requiere registrarte</span>
           </div>
           <div class="feature-card">
             <div class="feature-icon" style="background:#fde8f0;">📊</div>
             <h3>Mis predicciones</h3>
             <p>Rellena tus apuestas para cada partido antes de que empiece la fase.</p>
-            <span class="badge-lock">🔒 Requiere login</span>
+            <span class="badge-lock">🔒 Requiere registrarte</span>
           </div>
         </div>
       </section>
@@ -113,7 +145,7 @@
       <!-- CÓMO FUNCIONA -->
       <section class="como-funciona">
         <p class="section-eyebrow">¿Cómo funciona?</p>
-        <h2 class="section-heading">En cuatro pasos</h2>
+        <h2 class="section-heading">Súper simple</h2>
  
         <div class="steps-list">
           <div class="step">
@@ -134,7 +166,7 @@
             <div class="step-num">3</div>
             <div>
               <h4>Haz tus predicciones antes de cada fase</h4>
-              <p>Para grupos, predices el resultado de cada partido. Para eliminatorias, también quién pasa de ronda. Los plazos se cierran al inicio de cada fase — sin modificaciones después.</p>
+              <p>Antes de comenzar la competición, predice el resultado de los partidos de fase de grupos. Para las fases eliminatorias, hay que esperar a saber quién juega. Los plazos se cierran al inicio de cada fase.</p>
             </div>
           </div>
           <div class="step">
@@ -150,12 +182,12 @@
       <!-- CUÁNDO PREDECIR -->
       <section class="predicciones-section">
         <p class="section-eyebrow">Cuándo predecir</p>
-        <h2 class="section-heading">Cada fase, una ventana de tiempo</h2>
-        <p class="pred-intro">Las predicciones <strong>no se hacen todas a la vez</strong>. Para cada fase solo puedes apostar una vez que sabes qué equipos la van a jugar — es decir, cuando la fase anterior ha terminado. La ventana cierra en cuanto arranca el primer partido. <strong>¡Ojo!</strong> En algunos casos el margen es muy estrecho.</p>
+        <h2 class="section-heading">Nueva fase, nuevas predicciones</h2>
+        <p class="pred-intro">Las predicciones <strong>no se hacen todas a la vez</strong>. Para cada fase solo puedes apostar una vez que sabes qué equipos la van a jugar; es decir, cuando la fase anterior ha terminado. La ventana cierra en cuanto arranca el primer partido. <strong>¡Ojo!</strong> En algunos casos el margen es muy estrecho.</p>
  
         <div class="pred-alerta">
           <span class="alerta-icon">⚠️</span>
-          <span><strong>¡Atención!</strong> Para las fases de Dieciseisavos y Octavos tienes menos de 24 horas de margen. Si se te pasa la fecha límite ya no puedes hacer tus predicciones para esa fase, y pierdes todos esos puntos. Anota las fechas o activa las notificaciones de la app.</span>
+          <span><strong>¡Atención!</strong> Para las fases de Dieciseisavos y Octavos tienes menos de 24 horas de margen. Si se te pasa la fecha límite ya no puedes hacer tus predicciones para esa fase, y pierdes todos esos puntos. Anota bien las fechas para no olvidarte.</span>
         </div>
  
         <!-- <div class="pred-fases-cards">
@@ -211,28 +243,28 @@
               </div>
               <div class="urg-item">
                 <span class="urg-fase"> Dieciseisavos</span>
-                <span class="urg-margen">28 jun 01:30 → 21:00 — <strong>15 horas</strong></span>
+                <span class="urg-margen">28 jun 01:30 → 21:00  (<strong>15 horas</strong>)</span>
                 <span class="urg-badge critico">🚨 Crítico</span>
               </div>
               <div class="urg-item">
                 <span class="urg-fase"> Octavos</span>
-                <span class="urg-margen">4 jul 03:30 → 19:00 — <strong>13 horas</strong></span>
+                <span class="urg-margen">4 jul 03:30 → 19:00 (<strong>13 horas</strong>)</span>
                 <span class="urg-badge critico">🚨 Crítico</span>
               </div>
               <div class="urg-item">
                 <span class="urg-fase"> Cuartos</span>
-                <span class="urg-margen">7 jul 22:00 → 9 jul 22:00 — <strong>2 días</strong></span>
-                <span class="urg-badge corto">Razonable</span>
+                <span class="urg-margen">7 jul 22:00 → 9 jul 22:00 (<strong>2 días</strong>)</span>
+                <span class="urg-badge corto">Atento</span>
               </div>
               <div class="urg-item">
                 <span class="urg-fase"> Semifinales</span>
-                <span class="urg-margen">12 jul 03:00 → 14 jul 21:00 — <strong>3 días</strong></span>
-                <span class="urg-badge holgado">Amplio</span>
+                <span class="urg-margen">12 jul 03:00 → 14 jul 21:00 (<strong>3 días</strong>)</span>
+                <span class="urg-badge corto">Atento</span>
               </div>
               <div class="urg-item">
                 <span class="urg-fase"> Final</span>
-                <span class="urg-margen">15 jul 21:00 → 18 jul 23:00 — <strong>3 días</strong></span>
-                <span class="urg-badge holgado">Amplio</span>
+                <span class="urg-margen">15 jul 21:00 → 18 jul 23:00 (<strong>3 días</strong>)</span>
+                <span class="urg-badge corto">Atento</span>
               </div>
             </div>
           </div>
@@ -245,7 +277,7 @@
       <section class="puntos-section">
         <p class="section-eyebrow">Sistema de puntuación</p>
         <h2 class="section-heading">Cuánto vale cada acierto</h2>
-        <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la fase, más puntos en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda — independientemente de si lo hace en prórroga o penaltis.</p>
+        <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la competición, más puntos hay en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda, independientemente de si lo hace en prórroga o penaltis.</p>
  
         <div class="puntos-table-wrap">
           <table class="puntos">
@@ -269,7 +301,7 @@
               <tr>
                 <td>
                   Gana eliminatoria
-                  <span class="tipo-label">Acertar qué equipo pasa de ronda (puede ser en prórroga o penaltis)</span>
+                  <span class="tipo-label">Acertar qué equipo pasa de ronda </span>
                 </td>
                 <td>—</td>
                 <td class="elim-separator"><span class="pts-badge">1</span></td>
@@ -400,38 +432,38 @@
         <div class="campeon-section">
           <p class="section-eyebrow" style="margin-bottom:6px;">Predicción inicial</p>
           <h3 style="font-size:19px;color:var(--marron);margin-bottom:10px;">Campeón y Subcampeón del Mundial</h3>
-          <p class="campeon-intro">Antes de que empiece el torneo haces una predicción única: qué selección ganará el Mundial y cuál llegará a la final. Esta apuesta se puntúa al margen de todo lo demás, y los puntos dependen de cómo queden en realidad las dos selecciones que elegiste.</p>
+          <p class="campeon-intro">Antes de que empiece la competición haces una predicción única: qué selección ganará el Mundial y cuál llegará a la final. Esta apuesta se puntúa al margen de todo lo demás, y los puntos dependen de cómo queden en realidad las dos selecciones que elegiste.</p>
  
           <div class="campeon-grid">
             <div class="campeon-card campeona">
               <div class="cc-eyebrow">Campeón</div>
-              <h4>Tu selección queda...</h4>
+              <h4>El país que apostaste <strong> CAMPEÓN</strong> queda...</h4>
               <div class="cc-row match">
-                <span>🏆 Campeón (aciertas)</span>
+                <span>🏆 Campeón </span>
                 <span class="cc-pts">25 pts</span>
               </div>
               <div class="cc-row partial">
-                <span>🥈 Subcampeón (cerca)</span>
+                <span>🥈 Subcampeón</span>
                 <span class="cc-pts">10 pts</span>
               </div>
             </div>
             <div class="campeon-card subcampeon">
               <div class="cc-eyebrow">Subcampeón</div>
-              <h4>Tu selección queda...</h4>
+              <h4>El país que apostaste <strong> SUBCAMPEÓN</strong> queda...</h4>
               <div class="cc-row partial">
-                <span>🏆 Campeón (te pasaste)</span>
+                <span>🏆 Campeón</span>
                 <span class="cc-pts">5 pts</span>
               </div>
               <div class="cc-row match">
-                <span>🥈 Subcampeón (aciertas)</span>
+                <span>🥈 Subcampeón </span>
                 <span class="cc-pts">15 pts</span>
               </div>
             </div>
           </div>
  
-          <div class="campeon-nota">
+          <!-- <div class="campeon-nota">
             💡 <strong>Ejemplo:</strong> apuestas a España como <em>Campeón</em> y a Francia como <em>Subcampeón</em>. Al final, España llega a la final pero la pierde — queda Subcampeón. Por tu apuesta a España obtienes <strong>10 pts</strong> (apostaste a campeón, quedó subcampeón). Por Francia no obtienes nada (apostaste a subcampeón pero no llegó a la final). Si la final hubiera sido al revés (Francia campeón, España subcampeón), habrías sumado <strong>5 + 15 = 20 pts</strong>.
-          </div>
+          </div> -->
         </div>
  
         <button class="btn-reglas" id="openReglasBtn">📄 Ver reglas completas</button>
@@ -473,6 +505,7 @@
 </div>
 
 
+<script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script src="../static/js/codigos_paises.js"></script>
 <script type="module">
 
@@ -528,16 +561,23 @@ async function asegurarUsuario(user) {
 async function cargarAlias(user) {
   const ref = doc(db, "usuarios", user.uid);
   const snap = await getDoc(ref);
-  document.getElementById("aliasTexto").textContent = snap.data().nombre;
+  document.querySelectorAll(".aliasTexto").forEach(el => {
+    el.textContent = snap.data().nombre;
+  });
 }
 
 // ===== LOGIN / LOGOUT =====
-document.getElementById("loginBtn").onclick = async () => {
-  const provider = new GoogleAuthProvider();
-  await signInWithPopup(auth, provider);
-};
+document.querySelectorAll(".loginBtn").forEach(btn => {
+  btn.onclick = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
+});
 
-document.getElementById("logoutBtn").onclick = () => signOut(auth);
+document.querySelectorAll(".logoutBtn").forEach(btn => {
+  btn.onclick = async () => {await signOut(auth)};
+});
+// document.getElementById("logoutBtn").onclick = () => signOut(auth);
 
 // ===== AUTH STATE =====
 onAuthStateChanged(auth, async (user) => {
@@ -545,51 +585,103 @@ onAuthStateChanged(auth, async (user) => {
     await asegurarUsuario(user);
     await cargarAlias(user);
     currentUser = user;
-    document.getElementById("loginBtn").style.display = "none";
-    document.getElementById("userdiv").style.display = "block";
-    document.getElementById("userBtn").textContent = `Hola, ${user.displayName.split(' ')[0]}`;
+    document.querySelectorAll(".loginBtn").forEach(btn => {
+      btn.style.display = "none";
+    });
+    document.querySelectorAll(".userdiv").forEach(div => {
+      div.style.display = "block";
+    });
+    document.querySelectorAll(".userBtn").forEach(btn => {
+      btn.textContent = `Hola, ${user.displayName.split(' ')[0]}`;
+    });
     mostrarNavAutenticado(true);
   } else {
-    document.getElementById("loginBtn").style.display = "";
-    document.getElementById("userdiv").style.display = "none";
+    document.querySelectorAll(".loginBtn").forEach(btn => {
+      btn.style.display = "";
+    });
+    document.querySelectorAll(".userdiv").forEach(div => {
+      div.style.display = "none";
+    });
     mostrarNavAutenticado(false);
   }
 });
 
 // ===== ALIAS EDIT =====
-const aliasTexto = document.getElementById("aliasTexto");
-const aliasInput = document.getElementById("aliasInput");
-const editBtn = document.getElementById("editAliasBtn");
-const saveBtn = document.getElementById("saveAliasBtn");
 
-editBtn.onclick = () => {
-  aliasInput.value = aliasTexto.textContent;
-  aliasTexto.style.display = "none";
-  aliasInput.style.display = "inline-block";
-  editBtn.style.display = "none";
-  saveBtn.style.display = "inline-block";
-  aliasInput.focus();
-};
+document.querySelectorAll(".editAliasBtn").forEach(editBtn => {
 
-saveBtn.onclick = async () => {
-  const nuevo = aliasInput.value.trim();
-  if (!nuevo) return;
-  const ref = doc(db, "usuarios", currentUser.uid);
-  await updateDoc(ref, { nombre: nuevo });
-  aliasTexto.textContent = nuevo;
-  aliasTexto.style.display = "inline";
-  aliasInput.style.display = "none";
-  editBtn.style.display = "inline-block";
-  saveBtn.style.display = "none";
-};
+  editBtn.onclick = () => {
+
+    const box = editBtn.closest(".alias-box");
+
+    const aliasTexto = box.querySelector(".aliasTexto");
+    const aliasInput = box.querySelector(".aliasInput");
+    const saveBtn = box.querySelector(".saveAliasBtn");
+
+    aliasInput.value = aliasTexto.textContent;
+
+    aliasTexto.style.display = "none";
+    aliasInput.style.display = "inline-block";
+
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
+
+    aliasInput.focus();
+  };
+
+});
+
+document.querySelectorAll(".saveAliasBtn").forEach(saveBtn => {
+  saveBtn.onclick = async () => {
+    const box = saveBtn.closest(".alias-box");
+    const aliasTexto = box.querySelector(".aliasTexto");
+    const aliasInput = box.querySelector(".aliasInput");
+    const editBtn = box.querySelector(".editAliasBtn");
+    const nuevo = aliasInput.value.trim();
+    if (!nuevo) return;
+    const ref = doc(db, "usuarios", currentUser.uid);
+    await updateDoc(ref, { nombre: nuevo });
+    // Actualizar TODOS los alias visibles
+    document.querySelectorAll(".aliasTexto").forEach(el => {
+      el.textContent = nuevo;
+    });
+    document.querySelectorAll(".aliasInput").forEach(el => {
+      el.value = nuevo;
+    });
+    aliasTexto.style.display = "inline";
+    aliasInput.style.display = "none";
+    editBtn.style.display = "inline-block";
+    saveBtn.style.display = "none";
+  };
+});
 
 // ===== DROPDOWN USUARIO =====
-const btn = document.getElementById("userBtn");
-const menu = document.getElementById("menu");
 
-menu.addEventListener("click", (e) => e.stopPropagation());
-btn.onclick = () => { menu.style.display = menu.style.display === "block" ? "none" : "block"; };
-window.onclick = (e) => { if (!e.target.matches('.dropdown-btn')) menu.style.display = "none"; };
+document.querySelectorAll(".menu").forEach(menu => {
+  menu.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+});
+
+document.querySelectorAll(".userBtn").forEach(btn => {
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    const dropdown = btn.closest(".dropdown");
+    const menu = dropdown.querySelector(".menu");
+    const abierto = menu.style.display === "block";
+    // cerrar todos
+    document.querySelectorAll(".menu").forEach(m => {
+      m.style.display = "none";
+    });
+    // abrir actual
+    menu.style.display = abierto ? "none" : "block";
+  };
+});
+window.addEventListener("click", () => {
+  document.querySelectorAll(".menu").forEach(menu => {
+    menu.style.display = "none";
+  });
+});
 
 // ===== HAMBURGER / SIDEBAR =====
 const hamburgerBtn = document.getElementById("hamburgerBtn");

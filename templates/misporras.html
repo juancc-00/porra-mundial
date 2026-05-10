@@ -6,15 +6,34 @@
   <link rel="stylesheet" href="../static/misporras_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
   
-<header class="topbar">
+
+<!-- ===== SIDEBAR MÓVIL ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕</button>
   <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
-  <button class="nav-btn">Información</button>
-  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn active" > <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
+</div>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <span class="topbar-logo"><img style="height:2.5em" src="../static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
+  <nav class="nav-links">
+    <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn active" > <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
+  </nav>
+  
+  <button class="hamburger" id="hamburgerBtn">☰</button>
 </header>
 
   <main>
@@ -70,6 +89,8 @@
 
 </body>
 
+
+<script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script type="module">
 
   
@@ -151,13 +172,48 @@ function generarID() {
   return id;
 }
 
+// ===== HAMBURGER / SIDEBAR =====
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
 
-// 👤 Usuario actual
+hamburgerBtn.onclick = () => {
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+};
+sidebarClose.onclick = closeSidebar;
+sidebarOverlay.onclick = closeSidebar;
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
 let currentUser = null;
 
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    mostrarNavAutenticado(true);
+  } else {
+    mostrarNavAutenticado(false);
+  }
 });
+
+function mostrarNavAutenticado(mostrar) {
+  const ids = [
+    ['nav-porras-locked', 'nav-porras-btn'],
+    ['nav-pred-locked',   'nav-pred-btn'],
+    ['sb-porras-locked',  'sb-porras-btn'],
+    ['sb-pred-locked',    'sb-pred-btn'],
+  ];
+  ids.forEach(([lockId, btnId]) => {
+    const lock = document.getElementById(lockId);
+    const btn  = document.getElementById(btnId);
+    if (lock) lock.style.display = mostrar ? 'none' : '';
+    if (btn)  btn.style.display  = mostrar ? '' : 'none';
+  });
+}
 
 
 btnMostrarCrear.onclick = async () => {

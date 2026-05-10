@@ -40,11 +40,15 @@
     }
  
     .topbar-logo {
-      font-size: 22px;
+      font-size: 24px;
       color: white;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       margin-right: 12px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
  
     .nav-btn {
@@ -155,14 +159,14 @@
     /* ===== DROPDOWN USUARIO ===== */
     .dropdown { position: relative; display: inline-block; }
  
-    #loginBtn { 
+    .loginBtn { 
       background: white;
       color: var(--verde-oscuro);
       border: none;
       font-weight: 600;
     }
  
-    #loginBtn:hover { background: var(--crema); }
+    .loginBtn:hover { background: var(--crema); }
  
     .dropdown-btn {
       background: var(--blanco-trans);
@@ -175,7 +179,7 @@
       font-family: inherit;
     }
  
-    #userdiv { display: none; }
+    .userdiv { display: none; }
  
     .dropdown-menu {
       display: none;
@@ -218,8 +222,8 @@
       background: var(--verde);
       border: none;
       color: white;
-      border-radius: 6px;
-      padding: 3px 7px;
+      /* border-radius: 6px; */
+      /* padding: 3px 7px; */
       cursor: pointer;
     }
  
@@ -257,6 +261,7 @@
     }
  
     .hero-tagline {
+      max-width: 700px;
       font-family: "Lora", serif;
       font-style: italic;
       font-size: clamp(18px, 3vw, 26px);
@@ -342,7 +347,7 @@
       font-size: 17px;
       color: #6b5a3e;
       line-height: 1.7;
-      max-width: 600px;
+      /* max-width: 600px; */
       margin-bottom: 40px;
     }
  
@@ -1000,7 +1005,7 @@
       margin-bottom: 8px;
     }
  
-    @media (max-width: 640px) {
+    @media (max-width: 1000px) {
       .tl-phase { grid-template-columns: 100px 1fr; }
       .tl-dates { display: none; }
       .tl-axis { grid-template-columns: 100px 1fr; }
@@ -1084,7 +1089,7 @@
     .btn-reglas:hover { background: var(--verde-palido); }
  
     /* ===== RESPONSIVO ===== */
-    @media (max-width: 640px) {
+    @media (max-width: 1000px) {
       .nav-links { display: none; }
       .hamburger { display: block; margin-left: 0; }
       .topbar { flex-wrap: wrap; }
