@@ -11,17 +11,30 @@
 </head>
 <body>
 
-<header class="topbar">
-
+<!-- ===== SIDEBAR MÓVIL ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" id="sidebarClose">✕</button>
   <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
-  <button class="nav-btn">Información</button>
-  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
-  <button class="nav-btn" onclick="location.href='mispredicciones.html'">Mis Predicciones</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
+</div>
 
-  <button id="guardarBtn" class="guardar">
-  Guardar predicción
-</button>
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <span class="topbar-logo"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
+  <nav class="nav-links">
+    <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
+  <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
+  <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
+  <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
+  </nav>
+  <button id="guardarBtn" class="guardar">
+    Guardar
+  </button>
+  <button class="hamburger" id="hamburgerBtn">☰</button>
 </header>
 
 <main>
@@ -82,6 +95,33 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ===== HAMBURGER / SIDEBAR =====
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
+
+hamburgerBtn.onclick = () => {
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+};
+sidebarClose.onclick = closeSidebar;
+sidebarOverlay.onclick = closeSidebar;
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+  } else {
+    window.alert("Para ver la página debes registrarte con Google antes.");
+    return;
+  }
+});
 
 // Si ya empezó la fase de grupos, se bloquea y no permite cambiar predicciones
 
@@ -142,14 +182,6 @@ function actualizar_estado_usuario(n_pred) {
   }
 };
 
-
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
-});
 
 var num_pred = 0;
 

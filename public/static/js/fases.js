@@ -12,26 +12,26 @@ const fases = {
   },
 
   octavos: {
-    activaDesde: new Date("2026-07-04T06:00"),
-    // activaDesde: new Date("2026-02-28T01:30"),
+    // activaDesde: new Date("2026-07-04T06:00"),
+    activaDesde: new Date("2026-02-28T01:30"),
     bloqueadaDesde: new Date("2026-07-04T19:00")
   },
 
   cuartos: {
-    activaDesde: new Date("2026-07-08T0:00"),
-    // activaDesde: new Date("2026-02-28T01:30"),
+    // activaDesde: new Date("2026-07-08T0:00"),
+    activaDesde: new Date("2026-02-28T01:30"),
     bloqueadaDesde: new Date("2026-07-09T22:00")
   },
 
   semifinales: {
-    activaDesde: new Date("2026-07-12T06:00"),
-    // activaDesde: new Date("2026-02-28T01:30"),
+    // activaDesde: new Date("2026-07-12T06:00"),
+    activaDesde: new Date("2026-02-28T01:30"),
     bloqueadaDesde: new Date("2026-07-14T21:00")
   },
 
   final: {
-    activaDesde: new Date("2026-07-15T23:00"),
-    // activaDesde: new Date("2026-02-28T01:30"),
+    // activaDesde: new Date("2026-07-15T23:00"),
+    activaDesde: new Date("2026-02-28T01:30"),
     bloqueadaDesde: new Date("2026-07-18T23:00")
   }
 
