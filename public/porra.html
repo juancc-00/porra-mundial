@@ -3,8 +3,8 @@
 
 <head>
   <title>Porra</title>
-  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../static/porra_style.css">
+  <link rel="icon" href="static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="static/porra_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" id="sidebarClose">✕</button>
-  <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
+  <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
   <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
   <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
   <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
@@ -24,10 +24,10 @@
 
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo"><img style="height:2.5em" src="../static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
+  <span class="topbar-logo"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
   <nav class="nav-links">
-    <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
+    <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
   <button class="nav-btn" onclick="location.href='calendario-resultados.html'">  Calendario y Resultados</button>
   <button class="nav-btn" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
   <button class="nav-btn" onclick="location.href='mispredicciones.html'"> <i class="fa-solid fa-pen-to-square"></i>Mis predicciones</button>
@@ -84,7 +84,7 @@
 
 <script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../static/js/codigos_paises.js"></script>
+<script src="static/js/codigos_paises.js"></script>
 <script type="module">
 
   
@@ -195,7 +195,7 @@ onAuthStateChanged(auth, async (user) => {
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      window.location.href = "inicio.html";
+      window.location.href = "index.html";
       return;
     }
     await cargarPorra(idPorra, user);

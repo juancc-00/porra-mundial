@@ -3,8 +3,8 @@
 <html>
 <head>
   <title>Predicción fase de grupos</title>
-  <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../static/prediccion_grupos_style.css">
+  <link rel="icon" href="static/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="static/prediccion_grupos_style.css">
   <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
 </head>
@@ -12,7 +12,7 @@
 
 <header class="topbar">
 
-  <button class="nav-btn" onclick="location.href='inicio.html'">Inicio</button>
+  <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
   <button class="nav-btn">Información</button>
   <button class="nav-btn" onclick="location.href='calendario-resultados.html'">Calendario y Resultados</button>
   <button class="nav-btn" onclick="location.href='mispredicciones.html'">Mis Predicciones</button>
@@ -69,11 +69,11 @@
 </body>
 
 <script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
-<script src="../static/js/codigos_paises.js"></script>
-<script src="../static/js/fases.js"></script>
-<script src="../static/js/combis_16.js"></script>
-<script src="../static/js/partidos_grupos.js"></script>
-<script src="../static/js/emparejamientos.js"></script>
+<script src="static/js/codigos_paises.js"></script>
+<script src="static/js/fases.js"></script>
+<script src="static/js/combis_16.js"></script>
+<script src="static/js/partidos_grupos.js"></script>
+<script src="static/js/emparejamientos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="module">
 
@@ -171,7 +171,7 @@ function actualizar_estado_usuario(n_grupos, n_general) {
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "inicio.html";
+    window.location.href = "index.html";
     return;
   }
   cargarTodasLasPredicciones();
@@ -921,7 +921,7 @@ guardarBtn.onclick = async () => {
   alert("Predicciones guardadas");
 };
 
-import { generarCuadroEliminatorias } from "../static/js/pipeline_eliminatorias.js";
+import { generarCuadroEliminatorias } from "static/js/pipeline_eliminatorias.js";
 
 
 

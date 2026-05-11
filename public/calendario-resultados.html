@@ -4,8 +4,8 @@
 <head>
     <title>Calendario y Resultados</title>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <link rel="icon" href="../static/media/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../static/calendario-resultados_style.css">
+    <link rel="icon" href="static/media/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="static/calendario-resultados_style.css">
     <link href="https://fonts.googleapis.com/css2?family=ADLaM+Display&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -18,7 +18,7 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" id="sidebarClose">✕</button>
-  <button class="nav-btn" onclick="location.href='inicio.html'" >Inicio</button>
+  <button class="nav-btn" onclick="location.href='index.html'" >Inicio</button>
   <button class="nav-btn active">  Calendario y Resultados</button>
   <span id="sb-porras-locked" class="nav-locked">🔒 Mis porras</span>
   <button id="sb-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" ></i> Mis porras</button>
@@ -28,10 +28,10 @@
 
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo"><img style="height:2.5em" src="../static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
+  <span class="topbar-logo"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
   <nav class="nav-links">
-    <button class="nav-btn" onclick="location.href='inicio.html'" >Inicio</button>
+    <button class="nav-btn" onclick="location.href='index.html'" >Inicio</button>
   <button class="nav-btn active">  Calendario y Resultados</button>
     <span id="nav-porras-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis porras</span>
     <button id="nav-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" style="color: #ffffff;"></i> Mis porras</button>
@@ -62,8 +62,8 @@
 
 
 <script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
-<script src="../static/js/codigos_paises.js"></script>
-<script src="../static/js/fases.js"></script>
+<script src="static/js/codigos_paises.js"></script>
+<script src="static/js/fases.js"></script>
 <script type="module">
 
     import { initializeApp } from
@@ -152,7 +152,7 @@ function mostrarNavAutenticado(mostrar) {
 
     // onAuthStateChanged(auth, async (user) => {
     //     if (!user) {
-    //         window.location.href = "inicio.html";
+    //         window.location.href = "index.html";
     //         return;
     //     }
     //     // await cargarPrediccion(idPorra, user);
