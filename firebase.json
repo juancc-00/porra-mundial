@@ -25,17 +25,6 @@
     },
     "singleProjectMode": true
   },
-  "apphosting": {
-    "backendId": "porra-mundial-app",
-    "rootDir": "public",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log",
-      "functions"
-    ]
-  },
   "hosting": {
     "public": "public",
     "ignore": [
