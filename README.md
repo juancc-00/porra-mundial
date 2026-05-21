@@ -91,7 +91,7 @@ TODO:
     - [X] Cambiar nombres de paises por abreviaturas
     - [X] Hacer logica de procesados + 3 partidos (diccionario IDs -> orden cronologico)
     - [X] Leer predicciones + leer partidos y displayear en las tarjetas
-    - [ ] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
+    - [X] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
 - [X] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
 - [X] Gestionar empate en clasificacion
 - [X] Procesados no tienen por que estar en orden cronologico
@@ -105,10 +105,10 @@ TODO:
 
 (Juan)
 - [X] Meter acrónimos en vista calendario
-- [ ] Cambiar el bruteforce por leer procesados+partidos para resultados reales
+- [X] Cambiar el bruteforce por leer procesados+partidos para resultados reales
 - [X] Quitar "ver grupos"
 - [ ] optimizar para movil
-- [ ] Quitar "primera fase", cambiar por fase real
+- [X] Quitar "primera fase", cambiar por fase real
 
 ## Mis predicciones
 
