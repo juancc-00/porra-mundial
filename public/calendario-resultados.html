@@ -247,7 +247,9 @@ function mostrarNavAutenticado(mostrar) {
                 // --- NUEVO: Validar si el partido ya está procesado para mostrar g1 - g2 ---
                 let textoCentro = p.Hora;
                 if (idsProcesados.includes(p.Numero.toString())) {
-                    textoCentro = `${p.g1} - ${p.g2}`;
+                    textoCentro = (p.p1 != null && p.p2 != null)
+                        ? `${p.g1} <span style="font-size:0.9em">(${p.p1})</span>-<span style="font-size:0.9em">(${p.p2})</span> ${p.g2}`
+                        : `${p.g1} - ${p.g2}`;
                 }
                 // ---------------------------------------------------------------------------
 
