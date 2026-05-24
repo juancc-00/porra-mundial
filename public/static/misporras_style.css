@@ -493,3 +493,32 @@ main{
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+@media (max-width: 600px) {
+
+  .cabecera-container{
+    display: block;
+  }
+  .cabecera-container {
+  padding: 24px 0;
+}
+
+.cabecera-container > * {
+  margin-bottom: 24px;
+}
+.cabecera-container > *:last-child {
+  margin-bottom: 0;
+}
+
+.porra-card {
+  display: block;
+}
+
+
+
+
+.porra-right {
+margin-left: 30px;
+}
+}
+ 

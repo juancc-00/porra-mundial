@@ -354,10 +354,11 @@ td{
 
 .bracket {
   background-color: #4cc9f0;
+  max-width: 100%;
   padding: 15px;
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 30px;
   margin-top: 30px;
   font-family: sans-serif;
 }
@@ -369,7 +370,7 @@ td{
 .lado {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 10px;
   /* align-items: center; */
 }
 
@@ -637,3 +638,102 @@ button:hover {
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+
+  @media (max-width: 600px) {
+
+    .topbar-logo {
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      margin-right: 12px;
+      gap: 10px;
+    }
+
+ .bracket { 
+  gap: 10px;
+}
+
+.lado {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  /* align-items: center; */
+}
+
+.ronda {
+  gap: 5px;
+}
+
+.partido-bracket {
+  border-radius: 8px;
+  padding: 3px;
+  /* width: 40px; */
+}
+
+.equipo {
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+
+
+.centro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+
+  /* Partido: comprime columnas de banderas y goles */
+  .partido {
+    grid-template-columns: auto 1fr auto auto auto auto 1fr;
+    gap: 4px;
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
+  .bandera {
+    width: 20px;
+  }
+
+  .gol {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .resultado {
+    width: 50px;
+    font-size: 15px;
+  }
+
+  .fecha {
+    font-size: 0.75rem;
+  }
+
+  /* Picker: menos columnas para que quepan los números */
+  .picker {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+
+  /* #guardarBtn {
+    font-size: 0.7em;
+    padding: 6px 6px;
+    min-width: 50px;
+  } */
+
+  /* Estado usuario: ancho completo */
+  #estado-usuario {
+    max-width: 100%;
+  }
+
+  /* Grupos con menos padding */
+  .grupo {
+    padding: 10px;
+    margin: 12px 8px;
+  }
+
+}
