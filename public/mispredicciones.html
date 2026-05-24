@@ -305,6 +305,7 @@ async function actualizarTarjetas() {
 function tiempoRestante(fecha) {
   const objetivo = new Date(fecha);
   const diff = objetivo - new Date();
+  // const diff = objetivo - new Date("2026-06-19T20:30");
 
   if (diff <= 0) return "0h";
 

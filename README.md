@@ -41,12 +41,12 @@ TODO:
 - [ ] Excel con estimacion de consumo lecturas/escrituras
 - [ ] Trabajar en seguridad del backend (firebase bloqueado?)
 - [ ] Generalizar Estética
-- [ ] Cambiar panel desplegable user
+- [X] Cambiar panel desplegable user
 - [X] Eliminar clasificación
-- [ ] Nombres y distribución de botones, etc
+- [X] Nombres y distribución de botones, etc
 - [ ] Optimizar para movil
-- [ ] Quitar boton info
-- [ ] Desplegar web
+- [X] Quitar boton info
+- [X] Desplegar web
 
 ## Cloud functions
 
@@ -57,9 +57,9 @@ TODO:
 - [ ] En la final, sumar también puntos por predicciones generales (campeon y sub)
 
 ## Home
-- [ ] Quitar Zoom
-- [ ] Poner logo arriba izda
-- [ ] Cambiar slogan y texto cringe en general
+- (?) [ ] Quitar Zoom
+- [X] Poner logo arriba izda
+- [X] Cambiar slogan y texto cringe en general
 - [ ] Countdown personalizado por fase
 - [ ] Añadir explicacion "te parece injusto?" en puntuacion
 
@@ -78,7 +78,7 @@ TODO:
 ## Porra
 
 (Juan)
-- [ ] Scoreboard: muestra solo 3 o es dinamico?
+- [X] Scoreboard: muestra solo 3 o es dinamico?
 - [ ] Importante! comprobar eficiencia en como se recorre, parece que se está haciendo leyendo todos los partidos cada vez
 - [X] Crear diccionario IDs -> orden cronologico
 - [X] Quitar brute force a todo
@@ -91,24 +91,24 @@ TODO:
     - [X] Cambiar nombres de paises por abreviaturas
     - [X] Hacer logica de procesados + 3 partidos (diccionario IDs -> orden cronologico)
     - [X] Leer predicciones + leer partidos y displayear en las tarjetas
-    - [ ] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
-- [ ] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
+    - [X] Gestionar cuando mostrar cada fase (usar funcion obtenerEstadoFase dentro de fases.js)
+- [X] Gestionar correspondencia numero partido - que partido es para eje X grafica progreso
 - [X] Gestionar empate en clasificacion
 - [X] Procesados no tienen por que estar en orden cronologico
 - [X] Tarjetas mas estrechas
-- [ ] optimizar para movil
-- [ ] gestionar margenes containers
-- [ ] Eje X grafico quitar espacios "P 1" a "P1" 
-- [ ] Añadir identificador "PX" a tarjetas de partidos en la esquina
+- [X] optimizar para movil
+- [X] gestionar margenes containers
+- [X] Eje X grafico quitar espacios "P 1" a "P1" 
+- [X] Añadir identificador "PX" a tarjetas de partidos en la esquina
 
 ## Calendario y resultados
 
 (Juan)
 - [X] Meter acrónimos en vista calendario
-- [ ] Cambiar el bruteforce por leer procesados+partidos para resultados reales
-- [ ] Quitar "ver grupos"
+- [X] Cambiar el bruteforce por leer procesados+partidos para resultados reales
+- [X] Quitar "ver grupos"
 - [ ] optimizar para movil
-- [ ] Quitar "primera fase", cambiar por fase real
+- [X] Quitar "primera fase", cambiar por fase real
 
 ## Mis predicciones
 
@@ -117,7 +117,7 @@ TODO:
 - [X] Granularidad en tiempo faltante (horas, minutos al final)
 - [ ] Extender bloqueo de predicciones no solo no poder acceder a la pagina, sino bloqueo write de firebase
 - [ ] Poner boton Volver
-- [ ] Cambiar botones por desplegable
+- [ ] Cambiar botones por desplegable (fase testing, extender a resto predicciones)
 
 ## Prediccion Inicial
 
@@ -126,7 +126,7 @@ TODO:
 - [X] Boton guardar prediccion: posicion absoluta en pantalla
 - [X] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
 - [X] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
-- [ ] No leer de partidos: hacer html estatico
+- [X] No leer de partidos: hacer html estatico
 
 ## Prediccion Siguientes fases
 

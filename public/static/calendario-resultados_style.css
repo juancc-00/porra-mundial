@@ -415,7 +415,7 @@ main {
     font-size: 22px;
     font-weight: bold;
     color: #000000;
-    width: 100px;
+    width: 200px;
     /* Ancho fijo para la hora */
     text-align: center;
 }
@@ -486,6 +486,14 @@ main {
  
       .apuestas-grid { grid-template-columns: 1fr; }
       table.puntos { font-size: 12px; }
+
+      #btnToggleVista {
+        display: none;
+        }
+
+        #calendarioPlugin {
+        display: none;
+        }
     }
  
     /* Animaciones entrada */
@@ -493,3 +501,19 @@ main {
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+@media (max-width: 500px) {
+.bandera-calendario {
+    width: 30px;
+    height: auto;
+    margin: 0 10px;
+}
+
+.hora-partido {
+    font-size: 18px;
+    /* width: 150px; */
+    /* Ancho fijo para la hora */
+    text-align: center;
+}
+}
+

@@ -85,6 +85,7 @@
 <script src="https://kit.fontawesome.com/031b57ed49.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="static/js/codigos_paises.js"></script>
+<script src="static/js/fases.js"></script>
 <script type="module">
 
   
@@ -261,10 +262,39 @@ onAuthStateChanged(auth, async (user) => {
 
     // Como todosLosPartidos ya está ordenado, los filtrados mantienen el orden perfecto
     const partidosPasados = todosLosPartidos.filter(p => idsProcesados.includes(p.Numero.toString()));
-    const partidosFuturos = todosLosPartidos.filter(p => !idsProcesados.includes(p.Numero.toString()));
+    // --- MODIFICADO: Filtrar futuros excluyendo fases inactivas con mapeo de nombres ---
+    const partidosFuturos = todosLosPartidos.filter(p => {
+      const esFuturo = !idsProcesados.includes(p.Numero.toString());
+      if (!esFuturo) return false;
+      
+      // 1. Convertimos a minúsculas para evaluar fácilmente
+      const textoFase = (p.Fase || "").toLowerCase();
+      let claveFase = "grupos"; // Valor por defecto
+      
+      if (textoFase.includes("grupo")) {
+        claveFase = "grupos";
+      } else if (textoFase.includes("dieciseisavos")) {
+        claveFase = "dieciseisavos";
+      } else if (textoFase.includes("octavos")) {
+        claveFase = "octavos";
+      } else if (textoFase.includes("cuartos")) {
+        claveFase = "cuartos";
+      } else if (textoFase.includes("semifinal")) {
+        claveFase = "semifinales";
+      } else if (textoFase.includes("final")) {
+        claveFase = "final";
+      }
+
+      // 3. Consultamos el estado con la clave correcta
+      const estadoFase = obtenerEstadoFase(claveFase);
+      
+      // Solo mostramos partidos de fases que ya están activas o bloqueadas
+      return estadoFase !== "inactiva" && estadoFase !== "activa";
+    });
+
     const proximos3 = partidosFuturos.slice(0, 3);
     
-    // Al unirlos, quedan: [Pasados en orden] + [3 Próximos en orden]
+    // Al unirlos, quedan: [Pasados en orden] + [Hasta 3 Próximos de la fase actual/bloqueada]
     const partidosAMostrar = [...partidosPasados, ...proximos3];
 
     renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
@@ -383,14 +413,20 @@ async function cargarLogsActividad(id) {
     });
   }
 
-  function procesarPuntos(miembrosData, desglose_puntos) {
+function procesarPuntos(miembrosData, desglose_puntos) {
     let partidosSet = new Set();
     for (const uid in desglose_puntos) {
       for (const partidoId in desglose_puntos[uid]) {
         partidosSet.add(parseInt(partidoId));
       }
     }
-    const partidosOrdenados = Array.from(partidosSet).sort((a, b) => a - b);
+    
+    // === MODIFICADO: Ordenar cronológicamente usando el mapa cronológico ===
+    const partidosOrdenados = Array.from(partidosSet).sort((a, b) => {
+      const ordenA = mapa_cronologico[a] || 999;
+      const ordenB = mapa_cronologico[b] || 999;
+      return ordenA - ordenB;
+    });
 
     miembrosData.forEach(miembro => {
       const ptsUsuario = desglose_puntos[miembro.uid] || {};
@@ -438,7 +474,7 @@ function renderizarClasificacion(miembrosData) {
 
   function renderizarGrafico(miembrosData, partidosJugados) {
     const ctx = document.getElementById('graficoProgresion').getContext('2d');
-    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${p}`));
+    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${mapa_cronologico[p] || p}`));
     const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40'];
     const datasets = miembrosData.map((miembro, index) => ({
       label: miembro.nombre,

@@ -32,7 +32,7 @@
  
   <nav class="nav-links">
     <button class="nav-btn" onclick="location.href='index.html'" >Inicio</button>
-  <button class="nav-btn active">  Calendario y Resultados</button>
+  <button class="nav-btn active"> Calendario y Resultados</button>
     <span id="nav-porras-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis porras</span>
     <button id="nav-porras-btn" class="nav-btn" style="display:none" onclick="location.href='misporras.html'"> <i class="fa-solid fa-users" style="color: #ffffff;"></i> Mis porras</button>
     <span id="nav-pred-locked" style="padding:8px 16px;color:rgba(255,255,255,0.4);font-size:14px;display:flex;align-items:center;gap:5px;font-family:inherit;">🔒 Mis predicciones</span>
@@ -162,8 +162,13 @@ function mostrarNavAutenticado(mostrar) {
     let calendarioInstancia = null;
     let eventosCalendario = [];
 
-    async function cargarDatos() {
+  async function cargarDatos() {
         const snapshot = await getDocs(collection(db, "partidos"));
+        
+        const configRef = doc(db, "config", "procesados");
+        const configSnap = await getDoc(configRef);
+        const idsProcesados = configSnap.exists() ? configSnap.data().ids : [];
+
         const partidosPorFecha = {};
         eventosCalendario = [];
 
@@ -191,13 +196,12 @@ function mostrarNavAutenticado(mostrar) {
             });
         });
 
-        // Pintar la lista (siempre visible)
-        mostrarLista(partidosPorFecha);
+        // --- MODIFICADO: Pasar idsProcesados a la función ---
+        mostrarLista(partidosPorFecha, idsProcesados);
 
         // Inicializar el calendario (aunque esté oculto en el HTML)
         inicializarCalendarioPlugin();
     }
-
     // --- Funciones de utilidad para fechas ---
     function parseFecha(fechaStr) {
         const [d, m, a] = fechaStr.split("/");
@@ -218,7 +222,7 @@ function mostrarNavAutenticado(mostrar) {
     }
 
     // --- Renderizar la lista inferior ---
-    function mostrarLista(partidosPorFecha) {
+    function mostrarLista(partidosPorFecha, idsProcesados) {
         const contenedor = document.getElementById("contenedorCalendario");
         contenedor.innerHTML = "";
 
@@ -239,7 +243,15 @@ function mostrarNavAutenticado(mostrar) {
             partidosDelDia.forEach(p => {
                 const codPais1 = codigos_pais[p.Pais1] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais1]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
                 const codPais2 = codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
-                const textoCentro = (p.Resultado && p.Resultado.trim() !== "") ? p.Resultado : p.Hora;
+                
+                // --- NUEVO: Validar si el partido ya está procesado para mostrar g1 - g2 ---
+                let textoCentro = p.Hora;
+                if (idsProcesados.includes(p.Numero.toString())) {
+                    textoCentro = (p.p1 != null && p.p2 != null)
+                        ? `${p.g1} <span style="font-size:0.9em">(${p.p1})</span>-<span style="font-size:0.9em">(${p.p2})</span> ${p.g2}`
+                        : `${p.g1} - ${p.g2}`;
+                }
+                // ---------------------------------------------------------------------------
 
                 divDia.innerHTML += `
                   <div class="partido-calendario">
@@ -250,14 +262,13 @@ function mostrarNavAutenticado(mostrar) {
                           <img class="bandera-calendario" src="${codPais2}">
                           <div class="equipo">${p.Pais2}</div>
                       </div>
-                      <div class="partido-detalles">Primera fase · ${p.Fase} · ${p.Estadio}</div>
+                      <div class="partido-detalles">${p.Fase} · ${p.Estadio}</div>
                   </div>
               `;
             });
             contenedor.appendChild(divDia);
         });
     }
-
     const paises_abreviaturas = {
         "México": "MEX",
         "Suecia": "SUE",

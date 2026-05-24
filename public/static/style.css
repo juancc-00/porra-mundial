@@ -1091,6 +1091,78 @@
     }
  
     .btn-reglas:hover { background: var(--verde-palido); }
+
+ .countdown-card {
+  background: rgba(255,255,255,0.28);
+  padding: 28px 52px;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: background 0.6s, border-color 0.6s;
+  min-width: 300px;
+}
+
+.countdown-card.modo-prediccion {
+  background: rgba(200, 140, 20, 0.28);
+  border-color: rgba(255, 210, 80, 0.5);
+}
+.countdown-card.modo-fase {
+  background: rgba(40, 120, 20, 0.32);
+  border-color: rgba(160, 240, 100, 0.4);
+}
+.countdown-card.modo-fin {
+  background: rgba(160, 120, 30, 0.25);
+  border-color: rgba(220, 185, 70, 0.4);
+}
+
+/* TÍTULO GRANDE — nombre de la fase */
+.cd-fase {
+  font-size: 28px;
+  color: white;
+  letter-spacing: 0.01em;
+  margin-bottom: 4px;
+  line-height: 1.15;
+}
+
+/* SUBTÍTULO — "En juego" / "Predicciones abiertas" */
+.cd-subtitulo {
+  font-size: 16px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 14px;
+  min-height: 20px;
+  font-family: "Lora", serif;
+  font-style: italic;
+}
+
+/* LABEL pequeño encima del número */
+.cd-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+
+/* NÚMERO GRANDE */
+.countdown {
+  font-size: 44px;
+  color: white;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* PIE — "Siguiente: ..." */
+.cd-siguiente {
+  font-family: "Lora", serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  font-style: italic;
+  min-height: 18px;
+  margin-top: 4px;
+}
  
     /* ===== RESPONSIVO ===== */
     @media (max-width: 1000px) {
