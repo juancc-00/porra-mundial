@@ -262,7 +262,7 @@ onAuthStateChanged(auth, async (user) => {
 
     // Como todosLosPartidos ya está ordenado, los filtrados mantienen el orden perfecto
     const partidosPasados = todosLosPartidos.filter(p => idsProcesados.includes(p.Numero.toString()));
-// --- MODIFICADO: Filtrar futuros excluyendo fases inactivas con mapeo de nombres ---
+    // --- MODIFICADO: Filtrar futuros excluyendo fases inactivas con mapeo de nombres ---
     const partidosFuturos = todosLosPartidos.filter(p => {
       const esFuturo = !idsProcesados.includes(p.Numero.toString());
       if (!esFuturo) return false;
@@ -413,14 +413,20 @@ async function cargarLogsActividad(id) {
     });
   }
 
-  function procesarPuntos(miembrosData, desglose_puntos) {
+function procesarPuntos(miembrosData, desglose_puntos) {
     let partidosSet = new Set();
     for (const uid in desglose_puntos) {
       for (const partidoId in desglose_puntos[uid]) {
         partidosSet.add(parseInt(partidoId));
       }
     }
-    const partidosOrdenados = Array.from(partidosSet).sort((a, b) => a - b);
+    
+    // === MODIFICADO: Ordenar cronológicamente usando el mapa cronológico ===
+    const partidosOrdenados = Array.from(partidosSet).sort((a, b) => {
+      const ordenA = mapa_cronologico[a] || 999;
+      const ordenB = mapa_cronologico[b] || 999;
+      return ordenA - ordenB;
+    });
 
     miembrosData.forEach(miembro => {
       const ptsUsuario = desglose_puntos[miembro.uid] || {};
@@ -468,7 +474,7 @@ function renderizarClasificacion(miembrosData) {
 
   function renderizarGrafico(miembrosData, partidosJugados) {
     const ctx = document.getElementById('graficoProgresion').getContext('2d');
-    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${p}`));
+    const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${mapa_cronologico[p] || p}`));
     const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40'];
     const datasets = miembrosData.map((miembro, index) => ({
       label: miembro.nombre,
