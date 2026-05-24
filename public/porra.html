@@ -289,7 +289,7 @@ onAuthStateChanged(auth, async (user) => {
       const estadoFase = obtenerEstadoFase(claveFase);
       
       // Solo mostramos partidos de fases que ya están activas o bloqueadas
-      return estadoFase !== "inactiva";
+      return estadoFase !== "inactiva" && estadoFase !== "activa";
     });
 
     const proximos3 = partidosFuturos.slice(0, 3);

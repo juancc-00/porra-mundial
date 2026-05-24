@@ -41,12 +41,12 @@ TODO:
 - [ ] Excel con estimacion de consumo lecturas/escrituras
 - [ ] Trabajar en seguridad del backend (firebase bloqueado?)
 - [ ] Generalizar Estética
-- [ ] Cambiar panel desplegable user
+- [X] Cambiar panel desplegable user
 - [X] Eliminar clasificación
-- [ ] Nombres y distribución de botones, etc
+- [X] Nombres y distribución de botones, etc
 - [ ] Optimizar para movil
-- [ ] Quitar boton info
-- [ ] Desplegar web
+- [X] Quitar boton info
+- [X] Desplegar web
 
 ## Cloud functions
 
@@ -57,9 +57,9 @@ TODO:
 - [ ] En la final, sumar también puntos por predicciones generales (campeon y sub)
 
 ## Home
-- [ ] Quitar Zoom
-- [ ] Poner logo arriba izda
-- [ ] Cambiar slogan y texto cringe en general
+- (?) [ ] Quitar Zoom
+- [X] Poner logo arriba izda
+- [X] Cambiar slogan y texto cringe en general
 - [ ] Countdown personalizado por fase
 - [ ] Añadir explicacion "te parece injusto?" en puntuacion
 
@@ -117,7 +117,7 @@ TODO:
 - [X] Granularidad en tiempo faltante (horas, minutos al final)
 - [ ] Extender bloqueo de predicciones no solo no poder acceder a la pagina, sino bloqueo write de firebase
 - [ ] Poner boton Volver
-- [ ] Cambiar botones por desplegable
+- [ ] Cambiar botones por desplegable (fase testing, extender a resto predicciones)
 
 ## Prediccion Inicial
 
@@ -126,7 +126,7 @@ TODO:
 - [X] Boton guardar prediccion: posicion absoluta en pantalla
 - [X] Mensaje: "Todas las predicciones completadas. Puedes modificarlas hasta...", o "Faltan x", etc. 
 - [X] Simular fase eliminatoria: Info con para que esta ahi, cambiar estetica, boton ocultar, poner fase de grupos debajo
-- [ ] No leer de partidos: hacer html estatico
+- [X] No leer de partidos: hacer html estatico
 
 ## Prediccion Siguientes fases
 

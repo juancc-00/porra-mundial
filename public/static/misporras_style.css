@@ -455,6 +455,28 @@ main{
   color: rgb(255, 198, 11);
 }
 
+.btnPositivo{
+  background: #2ecc71;
+  /* color: white; */
+  border: none;
+  padding: 6px 10px;
+  /* font-size: 1.05rem; */
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btnNegativo{
+  background: #cc2e2e;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  /* font-size: 1.05rem; */
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 /* ===== RESPONSIVO ===== */
     @media (max-width: 1000px) {
       .nav-links { display: none; }

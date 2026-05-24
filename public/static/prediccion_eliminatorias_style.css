@@ -564,6 +564,14 @@ td{
 
 .dg-opcion.seleccionado .dg-check { opacity: 1; }
 
+#contenedorGrupos{
+  margin-top: 30px;
+}
+
+.titulo-container{
+  margin-top: 30px;
+}
+
 /* ===== RESPONSIVO ===== */
     @media (max-width: 1000px) {
       .nav-links { display: none; }

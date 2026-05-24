@@ -63,8 +63,8 @@
     <textarea id="shareText" readonly></textarea>
 
     <div class="modal-buttons">
-      <button id="copyBtn">Copiar</button>
-      <button id="closeModal">Cerrar</button>
+      <button id="copyBtn" class="btnPositivo">Copiar</button>
+      <button id="closeModal" class="btnNegativo">Cerrar</button>
     </div>
 
   </div>
@@ -80,8 +80,8 @@
     <p id="popupInfo" class="popup-info"></p>
 
     <div class="popup-buttons">
-      <button id="popupConfirm">Confirmar</button>
-      <button id="popupCancel">Cancelar</button>
+      <button id="popupConfirm" class="btnPositivo">Confirmar</button>
+      <button id="popupCancel" class="btnNegativo">Cancelar</button>
     </div>
 
   </div>
@@ -470,7 +470,7 @@ async function cargarMisPorras(user) {
     // BOTÓN COMPARTIR
     const shareBtn = document.createElement("button");
     shareBtn.className = "share-btn";
-    shareBtn.textContent = "🔗";
+    shareBtn.innerHTML = `<i class="fa-solid fa-link"></i>`;
 
     shareBtn.onclick = (e) => {
       e.stopPropagation();
@@ -479,7 +479,7 @@ async function cargarMisPorras(user) {
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "🗑️";
+    deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
 
     // Solo si es owner y hay 1 miembro
     if (
@@ -531,15 +531,14 @@ onAuthStateChanged(auth, (user) => {
 
 function abrirCompartir(data) {
 
-
   const link =
-      // "http://link_de_prueba.com";
-    `${window.location.origin}/unirse.html?id=${data.ID}`;
+      "https://porra-mundial-91819.web.app/misporras.html";
+    // `${window.location.origin}/unirse.html?id=${data.ID}`;
 
   const mensaje =
 `Únete a la porra ${data.nombre} introduciendo el ID ${data.ID}
-
-${link}`;
+${link}
+`;
 
   document.getElementById("shareText").value = mensaje;
 
