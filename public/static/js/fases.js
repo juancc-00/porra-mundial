@@ -35,7 +35,7 @@ const fases = {
 function obtenerEstadoFase(nombreFase) {
 
   // const ahora = new Date();
-  const ahora = new Date("2026-07-14T16:00");
+  const ahora = new Date("2026-07-11T16:00");
   const fase = fases[nombreFase];
 
   if (!fase) return "inactiva";

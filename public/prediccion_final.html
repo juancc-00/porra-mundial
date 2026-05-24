@@ -130,6 +130,7 @@ onAuthStateChanged(auth, async (user) => {
 
 const estado = obtenerEstadoFase("final");
 const editable = estado === "activa";
+if (!editable) {document.getElementById("guardarBtn").style.display = "none"};
 
 
 function tiempoRestante(fecha) {
@@ -348,31 +349,16 @@ function crearPartidoEliminatoria(p) {
   // ======================
 
   function actualizarSelector() {
-
     if (p.g1 === null || p.g2 === null) return;
 
     if (p.g1 === p.g2) {
-
       selector.classList.remove("hidden");
-
-      selector.innerHTML = `
-        <div class="toggle">
-          <span class="opcion ${p.ganador === 0 ? "activo" : ""}" data-lado="1">${p.Pais1}</span>
-          <span class="opcion ${p.ganador === 1 ? "activo" : ""}" data-lado="2">${p.Pais2}</span>
-        </div>
-      `;
-
-      selector.querySelectorAll(".opcion").forEach(op => {
-        op.onclick = () => {
-          p.ganador = op.dataset.lado == "1" ? 0 : 1;
-          actualizarSelector();
-        };
-      });
-
+      renderDropdownGanador(selector, p.Pais1, p.Pais2, p.ganador, (val) => {
+        p.ganador = val;
+        actualizarSelector();
+      }, editable);
     } else {
-
       selector.classList.add("hidden");
-
       p.ganador = p.g1 > p.g2 ? 0 : 1;
     }
   }
@@ -411,6 +397,77 @@ function crearPartidoEliminatoria(p) {
 }
 
 
+function renderDropdownGanador(container, pais1, pais2, ganadorActual, onChange, editable) {
+  // Cierra cualquier dropdown abierto antes de renderizar
+  container.innerHTML = "";
+
+  const wrap = document.createElement("div");
+  wrap.className = "dropdown-ganador";
+
+  const selected = document.createElement("div");
+  selected.className = "dg-selected";
+
+  function textoSeleccionado() {
+    if (ganadorActual === null || ganadorActual === undefined) {
+      return `<span class="dg-placeholder">Ganador</span><span class="dg-arrow">▼</span>`;
+    }
+    const nombre = ganadorActual === 0 ? pais1 : pais2;
+    const flag = ganadorActual === 0
+      ? (window.codigoPais?.[pais1] ? `<img src="../static/media/banderas/${window.codigoPais[pais1]}.png" style="width:20px;border-radius:2px;">` : "")
+      : (window.codigoPais?.[pais2] ? `<img src="../static/media/banderas/${window.codigoPais[pais2]}.png" style="width:20px;border-radius:2px;">` : "");
+    return `<span class="dg-pais">${flag}${nombre}</span><span class="dg-arrow">▼</span>`;
+  }
+
+  selected.innerHTML = textoSeleccionado();
+
+  const opciones = document.createElement("div");
+  opciones.className = "dg-opciones";
+  opciones.style.display = "none";
+
+  [pais1, pais2].forEach((pais, i) => {
+    const op = document.createElement("div");
+    op.className = "dg-opcion" + (ganadorActual === i ? " seleccionado" : "");
+
+    const flag = window.codigoPais?.[pais]
+      ? `<img src="../static/media/banderas/${window.codigoPais[pais]}.png" style="width:20px;border-radius:2px;">`
+      : "";
+
+    op.innerHTML = `${flag}${pais}<span class="dg-check">✓</span>`;
+
+    
+    op.onclick = editable ? (e) => {
+      e.stopPropagation();
+      ganadorActual = i;
+      onChange(i);
+      opciones.style.display = "none";
+      selected.classList.remove("abierto");
+      selected.innerHTML = textoSeleccionado();
+      wrap.querySelectorAll(".dg-opcion").forEach((o, j) => {
+        o.classList.toggle("seleccionado", j === i);
+      });
+    } : null;
+
+    opciones.appendChild(op);
+  });
+
+  selected.onclick = editable ? (e) => {
+    e.stopPropagation();
+    const abierto = opciones.style.display === "block";
+    opciones.style.display = abierto ? "none" : "block";
+    selected.classList.toggle("abierto", !abierto);
+  } : null;
+
+  // Cierra al hacer click fuera
+  document.addEventListener("click", function cerrar() {
+    opciones.style.display = "none";
+    selected.classList.remove("abierto");
+    document.removeEventListener("click", cerrar);
+  });
+
+  wrap.appendChild(selected);
+  wrap.appendChild(opciones);
+  container.appendChild(wrap);
+}
 
 const picker = document.getElementById("picker");
 let callbackActual = null;

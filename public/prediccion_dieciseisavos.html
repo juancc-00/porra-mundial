@@ -129,6 +129,7 @@ onAuthStateChanged(auth, async (user) => {
 
 const estado = obtenerEstadoFase("dieciseisavos");
 const editable = estado === "activa";
+if (!editable) {document.getElementById("guardarBtn").style.display = "none"};
 
 
 function tiempoRestante(fecha) {
@@ -358,19 +359,19 @@ function crearPartidoEliminatoria(p) {
   // ======================
 
   function actualizarSelector() {
-  if (p.g1 === null || p.g2 === null) return;
+    if (p.g1 === null || p.g2 === null) return;
 
-  if (p.g1 === p.g2) {
-    selector.classList.remove("hidden");
-    renderDropdownGanador(selector, p.Pais1, p.Pais2, p.ganador, (val) => {
-      p.ganador = val;
-      actualizarSelector();
-    });
-  } else {
-    selector.classList.add("hidden");
-    p.ganador = p.g1 > p.g2 ? 0 : 1;
+    if (p.g1 === p.g2) {
+      selector.classList.remove("hidden");
+      renderDropdownGanador(selector, p.Pais1, p.Pais2, p.ganador, (val) => {
+        p.ganador = val;
+        actualizarSelector();
+      }, editable);
+    } else {
+      selector.classList.add("hidden");
+      p.ganador = p.g1 > p.g2 ? 0 : 1;
+    }
   }
-}
 
   // ======================
   // EVENTOS GOLES
@@ -405,7 +406,7 @@ function crearPartidoEliminatoria(p) {
   return divcontainer;
 }
 
-function renderDropdownGanador(container, pais1, pais2, ganadorActual, onChange) {
+function renderDropdownGanador(container, pais1, pais2, ganadorActual, onChange, editable) {
   // Cierra cualquier dropdown abierto antes de renderizar
   container.innerHTML = "";
 
@@ -442,7 +443,8 @@ function renderDropdownGanador(container, pais1, pais2, ganadorActual, onChange)
 
     op.innerHTML = `${flag}${pais}<span class="dg-check">✓</span>`;
 
-    op.onclick = (e) => {
+    
+    op.onclick = editable ? (e) => {
       e.stopPropagation();
       ganadorActual = i;
       onChange(i);
@@ -452,17 +454,17 @@ function renderDropdownGanador(container, pais1, pais2, ganadorActual, onChange)
       wrap.querySelectorAll(".dg-opcion").forEach((o, j) => {
         o.classList.toggle("seleccionado", j === i);
       });
-    };
+    } : null;
 
     opciones.appendChild(op);
   });
 
-  selected.onclick = (e) => {
+  selected.onclick = editable ? (e) => {
     e.stopPropagation();
     const abierto = opciones.style.display === "block";
     opciones.style.display = abierto ? "none" : "block";
     selected.classList.toggle("abierto", !abierto);
-  };
+  } : null;
 
   // Cierra al hacer click fuera
   document.addEventListener("click", function cerrar() {

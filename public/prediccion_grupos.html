@@ -414,7 +414,8 @@ function aplicarEstadoEdicion() {
 
   const estado = obtenerEstadoFase("grupos");
   const editable = estado === "activa";
-
+ 
+  if (!editable) {document.getElementById("guardarBtn").style.display = "none"};
   selGanador.setEditable(editable);
   selFinalista.setEditable(editable);
 }
