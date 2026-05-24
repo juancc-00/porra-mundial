@@ -486,6 +486,14 @@ main {
  
       .apuestas-grid { grid-template-columns: 1fr; }
       table.puntos { font-size: 12px; }
+
+      #btnToggleVista {
+        display: none;
+        }
+
+        #calendarioPlugin {
+        display: none;
+        }
     }
  
     /* Animaciones entrada */
@@ -508,3 +516,4 @@ main {
     text-align: center;
 }
 }
+
