@@ -483,6 +483,10 @@ main {
   .panel-box h2 {
     font-size: 1.2em; /* Títulos un pelín más pequeños para ahorrar espacio */
   }
+
+  .topbar-logo {
+      font-size: 18px;
+    }
 }
 
 

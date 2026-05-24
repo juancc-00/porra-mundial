@@ -1188,3 +1188,9 @@
     .hero > *:nth-child(2) { animation-delay: 0.15s; }
     .hero > *:nth-child(3) { animation-delay: 0.25s; }
     .hero > *:nth-child(4) { animation-delay: 0.35s; }
+
+@media (max-width: 640px) {
+  .topbar-logo {
+      font-size: 18px;
+    }
+}

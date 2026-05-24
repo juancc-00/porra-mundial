@@ -391,3 +391,9 @@ main{
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+@media (max-width: 500px) {
+  .topbar-logo {
+    font-size: 18px;
+  }
+}

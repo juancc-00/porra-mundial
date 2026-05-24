@@ -719,11 +719,16 @@ button:hover {
   }
 
 
-  /* #guardarBtn {
-    font-size: 0.7em;
+  #guardarBtn {
+    font-size: 0.8em;
     padding: 6px 6px;
-    min-width: 50px;
-  } */
+    min-width: 70px;
+  }
+
+  #hamburgerBtn {
+    font-size: 1em;
+    padding: 6px 6px;
+  }
 
   /* Estado usuario: ancho completo */
   #estado-usuario {

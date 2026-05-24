@@ -515,5 +515,9 @@ main {
     /* Ancho fijo para la hora */
     text-align: center;
 }
+
+.topbar-logo {
+      font-size: 18px;
+    }
 }
 

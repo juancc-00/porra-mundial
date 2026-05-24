@@ -496,6 +496,10 @@ main{
 
 @media (max-width: 600px) {
 
+  .topbar-logo {
+      font-size: 18px;
+    }
+
   .cabecera-container{
     display: block;
   }
