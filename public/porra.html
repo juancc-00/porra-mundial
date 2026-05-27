@@ -225,30 +225,7 @@ onAuthStateChanged(auth, async (user) => {
     const configSnap = await getDoc(configRef);
     const idsProcesados = configSnap.exists() ? configSnap.data().ids : [];
 
-    const miembrosData = [];
-    for (const uid of dataPorra.miembros) {
-      const userRef = doc(db, "usuarios", uid);
-      const userSnap = await getDoc(userRef);
-      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
 
-      const predRef = doc(db, "predicciones", uid, "dieciseisavos", "datos");
-      const predSnap = await getDoc(predRef);
-      const predicciones = predSnap.exists() ? predSnap.data() : {};
-
-      miembrosData.push({ 
-        uid, 
-        nombre, 
-        predicciones, 
-        ptsPorPartido: desglose_puntos[uid] || {} 
-      });
-    }
-
-    console.log("miembros data");
-    console.log(miembrosData);
-
-    const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
-    renderizarClasificacion(miembrosData);
-    renderizarGrafico(miembrosData, partidosJugados);
 
     const partidosSnap = await getDocs(collection(db, "partidos"));
     let todosLosPartidos = [];
@@ -300,7 +277,49 @@ onAuthStateChanged(auth, async (user) => {
     // Al unirlos, quedan: [Pasados en orden] + [Hasta 3 Próximos de la fase actual/bloqueada]
     const partidosAMostrar = [...partidosPasados, ...proximos3];
 
+    const miembrosData = [];
+    for (const uid of dataPorra.miembros) {
+      const userRef = doc(db, "usuarios", uid);
+      const userSnap = await getDoc(userRef);
+      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
+
+      const predRef = doc(db, "predicciones", uid, "dieciseisavos", "datos");
+      const fases = [
+        "grupos",
+        "dieciseisavos",
+        "octavos",
+        "cuartos",
+        "semifinales",
+        "tercer",
+        "final"
+      ];
+
+      const predicciones = {};
+      for (const fase of fases) {
+        const predRef = doc(db, "predicciones", uid, fase, "datos");
+        const predSnap = await getDoc(predRef);
+        if (predSnap.exists()) {
+          Object.assign(predicciones, predSnap.data());
+        }
+      }
+      // const predSnap = await getDoc(predRef);
+      // const predicciones = predSnap.exists() ? predSnap.data() : {};
+      miembrosData.push({ 
+        uid, 
+        nombre, 
+        predicciones, 
+        ptsPorPartido: desglose_puntos[uid] || {} 
+      });
+    }
+
     renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
+
+    console.log("miembros data");
+    console.log(miembrosData);
+
+    const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
+    renderizarClasificacion(miembrosData);
+    renderizarGrafico(miembrosData, partidosJugados);
   }
 
 async function cargarLogsActividad(id) {
