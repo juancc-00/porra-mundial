@@ -243,6 +243,9 @@ onAuthStateChanged(auth, async (user) => {
       });
     }
 
+    console.log("miembros data");
+    console.log(miembrosData);
+
     const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
     renderizarClasificacion(miembrosData);
     renderizarGrafico(miembrosData, partidosJugados);
