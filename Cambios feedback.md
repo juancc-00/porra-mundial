@@ -1,4 +1,7 @@
 
-- [ ] Arreglar posicion de boton guardar
-- [ ] Cambiar nombre de porras grupos a iniciales
-- [ ] Nomenclatura porras
+- [X] Arreglar posicion de boton guardar
+- [X] Cambiar nombre de porras grupos a iniciales
+- [X] Nomenclatura porras
+- [ ] Porra -> poner prediccion empate + ganador eliminatoria
+- [ ] copia de seguridad de firestore
+- [ ] comprobar cuenta facturacion (27 de junio acaba)

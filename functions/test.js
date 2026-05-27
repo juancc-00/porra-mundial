@@ -405,24 +405,11 @@ async function actualizarActividad(partidosNuevos) {
           texto += `${user.nombre}: No ha obtenido ningún punto. \n`;
         }
 
-        // 🔥 CLAVE: evitar duplicar por usuario+partido
-        const key = `${uid}_${id}`;
-        if (!controlUsuarioPartido.has(key)) {
-          controlUsuarioPartido.add(key);
-
-          if (!puntosPorUsuario[uid]) {
-            puntosPorUsuario[uid] = 0;
-          }
-
-          puntosPorUsuario[uid] += res.puntos;
-
-          // 🔥 NUEVO: actualizar desglose
-          if (!desglose[uid]) {
-            desglose[uid] = {};
-          }
-
-          desglose[uid][id] = res.puntos; // id = partido
+        // Actualizar desglose
+        if (!desglose[uid]) {
+          desglose[uid] = {};
         }
+        desglose[uid][id] = res.puntos;
       }
 
       // 🔥 Guardar desglose actualizado (una sola escritura)
@@ -445,19 +432,6 @@ async function actualizarActividad(partidosNuevos) {
         texto
       });
   }
-
-  // 🔥 ESCRITURA OPTIMIZADA (una vez por usuario)
-  const batch = db.batch();
-
-  for (let uid in puntosPorUsuario) {
-    const ref = db.collection("usuarios").doc(uid);
-
-    batch.update(ref, {
-      puntos: admin.firestore.FieldValue.increment(puntosPorUsuario[uid])
-    });
-  }
-
-  await batch.commit();
 }
 
 const mapaCruces = {

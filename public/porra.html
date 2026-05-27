@@ -24,7 +24,7 @@
 
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo" onclick="location.href='index.html'"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
+  <span class="topbar-logo" onclick="location.href='index.html'" style="cursor: pointer;"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
   <nav class="nav-links">
     <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
@@ -231,7 +231,7 @@ onAuthStateChanged(auth, async (user) => {
       const userSnap = await getDoc(userRef);
       const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
 
-      const predRef = doc(db, "predicciones", uid, "grupos", "datos");
+      const predRef = doc(db, "predicciones", uid, "dieciseisavos", "datos");
       const predSnap = await getDoc(predRef);
       const predicciones = predSnap.exists() ? predSnap.data() : {};
 
@@ -368,7 +368,12 @@ async function cargarLogsActividad(id) {
       const codPais2 = codigos_pais && codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
 
       const cabeceraPartido = `${p.Fecha} - ${p.Hora} | ${p.Fase}`;
-      const separadorEquipos = esPasado ? `${p.g1} : ${p.g2}` : "vs";
+
+      const separadorEquipos = esPasado
+      ? (p.p1 != null && p.p2 != null
+          ? `${p.g1} - ${p.g2} (${p.p1}-${p.p2})`
+          : `${p.g1} - ${p.g2}`)
+      : "vs";
 
       const card = document.createElement("div");
       card.className = "partido-card";
@@ -392,7 +397,15 @@ async function cargarLogsActividad(id) {
         let textoPred = "-";
         
         if (pred && pred.g1 !== undefined && pred.g2 !== undefined) {
-          textoPred = `${pred.g1} - ${pred.g2}`;
+          if (pred.ganador == 0){
+            textoPred = `${pred.g1} - ${pred.g2} (${abr1}})`;
+          } 
+          else if (pred.ganador == 1){
+            textoPred = `${pred.g1} - ${pred.g2} (${abr2})`;
+          } 
+          else {
+            textoPred = `${pred.g1} - ${pred.g2}`;
+          }
         }
 
         let badgePuntos = "";
@@ -405,7 +418,7 @@ async function cargarLogsActividad(id) {
         htmlContent += `
         <div class="prediccion-fila">
           <span style="font-size:0.85em;">${miembro.nombre}</span>
-          <span class="resultado-pred">${textoPred} ${badgePuntos}</span>
+          <span class="resultado-pred">${textoPred} ${badgePuntos} </span>
         </div>
       `;
       });

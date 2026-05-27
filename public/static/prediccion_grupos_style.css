@@ -541,7 +541,7 @@ button:hover {
 #guardarBtn{
   max-width: 12%;
   min-width: 90px;
-  position: fixed;
+  /* position: fixed; */
   right: 4%;
   background: var(--verde-palido);
   border: 1px solid rgba(255,255,255,0.28);
