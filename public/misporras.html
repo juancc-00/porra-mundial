@@ -188,6 +188,8 @@ function closeSidebar() {
 }
 
 let currentUser = null;
+const params = new URLSearchParams(window.location.search);
+const joinID = params.get("join");
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
