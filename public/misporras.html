@@ -188,6 +188,11 @@ function closeSidebar() {
 }
 
 let currentUser = null;
+const params = new URLSearchParams(window.location.search);
+const joinID = params.get("join");
+if (joinID) {
+  await unirsePorID(joinID);
+}
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -330,9 +335,9 @@ async function crearPorraDesdePopup() {
 
 // };
 
-async function unirsePorID() {
+async function unirsePorID(idManual = null) {
 
-  const id =
+  const id = idManual ||
     document.getElementById("popupInput").value.trim();
 
   if (!id) return;
@@ -343,11 +348,9 @@ async function unirsePorID() {
   const info = document.getElementById("popupInfo");
 
   if (!snap.exists()) {
-
     info.textContent =
       "No existe ninguna porra con ese ID";
     return;
-
   }
 
   const data = snap.data();
@@ -373,6 +376,9 @@ async function unirsePorID() {
   await cargarMisPorras(currentUser);
 
   alert(`Te has unido a "${data.nombre}"`);
+
+  // Limpia la URL tras unirse
+  history.replaceState({}, "", "/misporras.html");
 }
 
 
@@ -397,25 +403,6 @@ btnUnirse.onclick = () => {
   document.getElementById("popup").style.display = "flex";
 };
 
-btnUnirse.onclick = () => {
-
-  const title = document.getElementById("popupTitle");
-  const input = document.getElementById("popupInput");
-  const info = document.getElementById("popupInfo");
-
-  title.textContent = "Unirse a una porra";
-
-  input.style.display = "block";
-  input.value = "";
-  input.placeholder = "Introduce el ID";
-
-  info.textContent = "";
-
-  document.getElementById("popupConfirm").onclick =
-    unirsePorID;
-
-  document.getElementById("popup").style.display = "flex";
-};
 
 
 async function cargarMisPorras(user) {
@@ -530,12 +517,13 @@ onAuthStateChanged(auth, (user) => {
 function abrirCompartir(data) {
 
   const link =
-      "https://porra-mundial-91819.web.app/misporras.html";
+      `https://porra-mundial-91819.web.app/misporras.html?join=${data.ID}`;
     // `${window.location.origin}/unirse.html?id=${data.ID}`;
 
   const mensaje =
-`Únete a la porra ${data.nombre} introduciendo el ID ${data.ID}
+`Únete a la porra ${data.nombre} a través del siguiente link
 ${link}
+o introduciendo el ID ${data.ID}.
 `;
 
   document.getElementById("shareText").value = mensaje;

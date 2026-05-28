@@ -6,3 +6,7 @@
 - [ ] footer
 - [ ] copia de seguridad de firestore
 - [ ] comprobar cuenta facturacion (27 de junio acaba)
+- [ ] home cambiar descripcion de 90' a 120'
+- [ ] hacer fantasy 
+- [ ] ()
+- [ ] cloud run -> matches.json cambiar

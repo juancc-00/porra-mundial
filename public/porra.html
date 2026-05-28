@@ -294,14 +294,19 @@ onAuthStateChanged(auth, async (user) => {
         "final"
       ];
 
+      const refs = fases.map(fase =>
+        getDoc(doc(db, "predicciones", uid, fase, "datos"))
+      );
+
+      const snaps = await Promise.all(refs);
+
       const predicciones = {};
-      for (const fase of fases) {
-        const predRef = doc(db, "predicciones", uid, fase, "datos");
-        const predSnap = await getDoc(predRef);
-        if (predSnap.exists()) {
-          Object.assign(predicciones, predSnap.data());
+
+      snaps.forEach(snap => {
+        if (snap.exists()) {
+          Object.assign(predicciones, snap.data());
         }
-      }
+      });
       // const predSnap = await getDoc(predRef);
       // const predicciones = predSnap.exists() ? predSnap.data() : {};
       miembrosData.push({ 
@@ -471,6 +476,8 @@ function procesarPuntos(miembrosData, desglose_puntos) {
         total += (ptsUsuario[pId.toString()] ?? ptsUsuario[pId] ?? 0);
         acumulado.push(total);
       });
+      total += (ptsUsuario["campeon"] ?? 0);
+      total += (ptsUsuario["subcampeon"] ?? 0);
       miembro.totalPuntos = total;
       miembro.datosGrafico = acumulado;
     });

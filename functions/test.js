@@ -326,6 +326,7 @@ async function actualizarActividad(partidosNuevos) {
     predicciones[uid] = {};
 
     for (let fase of fases) {
+      if (!fase) continue;
       const docRef = db
         .collection("predicciones")
         .doc(uid)
@@ -433,6 +434,135 @@ async function actualizarActividad(partidosNuevos) {
       });
   }
 }
+
+
+async function actualizarActividadFinal(partidosNuevos) {
+  const db = admin.firestore();
+
+  // Solo ejecutar si está el partido de la final
+  const hayFinal = partidosNuevos.some(p => p.fase === "final" || p.id === "104");
+  if (!hayFinal) return;
+
+  // El partido de la final para saber el resultado real
+  const matchFinal = partidosNuevos.find(p => p.fase === "final" || p.id === "104");
+  const { g1, g2, p1, p2, team1, team2 } = matchFinal;
+
+  // Determinar campeón y subcampeón reales
+  // p1/p2 son goles en penalties si los hay; si no, g1/g2 deciden
+  let campeonReal, subcampeonReal;
+  if (p1 !== null && p2 !== null) {
+    campeonReal    = p1 > p2 ? team1 : team2;
+    subcampeonReal = p1 > p2 ? team2 : team1;
+  } else {
+    campeonReal    = g1 > g2 ? team1 : team2;
+    subcampeonReal = g1 > g2 ? team2 : team1;
+  }
+
+  // Leer porras y usuarios (igual que en la función original)
+  const porrasSnap = await db.collection("porras").get();
+  let porras = [];
+  let userSet = new Set();
+
+  porrasSnap.forEach(doc => {
+    const data = doc.data();
+    porras.push({ id: doc.id, ...data });
+    data.miembros.forEach(uid => userSet.add(uid));
+  });
+
+  const userIds = Array.from(userSet);
+
+  const usersSnap = await db.getAll(
+    ...userIds.map(uid => db.collection("usuarios").doc(uid))
+  );
+  let usersMap = {};
+  usersSnap.forEach(doc => { usersMap[doc.id] = doc.data(); });
+
+  // Leer predicciones generales de cada usuario
+  let predGenerales = {};
+  for (let uid of userIds) {
+    const snap = await db
+      .collection("predicciones")
+      .doc(uid)
+      .collection("general")
+      .doc("datos")
+      .get();
+
+    predGenerales[uid] = snap.exists ? snap.data() : null;
+  }
+
+  const fechaFormateada = new Date().toLocaleString("es-ES", {
+    timeZone: "Europe/Madrid",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  // Función auxiliar de puntos
+  function calcularPuntosFinales(predCampeon, predSubcampeon) {
+    let ptosCampeon    = 0;
+    let ptosSubcampeon = 0;
+
+    if (predCampeon === campeonReal)         ptosCampeon    = 25;
+    else if (predCampeon === subcampeonReal) ptosCampeon    = 10;
+
+    if (predSubcampeon === subcampeonReal)   ptosSubcampeon = 15;
+    else if (predSubcampeon === campeonReal) ptosSubcampeon = 5;
+
+    return { ptosCampeon, ptosSubcampeon };
+  }
+
+  // Bucle por porra (igual que en la función original)
+  for (let porra of porras) {
+
+    let texto = `¡El Mundial ha terminado! \n\n`;
+    texto += `🏆 Campeón: **${campeonReal}** | 🥈 Subcampeón: **${subcampeonReal}**\n\n`;
+
+    const refPorra = db.collection("porras").doc(porra.id);
+    const porraDoc = await refPorra.get();
+    const dataPorra = porraDoc.data() || {};
+    let desglose = dataPorra.desglose_puntos || {};
+
+    for (let uid of porra.miembros) {
+      const user = usersMap[uid];
+      const pred = predGenerales[uid];
+
+      if (!pred) {
+        texto += `${user.nombre}: No realizó predicción de campeón/subcampeón.\n`;
+        continue;
+      }
+
+      const predCampeon    = pred.ganador   ?? null;
+      const predSubcampeon = pred.finalista ?? null;
+
+      const { ptosCampeon, ptosSubcampeon } = calcularPuntosFinales(predCampeon, predSubcampeon);
+
+      texto += `${user.nombre}: `;
+      texto += `+${ptosCampeon} pts por predicción de campeón (apostó ${predCampeon ?? "—"})`;
+      texto += `, +${ptosSubcampeon} pts por predicción de subcampeón (apostó ${predSubcampeon ?? "—"}).\n`;
+
+      // Guardar en desglose igual que en la función original
+      if (!desglose[uid]) desglose[uid] = {};
+      desglose[uid]["campeon"]    = ptosCampeon;
+      desglose[uid]["subcampeon"] = ptosSubcampeon;
+    }
+
+    await refPorra.set({ desglose_puntos: desglose }, { merge: true });
+
+    texto += `\n`;
+
+    await db
+      .collection("actividad")
+      .doc(porra.id)
+      .collection("logs")
+      .add({
+        timestamp: new Date(),
+        texto
+      });
+  }
+}
+
+
 
 const mapaCruces = {
   73: { nextMatchId: 90, slot: "Pais1" },
@@ -585,6 +715,7 @@ async function main(){
 
   actualizarPartidosReales(partidosNuevos);
   actualizarActividad(partidosNuevos);
+  actualizarActividadFinal(partidosNuevos);
 
   // Añadir partidos procesados a la variable de firestore
   const nuevosIds = partidosNuevos.map(p => p.id);
