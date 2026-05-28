@@ -24,14 +24,40 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// cargar JSON local
-const matchesData = JSON.parse(fs.readFileSync("matches.json", "utf8"));
+
+
+async function cargarInfoPartidos() {
+  // Carga única al inicio (grupos — estático)
+  const gruposData = JSON.parse(fs.readFileSync("matches.json", "utf8"));
+
+  // Carga eliminatorias desde Firestore (llámala una vez antes de procesar)
+  async function cargarEliminatorias(db) {
+    const ids = [];
+    for (let i = 73; i <= 104; i++) ids.push(i.toString());
+
+    const snaps = await db.getAll(
+      ...ids.map(id => db.collection("partidos").doc(id))
+    );
+
+    return snaps
+      .filter(snap => snap.exists)
+      .map(snap => ({ Numero: parseInt(snap.id), ...snap.data() }));
+  }
+
+  const eliminatoriasData = await cargarEliminatorias(db);
+  const allMatches = [...gruposData, ...eliminatoriasData];
+
+  console.log(allMatches);
+
+  return allMatches;
+}
+
 
 function normalize(str) {
   return str.toLowerCase().trim();
 }
 
-function findMatchId(team1, team2, date) {
+function findMatchId(team1, team2, date, matchesData) {
   // como fecha en Wikipedia es local, hay que permitir margen +1 dia en fecha española
   team1 = team1.replace("República Democrática del Congo", "RD Congo");
   team2 = team2.replace("República Democrática del Congo", "RD Congo");
@@ -94,7 +120,7 @@ function getFaseFromId(id) {
 
 let matchesGlobal = [];
 
-async function getAllMatches() {
+async function getAllMatches(matchesData) {
   // Esta función lee de la página de Wikipedia, detecta todos los partidos y extrae los resultados
   // Además, asigna a cada partido su ID, y devuelve todos los partidos con ID y resultado según Wikipedia
 
@@ -155,7 +181,7 @@ async function getAllMatches() {
       }
     });
 
-    const id = findMatchId(team1, team2, date);
+    const id = findMatchId(team1, team2, date, matchesData);
 
     matches.push({
       id,
@@ -692,8 +718,10 @@ async function actualizarPartidosReales(partidosNuevos) {
 async function main(){
 
   const db = admin.firestore();
+
+  const matchesData = await cargarInfoPartidos();
   // 1. Obtener partidos
-  const matches = await getAllMatches();
+  const matches = await getAllMatches(matchesData);
 
   // 2. Leer procesados
   const procDoc = await db.collection("config").doc("procesados").get();
