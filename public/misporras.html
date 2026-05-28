@@ -188,11 +188,21 @@ function closeSidebar() {
 }
 
 let currentUser = null;
+<<<<<<< Updated upstream
+=======
+const params = new URLSearchParams(window.location.search);
+const joinID = params.get("join");
+
+
+>>>>>>> Stashed changes
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
     mostrarNavAutenticado(true);
+    if (joinID) {
+      await unirsePorID(joinID);
+    }
   } else {
     mostrarNavAutenticado(false);
   }
@@ -355,12 +365,14 @@ async function unirsePorID() {
   if (data.miembros.includes(currentUser.uid)) {
     info.textContent =
       "Ya participas en esta porra";
+      window.alert("Ya participas en esta porra");
     return;
   }
 
   if (data.miembros.length > 11) {
     info.textContent =
       "Esta porra ha alcanzado el límite de 12 participantes";
+      window.alert("Esta porra ha alcanzado el límite de 12 participantes");
     return;
   }
 
