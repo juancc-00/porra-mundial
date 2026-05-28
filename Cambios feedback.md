@@ -1,0 +1,12 @@
+
+- [X] Arreglar posicion de boton guardar
+- [X] Cambiar nombre de porras grupos a iniciales
+- [X] Nomenclatura porras
+- [X] Porra -> poner prediccion empate + ganador eliminatoria
+- [X] footer
+- [ ] copia de seguridad de firestore
+- [ ] comprobar cuenta facturacion (27 de junio acaba)
+- [X] home cambiar descripcion de 90' a 120'
+- [ ] hacer fantasy 
+- [ ] ()
+- [X] cloud run -> matches.json cambiar

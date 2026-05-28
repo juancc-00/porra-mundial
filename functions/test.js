@@ -24,14 +24,40 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// cargar JSON local
-const matchesData = JSON.parse(fs.readFileSync("matches.json", "utf8"));
+
+
+async function cargarInfoPartidos() {
+  // Carga única al inicio (grupos — estático)
+  const gruposData = JSON.parse(fs.readFileSync("matches.json", "utf8"));
+
+  // Carga eliminatorias desde Firestore (llámala una vez antes de procesar)
+  async function cargarEliminatorias(db) {
+    const ids = [];
+    for (let i = 73; i <= 104; i++) ids.push(i.toString());
+
+    const snaps = await db.getAll(
+      ...ids.map(id => db.collection("partidos").doc(id))
+    );
+
+    return snaps
+      .filter(snap => snap.exists)
+      .map(snap => ({ Numero: parseInt(snap.id), ...snap.data() }));
+  }
+
+  const eliminatoriasData = await cargarEliminatorias(db);
+  const allMatches = [...gruposData, ...eliminatoriasData];
+
+  console.log(allMatches);
+
+  return allMatches;
+}
+
 
 function normalize(str) {
   return str.toLowerCase().trim();
 }
 
-function findMatchId(team1, team2, date) {
+function findMatchId(team1, team2, date, matchesData) {
   // como fecha en Wikipedia es local, hay que permitir margen +1 dia en fecha española
   team1 = team1.replace("República Democrática del Congo", "RD Congo");
   team2 = team2.replace("República Democrática del Congo", "RD Congo");
@@ -94,7 +120,7 @@ function getFaseFromId(id) {
 
 let matchesGlobal = [];
 
-async function getAllMatches() {
+async function getAllMatches(matchesData) {
   // Esta función lee de la página de Wikipedia, detecta todos los partidos y extrae los resultados
   // Además, asigna a cada partido su ID, y devuelve todos los partidos con ID y resultado según Wikipedia
 
@@ -155,7 +181,7 @@ async function getAllMatches() {
       }
     });
 
-    const id = findMatchId(team1, team2, date);
+    const id = findMatchId(team1, team2, date, matchesData);
 
     matches.push({
       id,
@@ -326,6 +352,7 @@ async function actualizarActividad(partidosNuevos) {
     predicciones[uid] = {};
 
     for (let fase of fases) {
+      if (!fase) continue;
       const docRef = db
         .collection("predicciones")
         .doc(uid)
@@ -405,24 +432,11 @@ async function actualizarActividad(partidosNuevos) {
           texto += `${user.nombre}: No ha obtenido ningún punto. \n`;
         }
 
-        // 🔥 CLAVE: evitar duplicar por usuario+partido
-        const key = `${uid}_${id}`;
-        if (!controlUsuarioPartido.has(key)) {
-          controlUsuarioPartido.add(key);
-
-          if (!puntosPorUsuario[uid]) {
-            puntosPorUsuario[uid] = 0;
-          }
-
-          puntosPorUsuario[uid] += res.puntos;
-
-          // 🔥 NUEVO: actualizar desglose
-          if (!desglose[uid]) {
-            desglose[uid] = {};
-          }
-
-          desglose[uid][id] = res.puntos; // id = partido
+        // Actualizar desglose
+        if (!desglose[uid]) {
+          desglose[uid] = {};
         }
+        desglose[uid][id] = res.puntos;
       }
 
       // 🔥 Guardar desglose actualizado (una sola escritura)
@@ -445,20 +459,136 @@ async function actualizarActividad(partidosNuevos) {
         texto
       });
   }
+}
 
-  // 🔥 ESCRITURA OPTIMIZADA (una vez por usuario)
-  const batch = db.batch();
 
-  for (let uid in puntosPorUsuario) {
-    const ref = db.collection("usuarios").doc(uid);
+async function actualizarActividadFinal(partidosNuevos) {
+  const db = admin.firestore();
 
-    batch.update(ref, {
-      puntos: admin.firestore.FieldValue.increment(puntosPorUsuario[uid])
-    });
+  // Solo ejecutar si está el partido de la final
+  const hayFinal = partidosNuevos.some(p => p.fase === "final" || p.id === "104");
+  if (!hayFinal) return;
+
+  // El partido de la final para saber el resultado real
+  const matchFinal = partidosNuevos.find(p => p.fase === "final" || p.id === "104");
+  const { g1, g2, p1, p2, team1, team2 } = matchFinal;
+
+  // Determinar campeón y subcampeón reales
+  // p1/p2 son goles en penalties si los hay; si no, g1/g2 deciden
+  let campeonReal, subcampeonReal;
+  if (p1 !== null && p2 !== null) {
+    campeonReal    = p1 > p2 ? team1 : team2;
+    subcampeonReal = p1 > p2 ? team2 : team1;
+  } else {
+    campeonReal    = g1 > g2 ? team1 : team2;
+    subcampeonReal = g1 > g2 ? team2 : team1;
   }
 
-  await batch.commit();
+  // Leer porras y usuarios (igual que en la función original)
+  const porrasSnap = await db.collection("porras").get();
+  let porras = [];
+  let userSet = new Set();
+
+  porrasSnap.forEach(doc => {
+    const data = doc.data();
+    porras.push({ id: doc.id, ...data });
+    data.miembros.forEach(uid => userSet.add(uid));
+  });
+
+  const userIds = Array.from(userSet);
+
+  const usersSnap = await db.getAll(
+    ...userIds.map(uid => db.collection("usuarios").doc(uid))
+  );
+  let usersMap = {};
+  usersSnap.forEach(doc => { usersMap[doc.id] = doc.data(); });
+
+  // Leer predicciones generales de cada usuario
+  let predGenerales = {};
+  for (let uid of userIds) {
+    const snap = await db
+      .collection("predicciones")
+      .doc(uid)
+      .collection("general")
+      .doc("datos")
+      .get();
+
+    predGenerales[uid] = snap.exists ? snap.data() : null;
+  }
+
+  const fechaFormateada = new Date().toLocaleString("es-ES", {
+    timeZone: "Europe/Madrid",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  // Función auxiliar de puntos
+  function calcularPuntosFinales(predCampeon, predSubcampeon) {
+    let ptosCampeon    = 0;
+    let ptosSubcampeon = 0;
+
+    if (predCampeon === campeonReal)         ptosCampeon    = 25;
+    else if (predCampeon === subcampeonReal) ptosCampeon    = 10;
+
+    if (predSubcampeon === subcampeonReal)   ptosSubcampeon = 15;
+    else if (predSubcampeon === campeonReal) ptosSubcampeon = 5;
+
+    return { ptosCampeon, ptosSubcampeon };
+  }
+
+  // Bucle por porra (igual que en la función original)
+  for (let porra of porras) {
+
+    let texto = `¡El Mundial ha terminado! \n\n`;
+    texto += `🏆 Campeón: **${campeonReal}** | 🥈 Subcampeón: **${subcampeonReal}**\n\n`;
+
+    const refPorra = db.collection("porras").doc(porra.id);
+    const porraDoc = await refPorra.get();
+    const dataPorra = porraDoc.data() || {};
+    let desglose = dataPorra.desglose_puntos || {};
+
+    for (let uid of porra.miembros) {
+      const user = usersMap[uid];
+      const pred = predGenerales[uid];
+
+      if (!pred) {
+        texto += `${user.nombre}: No realizó predicción de campeón/subcampeón.\n`;
+        continue;
+      }
+
+      const predCampeon    = pred.ganador   ?? null;
+      const predSubcampeon = pred.finalista ?? null;
+
+      const { ptosCampeon, ptosSubcampeon } = calcularPuntosFinales(predCampeon, predSubcampeon);
+
+      texto += `${user.nombre}: `;
+      texto += `+${ptosCampeon} pts por predicción de campeón (apostó ${predCampeon ?? "—"})`;
+      texto += `, +${ptosSubcampeon} pts por predicción de subcampeón (apostó ${predSubcampeon ?? "—"}).\n`;
+
+      // Guardar en desglose igual que en la función original
+      if (!desglose[uid]) desglose[uid] = {};
+      desglose[uid]["campeon"]    = ptosCampeon;
+      desglose[uid]["subcampeon"] = ptosSubcampeon;
+    }
+
+    await refPorra.set({ desglose_puntos: desglose }, { merge: true });
+
+    texto += `\n`;
+
+    await db
+      .collection("actividad")
+      .doc(porra.id)
+      .collection("logs")
+      .add({
+        timestamp: new Date(),
+        texto
+      });
+  }
 }
+
+
 
 const mapaCruces = {
   73: { nextMatchId: 90, slot: "Pais1" },
@@ -588,8 +718,10 @@ async function actualizarPartidosReales(partidosNuevos) {
 async function main(){
 
   const db = admin.firestore();
+
+  const matchesData = await cargarInfoPartidos();
   // 1. Obtener partidos
-  const matches = await getAllMatches();
+  const matches = await getAllMatches(matchesData);
 
   // 2. Leer procesados
   const procDoc = await db.collection("config").doc("procesados").get();
@@ -611,6 +743,7 @@ async function main(){
 
   actualizarPartidosReales(partidosNuevos);
   actualizarActividad(partidosNuevos);
+  actualizarActividadFinal(partidosNuevos);
 
   // Añadir partidos procesados a la variable de firestore
   const nuevosIds = partidosNuevos.map(p => p.id);

@@ -521,3 +521,31 @@ main {
     }
 }
 
+.footer-autores {
+  text-align: center;
+  padding: 10px;
+  background-color: #5a9a3a;
+  margin-top: 50px;
+}
+
+.contenedor-autores {
+  display: flex;
+  justify-content: center;
+  gap: 50px; /* Espacio entre los dos autores */
+  margin-top: 20px;
+}
+
+.foto-autor {
+  width: 150px;      
+  height: 120px;     
+  border-radius: 10%; 
+  object-fit: cover; 
+  margin-bottom: 10px;
+}
+
+.autor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+

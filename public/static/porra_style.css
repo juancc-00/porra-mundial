@@ -232,7 +232,7 @@ main {
 
 /* Tarjeta individual de cada partido */
 .partido-card {
-  flex: 0 0 300px; 
+  flex: 0 0 350px; 
   scroll-snap-align: center;
   background: #ffffff;
   border-radius: 12px;
