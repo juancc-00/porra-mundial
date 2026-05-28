@@ -24,7 +24,7 @@
 
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
-  <span class="topbar-logo" onclick="location.href='index.html'"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
+  <span class="topbar-logo" onclick="location.href='index.html'" style="cursor: pointer;"><img style="height:2.5em" src="static/media/icon.png" alt="Porra Mundial logo"> Porras Mundial</span>
  
   <nav class="nav-links">
     <button class="nav-btn" onclick="location.href='index.html'">Inicio</button>
@@ -225,27 +225,7 @@ onAuthStateChanged(auth, async (user) => {
     const configSnap = await getDoc(configRef);
     const idsProcesados = configSnap.exists() ? configSnap.data().ids : [];
 
-    const miembrosData = [];
-    for (const uid of dataPorra.miembros) {
-      const userRef = doc(db, "usuarios", uid);
-      const userSnap = await getDoc(userRef);
-      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
 
-      const predRef = doc(db, "predicciones", uid, "grupos", "datos");
-      const predSnap = await getDoc(predRef);
-      const predicciones = predSnap.exists() ? predSnap.data() : {};
-
-      miembrosData.push({ 
-        uid, 
-        nombre, 
-        predicciones, 
-        ptsPorPartido: desglose_puntos[uid] || {} 
-      });
-    }
-
-    const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
-    renderizarClasificacion(miembrosData);
-    renderizarGrafico(miembrosData, partidosJugados);
 
     const partidosSnap = await getDocs(collection(db, "partidos"));
     let todosLosPartidos = [];
@@ -297,7 +277,54 @@ onAuthStateChanged(auth, async (user) => {
     // Al unirlos, quedan: [Pasados en orden] + [Hasta 3 Próximos de la fase actual/bloqueada]
     const partidosAMostrar = [...partidosPasados, ...proximos3];
 
+    const miembrosData = [];
+    for (const uid of dataPorra.miembros) {
+      const userRef = doc(db, "usuarios", uid);
+      const userSnap = await getDoc(userRef);
+      const nombre = userSnap.exists() ? userSnap.data().nombre : "Jugador";
+
+      const predRef = doc(db, "predicciones", uid, "dieciseisavos", "datos");
+      const fases = [
+        "grupos",
+        "dieciseisavos",
+        "octavos",
+        "cuartos",
+        "semifinales",
+        "tercer",
+        "final"
+      ];
+
+      const refs = fases.map(fase =>
+        getDoc(doc(db, "predicciones", uid, fase, "datos"))
+      );
+
+      const snaps = await Promise.all(refs);
+
+      const predicciones = {};
+
+      snaps.forEach(snap => {
+        if (snap.exists()) {
+          Object.assign(predicciones, snap.data());
+        }
+      });
+      // const predSnap = await getDoc(predRef);
+      // const predicciones = predSnap.exists() ? predSnap.data() : {};
+      miembrosData.push({ 
+        uid, 
+        nombre, 
+        predicciones, 
+        ptsPorPartido: desglose_puntos[uid] || {} 
+      });
+    }
+
     renderizarGaleria(partidosAMostrar, miembrosData, idsProcesados);
+
+    console.log("miembros data");
+    console.log(miembrosData);
+
+    const partidosJugados = procesarPuntos(miembrosData, desglose_puntos);
+    renderizarClasificacion(miembrosData);
+    renderizarGrafico(miembrosData, partidosJugados);
   }
 
 async function cargarLogsActividad(id) {
@@ -365,7 +392,12 @@ async function cargarLogsActividad(id) {
       const codPais2 = codigos_pais && codigos_pais[p.Pais2] ? `https://flagcdn.com/w40/${codigos_pais[p.Pais2]}.png` : `https://via.placeholder.com/40x40.png?text=🛡️`;
 
       const cabeceraPartido = `${p.Fecha} - ${p.Hora} | ${p.Fase}`;
-      const separadorEquipos = esPasado ? `${p.g1} : ${p.g2}` : "vs";
+
+      const separadorEquipos = esPasado
+      ? (p.p1 != null && p.p2 != null
+          ? `${p.g1} - ${p.g2} (${p.p1}-${p.p2})`
+          : `${p.g1} - ${p.g2}`)
+      : "vs";
 
       const card = document.createElement("div");
       card.className = "partido-card";
@@ -389,7 +421,15 @@ async function cargarLogsActividad(id) {
         let textoPred = "-";
         
         if (pred && pred.g1 !== undefined && pred.g2 !== undefined) {
-          textoPred = `${pred.g1} - ${pred.g2}`;
+          if (pred.ganador == 0){
+            textoPred = `${pred.g1} - ${pred.g2} (${abr1}})`;
+          } 
+          else if (pred.ganador == 1){
+            textoPred = `${pred.g1} - ${pred.g2} (${abr2})`;
+          } 
+          else {
+            textoPred = `${pred.g1} - ${pred.g2}`;
+          }
         }
 
         let badgePuntos = "";
@@ -402,7 +442,7 @@ async function cargarLogsActividad(id) {
         htmlContent += `
         <div class="prediccion-fila">
           <span style="font-size:0.85em;">${miembro.nombre}</span>
-          <span class="resultado-pred">${textoPred} ${badgePuntos}</span>
+          <span class="resultado-pred">${textoPred} ${badgePuntos} </span>
         </div>
       `;
       });
@@ -436,6 +476,8 @@ function procesarPuntos(miembrosData, desglose_puntos) {
         total += (ptsUsuario[pId.toString()] ?? ptsUsuario[pId] ?? 0);
         acumulado.push(total);
       });
+      total += (ptsUsuario["campeon"] ?? 0);
+      total += (ptsUsuario["subcampeon"] ?? 0);
       miembro.totalPuntos = total;
       miembro.datosGrafico = acumulado;
     });

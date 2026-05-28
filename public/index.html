@@ -284,7 +284,7 @@
       <section class="puntos-section">
         <p class="section-eyebrow">Sistema de puntuación</p>
         <h2 class="section-heading">Cuánto vale cada acierto</h2>
-        <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la competición, más puntos hay en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda, independientemente de si lo hace en prórroga o penaltis.</p>
+        <p class="section-sub" style="margin-bottom:24px;">Cuanto más avanzada la competición, más puntos hay en juego. En eliminatorias, hay puntos adicionales por acertar quien pasa de ronda, independientemente de si lo hace en penaltis.</p>
  
         <div class="puntos-table-wrap">
           <table class="puntos">
@@ -301,7 +301,7 @@
               </tr>
               <tr>
                 <th style="font-size:10px;opacity:0.7;font-weight:400;padding-top:0;"></th>
-                <th colspan="6" style="font-size:10px;opacity:0.7;font-weight:400;padding-top:0;letter-spacing:0.08em;background:rgba(0,0,0,0.12);">ELIMINATORIAS — puntos por 90'</th>
+                <th colspan="6" style="font-size:10px;opacity:0.7;font-weight:400;padding-top:0;letter-spacing:0.08em;background:rgba(0,0,0,0.12);">ELIMINATORIAS</th>
               </tr>
             </thead>
             <tbody>
@@ -321,7 +321,7 @@
               <tr>
                 <td>
                   1×2
-                  <span class="tipo-label">Acertar si gana el equipo A, empate, o gana el B — solo los 90 minutos</span>
+                  <span class="tipo-label">Acertar si gana el equipo A, empate, o gana el B — prórroga incluida</span>
                 </td>
                 <td><span class="pts-badge">1</span></td>
                 <td class="elim-separator"><span class="pts-badge">2</span></td>
@@ -334,7 +334,7 @@
               <tr>
                 <td>
                   Diferencia de goles (DG)
-                  <span class="tipo-label">Acertar la diferencia exacta entre los dos equipos — solo los 90 minutos</span>
+                  <span class="tipo-label">Acertar la diferencia exacta entre los dos equipos — prórroga incluida</span>
                 </td>
                 <td><span class="pts-badge">1</span></td>
                 <td class="elim-separator"><span class="pts-badge">2</span></td>
@@ -347,7 +347,7 @@
               <tr>
                 <td>
                   Marcador exacto
-                  <span class="tipo-label">Acertar el resultado exacto (goles de cada equipo) — solo los 90 minutos</span>
+                  <span class="tipo-label">Acertar el resultado exacto (goles de cada equipo) — prórroga incluida</span>
                 </td>
                 <td><span class="pts-badge">2</span></td>
                 <td class="elim-separator"><span class="pts-badge">5</span></td>
@@ -362,7 +362,7 @@
         </div>
  
         <div class="nota-elim">
-          <strong>Eliminatorias:</strong> los puntos de 1×2, DG y marcador exacto se calculan siempre sobre el resultado a los <strong>90 minutos</strong>, sin contar prórroga ni penaltis. El punto adicional de <em>«gana eliminatoria»</em> se otorga si aciertas el equipo que pasa, independientemente de cómo lo haga (prórroga, penaltis, etc.).
+          <strong>Eliminatorias:</strong> los puntos de 1×2, DG y marcador exacto se calculan siempre sobre el resultado <strong>incluyendo la prórroga</strong>, sin importar si los goles se meten en tiempo reglamentario o no. La bonificación adicional de <em>«gana eliminatoria»</em> se otorga si aciertas el equipo que pasa, independientemente de cómo lo haga (tiempo reglamentario, prórroga o penaltis).
         </div>
  
         <!-- EJEMPLO INTERACTIVO -->
@@ -372,27 +372,27 @@
  
             <div class="ejemplo-partido">
               <span class="equipo-e">  <img src="https://flagcdn.com/w40/es.png" style="height: 1em;"> España</span>
-              <span class="result-e">1 – 1</span>
+              <span class="result-e">2 – 1</span>
               <span class="equipo-e"> Alemania <img src="https://flagcdn.com/w40/de.png" style="height: 1em;"> </span>
               <br>
-              <span class="nota-90" style="width:100%;text-align:center;">Resultado final: 2-1. España marca <b>en la prórroga</b></span>
+              <span class="nota-90" style="width:100%;text-align:center;">Resultado a los 90': 1-1. España marca <b>en la prórroga</b></span>
             </div>
  
             <div class="apuestas-grid">
               <div class="apuesta-card">
                 <div class="nombre">🙋 Tú apostaste:</div>
-                <div class="prediccion">2 – 1</div>
+                <div class="prediccion">1 – 1 <span style="font-size:0.8em"> (Pasa España en penaltis)</span></div>
                 <div class="check-row">
                   <div class="check-item">
                     <span class="dot-ok">✓</span> Gana eliminatoria (España)
                     <span class="pts-inline">+3</span>
                   </div>
                   <div class="check-item">
-                    <span class="dot-no">✗</span> 1×2 (gana España)
+                    <span class="dot-no">✗</span> 1×2 
                     <span class="pts-inline cero">+0</span>
                   </div>
                   <div class="check-item">
-                    <span class="dot-no">✗</span> DG (+1 a favor España)
+                    <span class="dot-no">✗</span> DG 
                     <span class="pts-inline cero">+0</span>
                   </div>
                   <div class="check-item">
@@ -405,18 +405,18 @@
  
               <div class="apuesta-card">
                 <div class="nombre">🙋 Tu amigo apostó:</div>
-                <div class="prediccion">2 – 2 <span style="font-size:0.8em"> (Pasa España)</span></div>
+                <div class="prediccion">3 – 2 </div>
                 <div class="check-row">
                   <div class="check-item">
                     <span class="dot-ok">✓</span> Gana eliminatoria (España)
                     <span class="pts-inline">+3</span>
                   </div>
                   <div class="check-item">
-                    <span class="dot-ok">✓</span> 1×2 (apostó empate)
+                    <span class="dot-ok">✓</span> 1×2 
                     <span class="pts-inline">+5</span>
                   </div>
                   <div class="check-item">
-                    <span class="dot-ok">✓</span> DG (diferencia 0)
+                    <span class="dot-ok">✓</span> DG 
                     <span class="pts-inline">+5</span>
                   </div>
                   <div class="check-item">
@@ -493,7 +493,7 @@
     </div>
     <div class="rule-item">
       <h4>Predicciones de eliminatorias</h4>
-      <p>Para cada partido de eliminatoria predices el resultado a 90' (1×2, DG, marcador) y también qué equipo pasa de ronda. Estos son independientes: el marcador se refiere solo a los 90 minutos; quién pasa puede hacerlo en 90', prórroga o penaltis.</p>
+      <p>Para cada partido de eliminatoria predices el resultado del tiempo reglamentario + prórroga si aplica (1×2, DG, marcador) y también qué equipo pasa de ronda. </p>
     </div>
     <div class="rule-item">
       <h4>Plazo para predecir</h4>
@@ -806,7 +806,7 @@ function calcularEstado() {
     return {
       tipo: "previo",
       fase: "Mundial 2026",
-      subtitulo: "Predicciones de grupos abiertas",
+      subtitulo: "Predicciones iniciales abiertas",
       label: "Empieza en",
       cuenta: fasesPrediccion.grupos.bloqueadaDesde - ahora,
       siguiente: ""
@@ -910,5 +910,20 @@ actualizarCountdown();
 setInterval(actualizarCountdown, 1000);
 
 </script>
+
+<footer class="footer-autores">
+  <!-- <h3>Créditos</h3> -->
+  <div class="contenedor-autores">
+    
+    <div class="autor">
+      <img src="static/media/juanalber.jpg" alt="JuanAlber" class="foto-autor">
+      <h4>Esta página fue creada por Juan y Alberto Cañada </h4>
+      <p><a href="mailto:correo1@ejemplo.com">alberccarril@gmail.com</a> | 
+      <a href="mailto:correo1@ejemplo.com">juan.canada.carril@gmail.com</a></p>
+    </div>
+
+  </div>
+</footer>
+
 </body>
 </html>
