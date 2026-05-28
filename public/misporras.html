@@ -190,14 +190,15 @@ function closeSidebar() {
 let currentUser = null;
 const params = new URLSearchParams(window.location.search);
 const joinID = params.get("join");
-if (joinID) {
-  await unirsePorID(joinID);
-}
+
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
     mostrarNavAutenticado(true);
+    if (joinID) {
+      await unirsePorID(joinID);
+    }
   } else {
     mostrarNavAutenticado(false);
   }
@@ -273,6 +274,9 @@ async function crearPorraDesdePopup() {
   const nombre =
     document.getElementById("popupInput").value.trim();
 
+  console.log("nombre: ");
+  console.log(nombre);
+
   if (!nombre) return;
 
   const id = generarID();
@@ -342,6 +346,10 @@ async function unirsePorID(idManual = null) {
 
   if (!id) return;
 
+  console.log("id");
+  console.log(id);
+
+
   const ref = doc(db, "porras", id);
   const snap = await getDoc(ref);
 
@@ -350,6 +358,8 @@ async function unirsePorID(idManual = null) {
   if (!snap.exists()) {
     info.textContent =
       "No existe ninguna porra con ese ID";
+      window.alert("No existe ninguna porra con ese ID");
+      history.replaceState({}, "", "/misporras.html");
     return;
   }
 
@@ -358,12 +368,16 @@ async function unirsePorID(idManual = null) {
   if (data.miembros.includes(currentUser.uid)) {
     info.textContent =
       "Ya participas en esta porra";
+      window.alert("Ya participas en esta porra");
+      history.replaceState({}, "", "/misporras.html");
     return;
   }
 
   if (data.miembros.length > 11) {
     info.textContent =
       "Esta porra ha alcanzado el límite de 12 participantes";
+      window.alert("Esta porra ha alcanzado el límite de 12 participantes");
+      history.replaceState({}, "", "/misporras.html");
     return;
   }
 
@@ -397,8 +411,7 @@ btnUnirse.onclick = () => {
 
   info.textContent = "";
 
-  document.getElementById("popupConfirm").onclick =
-    unirsePorID;
+  document.getElementById("popupConfirm").onclick = () => unirsePorID();
 
   document.getElementById("popup").style.display = "flex";
 };
