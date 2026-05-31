@@ -4,8 +4,8 @@
 - [X] Nomenclatura porras
 - [X] Porra -> poner prediccion empate + ganador eliminatoria
 - [X] footer
-- [ ] copia de seguridad de firestore
-- [ ] comprobar cuenta facturacion (27 de junio acaba)
+- [X] copia de seguridad de firestore
+- [X] comprobar cuenta facturacion (27 de junio acaba)
 - [X] home cambiar descripcion de 90' a 120'
 - [ ] hacer fantasy 
 - [ ] ()
