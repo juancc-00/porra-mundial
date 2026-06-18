@@ -336,7 +336,8 @@ async function cargarLogsActividad(id) {
       let logsArr = [];
       logsSnap.forEach(doc => logsArr.push({ idDoc: doc.id, ...doc.data() }));
 
-      logsArr.sort((a, b) => b.idDoc.localeCompare(a.idDoc));
+      // logsArr.sort((a, b) => b.idDoc.localeCompare(a.idDoc));
+      logsArr.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
 
       const tresRecientes = logsArr.slice(0, 3);
 
@@ -450,6 +451,12 @@ async function cargarLogsActividad(id) {
       htmlContent += `</div>`;
       card.innerHTML = htmlContent;
       contenedor.appendChild(card);
+
+      const indiceInicial = Math.max(0, partidos.length - 4);
+
+      if (contenedor.children[indiceInicial]) {
+        contenedor.scrollLeft = contenedor.children[indiceInicial].offsetLeft;
+      }
     });
   }
 
