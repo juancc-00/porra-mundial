@@ -11,15 +11,15 @@ const fs = require("fs");
 
 
 //En desarrollo, usar asi: 
-admin.initializeApp();
+// admin.initializeApp();
 
 // solo para local usar service account
-// const serviceAccount = require("./serviceAccount.json");  
+const serviceAccount = require("./serviceAccount.json");  
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   projectId: "porra-mundial-91819"
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  projectId: "porra-mundial-91819"
+});
 
 
 const db = admin.firestore();
@@ -70,7 +70,9 @@ function findMatchId(team1, team2, date, matchesData) {
 
     // 👉 Parsear fechas
     const dbDate = parseFecha(m.Fecha);
+    console.log("dbdate", dbDate);
     const wikiDate = parseFechaWiki(date);
+    console.log("wikiDate", wikiDate);
 
     // 👉 Diferencia en días
     const diffDays = Math.floor(
@@ -731,46 +733,46 @@ async function main(){
   const matches = await getAllMatches(matchesData);
 
   // 2. Leer procesados
-  const procDoc = await db.collection("config").doc("procesados").get();
+  // const procDoc = await db.collection("config").doc("procesados").get();
 
-  let procesados = [];
-  if (procDoc.exists) {
-    procesados = procDoc.data().ids || [];
-  }
+  // let procesados = [];
+  // if (procDoc.exists) {
+  //   procesados = procDoc.data().ids || [];
+  // }
 
-  console.log("Partidos ya procesados: ", procesados);
+  // console.log("Partidos ya procesados: ", procesados);
 
-  const partidosNuevos = await obtenerPartidosNuevos(matches, procesados);
+  // const partidosNuevos = await obtenerPartidosNuevos(matches, procesados);
 
 
-  if (partidosNuevos.length === 0) {
-    console.log("No hay partidos nuevos");
-    return;
-  }
+  // if (partidosNuevos.length === 0) {
+  //   console.log("No hay partidos nuevos");
+  //   return;
+  // }
 
-  console.log("Partidos nuevos: ", partidosNuevos);
+  // console.log("Partidos nuevos: ", partidosNuevos);
 
-  await actualizarPartidosReales(partidosNuevos);
-  await actualizarActividad(partidosNuevos);
-  await actualizarActividadFinal(partidosNuevos);
+  // await actualizarPartidosReales(partidosNuevos);
+  // await actualizarActividad(partidosNuevos);
+  // await actualizarActividadFinal(partidosNuevos);
 
-  // Añadir partidos procesados a la variable de firestore
-  const nuevosIds = partidosNuevos.map(p => p.id);
-  const actualizados = [...new Set([...procesados, ...nuevosIds])];
+  // // Añadir partidos procesados a la variable de firestore
+  // const nuevosIds = partidosNuevos.map(p => p.id);
+  // const actualizados = [...new Set([...procesados, ...nuevosIds])];
 
-  await db.collection("config").doc("procesados").set({
-    ids: actualizados
-  });
+  // await db.collection("config").doc("procesados").set({
+  //   ids: actualizados
+  // });
 }
 
-// main();
+main();
 
-exports.ActualizacionCompleta = onSchedule(
-  {
-    schedule: "*/15 20-23,0-9 * * *",
-    timeZone: "Europe/Madrid"
-  },
-  async () => {
-    await main();
-  }
-);
+// exports.ActualizacionCompleta = onSchedule(
+//   {
+//     schedule: "*/15 20-23,0-9 * * *",
+//     timeZone: "Europe/Madrid"
+//   },
+//   async () => {
+//     await main();
+//   }
+// );
