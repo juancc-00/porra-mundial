@@ -197,11 +197,11 @@ main {
 
 .partidos-section, 
 .chart-section {
-  width: 100%;           /* 100% del 90% del contenedor padre */
-  max-width: 100%;       /* Evita desbordamientos */
+  width: 100%; 
+  max-width: 100%;
   box-sizing: border-box;
-  margin-left: 0;        /* Eliminamos márgenes manuales */
-  margin-right: 0;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch; 
 }
 
 .chart-container {
