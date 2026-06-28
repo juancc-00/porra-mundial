@@ -87,13 +87,13 @@ function parseFechaWiki(fechaStr) {
     junio: 5,
     julio: 6,
   };
-  const match = fechaStr.match(/(\d{1,2}) de (\w+) de (\d{4})/);
+  const match = fechaStr.match(/(\d{1,2}) de (\w+)/);
   if (!match) return null;
   const dia = parseInt(match[1]);
   const mes = meses[match[2].toLowerCase()];
-  const anio = parseInt(match[3]);
+  // const anio = parseInt(match[3]);
 
-  return new Date(anio, mes, dia);
+  return new Date(2026, mes, dia);
 }
 
 function parseFecha(fechaStr) {
@@ -186,6 +186,7 @@ async function getAllMatches(matchesData) {
     console.log(team1, team2, date, g1, g2, p1, p2);
 
     const id = findMatchId(team1, team2, date, matchesData);
+    console.log("id", id);
 
     matches.push({
       id,
