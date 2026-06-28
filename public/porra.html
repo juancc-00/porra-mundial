@@ -523,8 +523,14 @@ function renderizarClasificacion(miembrosData) {
 
   function renderizarGrafico(miembrosData, partidosJugados) {
     const ctx = document.getElementById('graficoProgresion').getContext('2d');
+
+    const container = document.querySelector('.chart-container');
+    container.style.width = partidosJugados.length > 25 ? `${partidosJugados.length * 15}px` : '100%';
+
     const labelsPartidos = ['Inicio'].concat(partidosJugados.map(p => `P${mapa_cronologico[p] || p}`));
-    const colores = ['#FFD700', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40'];
+    const colores = [
+      '#FFCC56', '#4bc0c0', '#ff6384', '#36a2eb', '#9966ff', '#ff9f40', '#EF4444', '#4bc587', '#f263b8', '#36cbd5', '#bd66ff', '#ff7a40'  
+    ];
     const datasets = miembrosData.map((miembro, index) => ({
       label: miembro.nombre,
       data: miembro.datosGrafico,
